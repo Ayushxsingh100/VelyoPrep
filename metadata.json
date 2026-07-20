@@ -1,0 +1,6 @@
+{
+  "name": "VeyloPrep",
+  "description": "A startup-grade single operating system for college internships, placements, and career tracking with VeyloPrep.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
