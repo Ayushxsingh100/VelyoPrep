@@ -3,54 +3,16 @@ import { motion, AnimatePresence } from "motion/react";
 import { 
   Plus, Check, ChevronRight, FileText, Briefcase, Calendar, 
   AlertTriangle, Code, MessageSquare, Award, Compass,
-  Clock, Sliders
+  Clock, Settings
 } from "lucide-react";
-
-const getCompanyLogo = (companyName: string, isDark: boolean, customClass?: string) => {
-  const firstLetter = companyName.charAt(0).toUpperCase();
-  const lower = companyName.toLowerCase();
-
-  let bgClass = isDark ? "bg-[#18181C] border-white/[0.04] text-zinc-300" : "bg-zinc-100 border-zinc-200/85 text-zinc-700";
-  let logoContent = <span className="font-semibold text-[15px] tracking-tight">{firstLetter}</span>;
-
-  if (lower.includes("stripe")) {
-    bgClass = "bg-[#635BFF]/10 border-[#635BFF]/20 text-[#635BFF]";
-  } else if (lower.includes("google")) {
-    bgClass = isDark ? "bg-zinc-950 border-white/5" : "bg-zinc-100 border-zinc-200";
-    logoContent = (
-      <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none">
-        <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
-        <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" />
-        <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" fill="#FBBC05" />
-        <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335" />
-      </svg>
-    );
-  } else if (lower.includes("apple")) {
-    bgClass = isDark ? "bg-zinc-100/10 border-white/10 text-white" : "bg-zinc-100 border-zinc-200 text-zinc-900";
-    logoContent = (
-      <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24">
-        <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 4.17c.66-.81 1.11-1.93.99-3.06-1 .04-2.21.67-2.93 1.49-.62.69-1.16 1.84-1.01 2.96 1.12.09 2.27-.57 2.95-1.39z" />
-      </svg>
-    );
-  } else if (lower.includes("netflix")) {
-    bgClass = "bg-[#E50914]/10 border-[#E50914]/20 text-[#E50914]";
-  } else if (lower.includes("meta") || lower.includes("facebook")) {
-    bgClass = "bg-[#0668E1]/10 border-[#0668E1]/20 text-[#0668E1]";
-  }
-
-  return (
-    <div className={`${customClass || "w-10 h-10"} rounded-full border ${bgClass} flex items-center justify-center shadow-inner shrink-0 group-hover:scale-105 transition-transform duration-180`}>
-      {logoContent}
-    </div>
-  );
-};
+import { CompanyLogo } from "../../shared/components";
 
 const getTaskStyle = (task: any, isChecked: boolean, isDark: boolean) => {
   if (isChecked) {
     return {
       label: "Completed",
-      icon: <Check size={11} className={`stroke-[3] ${isDark ? "text-zinc-500" : "text-zinc-400"}`} />,
-      glowClass: isDark ? "text-zinc-500" : "text-zinc-400"
+      icon: <Check size={10} className={`stroke-[3.5] ${isDark ? "text-zinc-500" : "text-zinc-400"}`} />,
+      badgeClass: isDark ? "bg-zinc-850/40 border-zinc-800/30 text-zinc-500" : "bg-zinc-100 border-zinc-200 text-zinc-400"
     };
   }
   const type = (task.type || "").toLowerCase();
@@ -59,42 +21,42 @@ const getTaskStyle = (task: any, isChecked: boolean, isDark: boolean) => {
   if (type.includes("interview") || title.includes("interview")) {
     return {
       label: "Interview",
-      icon: <MessageSquare size={11} className={isDark ? "text-blue-400" : "text-blue-600"} />,
-      glowClass: isDark ? "text-blue-400 drop-shadow-[0_0_4px_rgba(96,165,250,0.5)]" : "text-blue-600 font-semibold"
+      icon: <MessageSquare size={10} className={isDark ? "text-blue-400" : "text-blue-600"} />,
+      badgeClass: isDark ? "bg-blue-500/[0.07] border-blue-500/[0.16] text-blue-400" : "bg-blue-50 border-blue-200/60 text-blue-700"
     };
   }
   if (type.includes("coding test") || title.includes("coding") || title.includes("test")) {
     return {
       label: "Coding",
-      icon: <Code size={11} className={isDark ? "text-purple-400" : "text-purple-600"} />,
-      glowClass: isDark ? "text-purple-400 drop-shadow-[0_0_4px_rgba(192,132,252,0.5)]" : "text-purple-600 font-semibold"
+      icon: <Code size={10} className={isDark ? "text-purple-400" : "text-purple-600"} />,
+      badgeClass: isDark ? "bg-purple-500/[0.07] border-purple-500/[0.16] text-purple-400" : "bg-purple-50 border-purple-200/60 text-purple-700"
     };
   }
   if (type.includes("assessment") || title.includes("assessment") || type.includes("oa")) {
     return {
       label: "Assessment",
-      icon: <FileText size={11} className={isDark ? "text-amber-400" : "text-amber-600"} />,
-      glowClass: isDark ? "text-amber-400 drop-shadow-[0_0_4px_rgba(251,191,36,0.5)]" : "text-amber-700 font-semibold"
+      icon: <FileText size={10} className={isDark ? "text-amber-400" : "text-amber-600"} />,
+      badgeClass: isDark ? "bg-amber-500/[0.07] border-amber-500/[0.16] text-amber-400" : "bg-amber-50 border-amber-200/60 text-amber-700"
     };
   }
   if (type.includes("offer") || title.includes("offer")) {
     return {
       label: "Offer",
-      icon: <Award size={11} className={isDark ? "text-emerald-400" : "text-emerald-600"} />,
-      glowClass: isDark ? "text-emerald-400 drop-shadow-[0_0_4px_rgba(52,211,153,0.5)]" : "text-emerald-600 font-semibold"
+      icon: <Award size={10} className={isDark ? "text-emerald-400" : "text-emerald-600"} />,
+      badgeClass: isDark ? "bg-emerald-500/[0.07] border-emerald-500/[0.16] text-emerald-400" : "bg-emerald-50 border-emerald-200/60 text-emerald-700"
     };
   }
   if (type.includes("deadline") || title.includes("due") || title.includes("deadline")) {
     return {
       label: "Deadline",
-      icon: <Calendar size={11} className={isDark ? "text-orange-400" : "text-orange-600"} />,
-      glowClass: isDark ? "text-orange-400 drop-shadow-[0_0_4px_rgba(251,146,60,0.5)]" : "text-orange-600 font-semibold"
+      icon: <Calendar size={10} className={isDark ? "text-orange-400" : "text-orange-600"} />,
+      badgeClass: isDark ? "bg-orange-500/[0.07] border-orange-500/[0.16] text-orange-400" : "bg-orange-50 border-orange-200/60 text-orange-700"
     };
   }
   return {
     label: task.type || "Milestone",
-    icon: <Compass size={11} className={isDark ? "text-zinc-400" : "text-zinc-500"} />,
-    glowClass: isDark ? "text-zinc-400 drop-shadow-[0_0_3px_rgba(255,255,255,0.15)]" : "text-zinc-500 font-semibold"
+    icon: <Compass size={10} className={isDark ? "text-zinc-400" : "text-zinc-500"} />,
+    badgeClass: isDark ? "bg-zinc-800/40 border-zinc-700/30 text-zinc-450" : "bg-zinc-100 border-zinc-200 text-zinc-600"
   };
 };
 
@@ -338,10 +300,10 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({
         label: "Applied",
         subtitle: "Active submittals",
         count: countApplied,
-        icon: <Briefcase size={13} className="text-blue-400/70" />,
-        iconBg: "bg-blue-500/[0.03]",
-        iconBorder: "border-blue-500/[0.10]",
-        textClass: "text-blue-400/70",
+        icon: <Briefcase size={13} className="text-blue-400" />,
+        iconBg: "bg-blue-500/20",
+        iconBorder: "border-blue-500/30",
+        textClass: "text-blue-400 font-extrabold",
         glowColor: "rgba(59,130,246,0.15)"
       },
       {
@@ -349,10 +311,10 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({
         label: "Assessment",
         subtitle: "Technical tests",
         count: countOA,
-        icon: <Code size={13} className="text-amber-400/70" />,
-        iconBg: "bg-amber-500/[0.03]",
-        iconBorder: "border-amber-500/[0.10]",
-        textClass: "text-amber-400/70",
+        icon: <Code size={13} className="text-amber-400" />,
+        iconBg: "bg-amber-500/20",
+        iconBorder: "border-amber-500/30",
+        textClass: "text-amber-400 font-extrabold",
         glowColor: "rgba(245,158,11,0.15)"
       },
       {
@@ -360,10 +322,10 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({
         label: "Interview",
         subtitle: "Live discussions",
         count: countInterview,
-        icon: <MessageSquare size={13} className="text-purple-400/70" />,
-        iconBg: "bg-purple-500/[0.03]",
-        iconBorder: "border-purple-500/[0.10]",
-        textClass: "text-purple-400/70",
+        icon: <MessageSquare size={13} className="text-purple-400" />,
+        iconBg: "bg-purple-500/20",
+        iconBorder: "border-purple-500/30",
+        textClass: "text-purple-400 font-extrabold",
         glowColor: "rgba(168,85,247,0.15)"
       },
       {
@@ -371,10 +333,10 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({
         label: "Offers",
         subtitle: "Final wins",
         count: countOffer,
-        icon: <Award size={13} className="text-emerald-400/70" />,
-        iconBg: "bg-emerald-500/[0.03]",
-        iconBorder: "border-emerald-500/[0.10]",
-        textClass: "text-emerald-400/70",
+        icon: <Award size={13} className="text-emerald-400" />,
+        iconBg: "bg-emerald-500/20",
+        iconBorder: "border-emerald-500/30",
+        textClass: "text-emerald-400 font-extrabold",
         glowColor: "rgba(16,185,129,0.15)"
       }
     ];
@@ -407,18 +369,20 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(59,130,246,0.01)_0%,transparent_65%)] pointer-events-none -z-10" />
 
       {/* GREETING HEADER */}
-      <motion.div variants={itemVariants} className="pt-5 pb-3 flex items-center justify-between relative text-left">
+      <motion.div variants={itemVariants} className="pt-6 pb-4 flex items-start justify-between relative text-left">
         <div className="flex flex-col space-y-1 pr-12">
-          <h1 className={`text-[30px] font-extrabold tracking-tight leading-tight ${isDark ? 'text-white' : 'text-zinc-900'}`}>
+          <h1 className={`text-[34px] font-extrabold tracking-tight leading-[1.1] ${isDark ? 'text-white' : 'text-zinc-900'}`}>
             {getGreeting()},<br />
-            {firstName} 👋
+            <span className="bg-gradient-to-r from-[#60A5FA] via-[#818CF8] to-[#C084FC] bg-clip-text text-transparent">
+              {firstName}
+            </span> 👋
           </h1>
           <span 
             onClick={() => {
               setSimulateFailure(!simulateFailure);
               showToast(simulateFailure ? "System is back online" : "System simulation: Sandbox Mode", "info");
             }}
-            className={`text-xs mt-1 transition-colors cursor-pointer select-none font-semibold tracking-wide leading-none ${isDark ? 'text-zinc-400 hover:text-zinc-200' : 'text-zinc-500 hover:text-zinc-800'}`}
+            className={`text-sm mt-2 transition-colors cursor-pointer select-none font-semibold ${isDark ? 'text-zinc-400 hover:text-zinc-200' : 'text-zinc-500 hover:text-zinc-800'}`}
           >
             {getDayLabel()}
           </span>
@@ -428,13 +392,13 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({
             setCurrentScreen("settings");
             showToast("Navigation routed to Settings", "info");
           }} 
-          className={`w-9.5 h-9.5 rounded-full border flex items-center justify-center transition-all duration-200 cursor-pointer shrink-0 ${
+          className={`w-11 h-11 rounded-full border flex items-center justify-center transition-all duration-200 cursor-pointer shrink-0 ${
             isDark 
-              ? "bg-[#121214] border-zinc-850 text-zinc-400 hover:text-white hover:border-zinc-700" 
+              ? "bg-gradient-to-b from-[#1A1A1E] to-[#121214] border-[#2D2D32] text-zinc-455 hover:text-white hover:border-zinc-700" 
               : "bg-white border-zinc-200 text-zinc-655 hover:text-zinc-950 shadow-sm"
           }`}
         >
-          <Sliders size={16} strokeWidth={1.75} />
+          <Settings size={18} strokeWidth={1.75} />
         </button>
       </motion.div>
 
@@ -470,52 +434,48 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({
         <>
           {/* TODAY'S PRIORITY CARD */}
           <motion.div variants={itemVariants} className="space-y-3 relative text-left">
-            <h2 className="text-[11px] font-semibold text-zinc-550 dark:text-zinc-400 uppercase tracking-wider px-1 leading-none select-none">
+            <h2 className="text-[11px] font-semibold text-zinc-555 dark:text-zinc-500 uppercase tracking-wider px-1 leading-none select-none">
               Today's Priority
             </h2>
             <div className="relative group">
-              <div className="absolute -inset-[1px] bg-gradient-to-r from-blue-500/[0.03] to-indigo-500/[0.03] rounded-[20px] blur-sm opacity-60 group-hover:opacity-100 transition duration-300 pointer-events-none" />
-              
               <motion.div 
                 whileHover={{ y: -2, scale: 1.003 }}
-                whileTap={{ scale: 0.98 }}
+                whileTap={{ scale: 0.95, opacity: 0.85 }}
                 transition={{ duration: 0.15, ease: "easeOut" }}
                 onClick={todayPriority.action}
-                className={`relative overflow-hidden p-6 rounded-[20px] border cursor-pointer flex items-center justify-between w-full ${
+                className={`relative overflow-hidden p-6 rounded-[22px] border cursor-pointer flex items-center justify-between w-full transition-all duration-200 ${
                   isDark 
-                    ? "bg-[#121214] border-zinc-800 shadow-[0_4px_12px_rgba(0,0,0,0.25)]" 
-                    : "bg-white border-zinc-200/80 shadow-[0_4px_12px_rgba(0,0,0,0.03)]"
+                    ? "bg-gradient-to-b from-[#1A1A1E] to-[#121214] border-[#2D2D32] hover:from-[#202025] hover:to-[#151518] shadow-[0_12px_32px_rgba(0,0,0,0.7)]" 
+                    : "bg-white border-zinc-250/50 hover:border-zinc-300 hover:bg-zinc-50/30 shadow-[0_12px_30px_-8px_rgba(0,0,0,0.03)]"
                 }`}
               >
-                {isDark && <div className="absolute top-0 left-[15%] right-[15%] h-[1px] bg-gradient-to-r from-transparent via-blue-500/[0.08] to-transparent pointer-events-none" />}
+                {isDark && <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-white/[0.12] to-transparent pointer-events-none" />}
                 
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(59,130,246,0.005)_0%,transparent_75%)] pointer-events-none -z-10" />
-
                 <div className="flex items-center gap-3.5 min-w-0 flex-1">
-                  {getCompanyLogo(todayPriority.company, isDark, "w-12 h-12 text-[15px] font-bold")}
+                  <CompanyLogo companyName={todayPriority.company} isDark={isDark} sizeClasses="w-14 h-14 text-xl font-bold" />
                   <div className="min-w-0 flex-1 flex flex-col justify-center">
-                    <h3 className={`text-[15px] font-extrabold tracking-tight leading-snug truncate ${isDark ? 'text-white' : 'text-zinc-900'}`}>
+                    <h3 className={`text-[16px] font-extrabold tracking-tight leading-snug truncate ${isDark ? 'text-white' : 'text-zinc-955'}`}>
                       {todayPriority.company}
                     </h3>
-                    <span className={`text-xs font-medium mt-1 block leading-none truncate tracking-wide ${isDark ? 'text-zinc-400' : 'text-zinc-500'}`}>
+                    <span className={`text-[13px] font-semibold mt-1 block leading-none truncate tracking-wide ${isDark ? 'text-zinc-500' : 'text-zinc-500'}`}>
                       {todayPriority.role}
                     </span>
                   </div>
                 </div>
 
                 <div className="flex items-center gap-3.5 shrink-0 ml-4">
-                  <span className={`text-xs tracking-widest font-mono font-bold uppercase select-none ${
-                    todayPriority.statusType === "Interview" ? (isDark ? "text-blue-400 drop-shadow-[0_0_4px_rgba(96,165,250,0.45)]" : "text-blue-600") :
-                    todayPriority.statusType === "Assessment" ? (isDark ? "text-amber-400 drop-shadow-[0_0_4px_rgba(251,191,36,0.45)]" : "text-amber-600") :
-                    todayPriority.statusType === "Offer" ? (isDark ? "text-emerald-400 drop-shadow-[0_0_4px_rgba(52,211,153,0.45)]" : "text-emerald-600") :
-                    (isDark ? "text-zinc-400" : "text-zinc-550")
+                  <span className={`text-[10px] tracking-wider font-sans font-bold uppercase select-none px-3.5 py-1 rounded-full border leading-none ${
+                    todayPriority.statusType === "Interview" ? (isDark ? "bg-blue-500/[0.08] border-blue-500/[0.18] text-blue-400" : "bg-blue-50 border-blue-200/60 text-blue-700") :
+                    todayPriority.statusType === "Assessment" ? (isDark ? "bg-amber-500/[0.08] border-amber-500/[0.18] text-amber-400" : "bg-amber-50 border-amber-200/60 text-amber-700") :
+                    todayPriority.statusType === "Offer" ? (isDark ? "bg-emerald-500/[0.08] border-emerald-500/[0.18] text-[#10B981] bg-[#04261C]" : "bg-emerald-50 border-emerald-200/60 text-emerald-700") :
+                    (isDark ? "bg-zinc-800/40 border-zinc-750 text-zinc-450" : "bg-zinc-100 border-zinc-250 text-zinc-600")
                   }`}>
                     {todayPriority.statusType === "Default" ? "Companion" : todayPriority.statusType}
                   </span>
-                  <div className={`w-7.5 h-7.5 rounded-full flex items-center justify-center shrink-0 border ${
-                    isDark ? "bg-zinc-900 border-zinc-800" : "bg-zinc-50 border-zinc-200"
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 border ${
+                    isDark ? "bg-[#242428] border-[#3E3E42] text-zinc-300" : "bg-zinc-50 border-zinc-200 text-zinc-455"
                   }`}>
-                    <ChevronRight size={13} className={`${isDark ? 'text-zinc-500' : 'text-zinc-500'}`} />
+                    <ChevronRight size={14} className={`${isDark ? 'text-zinc-400' : 'text-zinc-500'}`} />
                   </div>
                 </div>
               </motion.div>
@@ -537,38 +497,46 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({
                   <motion.div
                      key={stage.id}
                      whileHover={{ y: -1.5, scale: 1.003 }}
-                     whileTap={{ scale: 0.98 }}
+                     whileTap={{ scale: 0.95, opacity: 0.85 }}
                      transition={{ duration: 0.15, ease: "easeOut" }}
                      onClick={() => {
                        setSelectedFunnelStage(selectedFunnelStage === stage.id ? null : stage.id);
                        showToast(`Filtering funnel by ${stage.label} stage`, "info");
                      }}
-                     className={`relative p-6.5 rounded-[22px] border cursor-pointer select-none ${
+                     className={`relative p-5 rounded-[22px] border cursor-pointer select-none transition-all duration-200 ${
                        isSelected
-                         ? (isDark ? "bg-[#1E1E22] border-blue-500/40 shadow-[0_4px_16px_rgba(0,0,0,0.4)]" : "bg-blue-50/60 border-blue-200 shadow-sm")
-                         : (isDark ? "bg-[#121214] border-zinc-800 shadow-[0_4px_12px_rgba(0,0,0,0.2)]" : "bg-white border-zinc-200/80 shadow-[0_4px_12px_rgba(0,0,0,0.02)]")
+                         ? (isDark ? "bg-[#1A1A1F] border-blue-500/50 hover:bg-[#202025] shadow-[0_12px_24px_rgba(0,0,0,0.4)]" : "bg-blue-50/80 border-blue-300 shadow-sm")
+                         : (isDark 
+                             ? "bg-gradient-to-b from-[#1A1A1E] to-[#121214] border-[#2D2D32] hover:from-[#202025] hover:to-[#151518] shadow-[0_10px_24px_-8px_rgba(0,0,0,0.5)]" 
+                             : "bg-white border-zinc-200/50 hover:border-zinc-350/85 hover:bg-zinc-50/30 shadow-[0_10px_24px_-8px_rgba(0,0,0,0.03)]")
                        }`}
                   >
+                    {isDark && <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-white/[0.12] to-transparent pointer-events-none" />}
                     <div className="flex items-center justify-between">
-                      <div className={`p-2.5 rounded-[14px] ${stage.iconBg} border ${stage.iconBorder} flex items-center justify-center shrink-0`}>
+                      <div className={`p-2 rounded-xl ${stage.iconBg} border ${stage.iconBorder} flex items-center justify-center shrink-0`}>
                         {stage.icon}
                       </div>
-                      <span className={`text-base font-extrabold tracking-normal ${stage.textClass} font-mono`}>
+                      <span className={`text-[19px] font-extrabold tracking-normal ${stage.textClass} font-sans`}>
                         {stage.count.toString().padStart(2, '0')}
                       </span>
                     </div>
                     <div className="mt-4 flex items-center justify-between">
                       <div>
-                        <h4 className={`text-[13px] font-bold leading-none tracking-wide ${isDark ? 'text-zinc-200' : 'text-zinc-800'}`}>
+                        <h4 className={`text-[15px] font-bold leading-none tracking-wide ${isDark ? 'text-white' : 'text-zinc-950'}`}>
                           {stage.label}
                         </h4>
+                        <span className="text-[10px] text-zinc-500 font-semibold block mt-1.5 leading-none">{stage.subtitle}</span>
                       </div>
-                      <ChevronRight 
-                        size={12} 
-                        className={`text-zinc-550 transition-transform duration-180 ${
-                          isSelected ? "rotate-90 text-blue-500" : ""
-                        }`} 
-                      />
+                      <div className={`w-7.5 h-7.5 rounded-full flex items-center justify-center border shrink-0 ${
+                        isDark ? "border-[#3E3E42] bg-[#242428] text-zinc-300" : "border-zinc-200 bg-zinc-50 text-zinc-400"
+                      }`}>
+                        <ChevronRight 
+                          size={12} 
+                          className={`transition-transform duration-180 ${
+                            isSelected ? "rotate-90 text-blue-500" : ""
+                          }`} 
+                        />
+                      </div>
                     </div>
                   </motion.div>
                 );
@@ -657,20 +625,47 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({
 
           {/* TODAY'S CHECKLIST */}
           <motion.div variants={itemVariants} className="space-y-3 text-left">
-            <h2 className="text-[11px] font-semibold text-zinc-550 dark:text-zinc-400 uppercase tracking-wider px-1 leading-none select-none">
+            <h2 className="text-[11px] font-semibold text-zinc-555 dark:text-zinc-500 uppercase tracking-wider px-1 leading-none select-none">
               Today's Checklist
             </h2>
 
-            <div className={`p-6 rounded-[20px] border divide-y shadow-xs ${
+            <div className={`relative p-6 rounded-[22px] border divide-y transition-all duration-200 ${
               isDark 
-                ? "bg-[#121214] border-zinc-800 divide-zinc-800/[0.4] shadow-[0_4px_12px_rgba(0,0,0,0.25)]" 
-                : "bg-white border-zinc-200/80 divide-zinc-100 shadow-[0_4px_12px_rgba(0,0,0,0.03)]"
+                ? "bg-gradient-to-b from-[#1A1A1E] to-[#121214] border-[#2D2D32] divide-[#2D2D32]/[0.4] shadow-[0_12px_32px_rgba(0,0,0,0.7)]" 
+                : "bg-white border-zinc-200/80 divide-zinc-100 shadow-[0_12px_30px_-8px_rgba(0,0,0,0.03)]"
             }`}>
+              
               {todayChecklist.length === 0 ? (
-                <div className="text-[13px] font-normal text-zinc-555 py-6 text-center select-none flex flex-col items-center justify-center space-y-1 font-sans">
-                  <span className="text-zinc-400 font-bold text-[13px] tracking-wide">All checklists completed</span>
-                  <span className="text-xs text-zinc-550 font-mono uppercase tracking-widest font-bold">Your schedule is clear</span>
-                </div>
+                <motion.div 
+                  whileHover={{ scale: 1.002 }}
+                  whileTap={{ scale: 0.96, opacity: 0.85 }}
+                  onClick={() => showToast("All checklists up to date", "success")}
+                  className="flex items-center justify-between py-1 cursor-pointer w-full text-left"
+                >
+                  <div className="flex items-center gap-4 min-w-0 flex-1">
+                    {/* Double green ring success indicator */}
+                    <div className="w-13 h-13 rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center shrink-0">
+                      <div className="w-8 h-8 rounded-full bg-[#10B981] flex items-center justify-center text-white shadow-sm shadow-emerald-500/30">
+                        <Check size={16} strokeWidth={3.5} />
+                      </div>
+                    </div>
+                    
+                    <div className="min-w-0 flex-1">
+                      <h4 className={`text-[15px] font-extrabold tracking-tight truncate ${isDark ? 'text-white' : 'text-zinc-950'}`}>
+                        All checklists completed
+                      </h4>
+                      <p className={`text-xs font-semibold truncate mt-1 leading-none ${isDark ? 'text-zinc-500' : 'text-zinc-600'}`}>
+                        Your schedule is clear for today
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 border ${
+                    isDark ? "bg-[#242428] border-[#3E3E42] text-zinc-300" : "bg-zinc-50 border-zinc-200 text-zinc-400"
+                  }`}>
+                    <ChevronRight size={14} className={`${isDark ? 'text-zinc-400' : 'text-zinc-500'}`} />
+                  </div>
+                </motion.div>
               ) : (
                 todayChecklist.map((task) => {
                   const isChecked = task.id === completingId;
@@ -693,7 +688,7 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({
                             isChecked 
                               ? "border-emerald-500/30 bg-emerald-500/[0.08]" 
                               : isDark 
-                                ? "border-zinc-800 hover:border-zinc-600 bg-zinc-900 hover:bg-zinc-800/30"
+                                ? "border-zinc-800 hover:border-zinc-655 bg-zinc-900 hover:bg-zinc-800/30"
                                 : "border-zinc-300 hover:border-zinc-450 bg-zinc-50 hover:bg-zinc-100/50"
                           }`}
                         >
@@ -709,7 +704,7 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({
                           <span className={`text-[13.5px] relative transition-all duration-180 truncate block w-full tracking-wide font-bold leading-snug ${
                             isChecked 
                               ? "text-zinc-555 font-semibold line-through" 
-                              : isDark ? "text-zinc-100 font-bold" : "text-zinc-900 font-bold"
+                              : isDark ? "text-zinc-100 font-bold" : "text-zinc-950 font-bold"
                           }`}>
                             {task.title}
                             {isChecked && (
@@ -722,18 +717,20 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({
                             )}
                           </span>
                           {!isChecked && (
-                            <span className={`text-[10px] flex items-center gap-1.5 mt-1 font-mono tracking-wider uppercase select-none font-bold ${taskStyle.glowClass}`}>
-                              {taskStyle.icon}
-                              <span>{taskStyle.label}</span>
-                            </span>
+                            <div className="mt-1.5">
+                              <span className={`text-[9px] inline-flex items-center gap-1 px-2 py-0.5 rounded-full border select-none font-bold font-sans tracking-wider uppercase ${taskStyle.badgeClass}`}>
+                                {taskStyle.icon}
+                                <span>{taskStyle.label}</span>
+                              </span>
+                            </div>
                           )}
                         </div>
                       </div>
 
                       {!isChecked && task.dueDate && (
                         <div className="flex items-center gap-2 pl-3 select-none text-right shrink-0">
-                          <Clock size={10.5} className="text-zinc-550 group-hover:text-zinc-400 transition-colors duration-150" />
-                          <span className="text-[9px] font-bold text-zinc-500 group-hover:text-zinc-350 transition-colors duration-150 tracking-wider font-mono">
+                          <Clock size={10.5} className="text-zinc-550 group-hover:text-zinc-450 transition-colors duration-150" />
+                          <span className="text-[9px] font-bold text-zinc-500 group-hover:text-zinc-350 transition-colors duration-150 tracking-wider font-sans">
                             {task.dueDate}
                           </span>
                         </div>
@@ -747,40 +744,41 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({
 
           {/* CONTINUE WHERE YOU LEFT OFF */}
           <motion.div variants={itemVariants} className="space-y-3 text-left">
-            <h2 className="text-[11px] font-semibold text-zinc-555 dark:text-zinc-400 uppercase tracking-wider px-1 leading-none select-none">
+            <h2 className="text-[11px] font-semibold text-zinc-555 dark:text-zinc-500 uppercase tracking-wider px-1 leading-none select-none">
               Continue Where You Left Off
             </h2>
 
             <motion.div 
               whileHover={{ y: -1.5, scale: 1.003 }}
-              whileTap={{ scale: 0.98 }}
+              whileTap={{ scale: 0.95, opacity: 0.85 }}
               transition={{ duration: 0.15, ease: "easeOut" }}
               onClick={lastInteractedItem.action}
-              className={`relative overflow-hidden p-6 rounded-[20px] border cursor-pointer flex items-center justify-between group ${
+              className={`relative overflow-hidden p-6 rounded-[22px] border cursor-pointer flex items-center justify-between group transition-all duration-200 ${
                 isDark 
-                  ? "bg-[#121214] border-zinc-800 shadow-[0_4px_12px_rgba(0,0,0,0.25)]" 
-                  : "bg-white border-zinc-200/80 shadow-[0_4px_12px_rgba(0,0,0,0.03)]"
+                  ? "bg-gradient-to-b from-[#1A1A1E] to-[#121214] border-[#2D2D32] hover:from-[#202025] hover:to-[#151518] shadow-[0_12px_32px_rgba(0,0,0,0.7)]" 
+                  : "bg-white border-zinc-200/50 hover:border-zinc-350/80 hover:bg-zinc-50/30 shadow-[0_12px_30px_-8px_rgba(0,0,0,0.03)]"
               }`}
             >
+              {isDark && <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-white/[0.12] to-transparent pointer-events-none" />}
               <div className="flex items-center gap-4 min-w-0 flex-1">
                 <div className={`w-10.5 h-10.5 rounded-xl flex items-center justify-center shrink-0 border ${
-                  isDark ? "bg-zinc-900 border-zinc-800" : "bg-zinc-50 border-zinc-200"
+                  isDark ? "bg-[#242428] border-[#3E3E42] text-zinc-400" : "bg-zinc-50 border-zinc-250/85"
                 }`}>
                   {lastInteractedItem.icon}
                 </div>
                 <div className="min-w-0 flex-1">
-                  <span className="text-[10px] font-bold text-zinc-550 dark:text-zinc-400 font-mono uppercase block leading-none mb-1.5">{lastInteractedItem.type}</span>
-                  <h4 className={`text-[14.5px] font-extrabold tracking-tight truncate ${isDark ? 'text-white' : 'text-zinc-900'}`}>
+                  <span className="text-[10px] font-bold text-zinc-505 dark:text-zinc-400 font-sans uppercase block leading-none mb-1.5">{lastInteractedItem.type}</span>
+                  <h4 className={`text-[14.5px] font-extrabold tracking-tight truncate ${isDark ? 'text-white' : 'text-zinc-950'}`}>
                     {lastInteractedItem.title}
                   </h4>
-                  <p className="text-xs text-zinc-500 font-semibold truncate mt-1 leading-none">{lastInteractedItem.subtitle}</p>
+                  <p className={`text-xs font-semibold truncate mt-1 leading-none ${isDark ? 'text-zinc-350' : 'text-zinc-600'}`}>{lastInteractedItem.subtitle}</p>
                 </div>
               </div>
 
               <div className={`w-7.5 h-7.5 rounded-full flex items-center justify-center shrink-0 border ${
-                isDark ? "bg-zinc-900 border-zinc-800" : "bg-zinc-50 border-zinc-200"
+                isDark ? "bg-[#242428] border-[#3E3E42] text-zinc-400" : "bg-zinc-50 border-zinc-200 text-zinc-400"
               }`}>
-                <ChevronRight size={13} className={`${isDark ? 'text-zinc-500' : 'text-zinc-500'}`} />
+                <ChevronRight size={13} className={`${isDark ? 'text-zinc-400' : 'text-zinc-500'}`} />
               </div>
             </motion.div>
           </motion.div>

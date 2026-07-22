@@ -10,7 +10,7 @@ import {
   Lock, Mail, Smartphone, Plus, CheckCircle, 
   Trash2, X, Calendar, AlertTriangle, Search, Sparkles,
   Sliders, ArrowLeft, Briefcase, User, 
-  RefreshCw, Eye, EyeOff, Home
+  RefreshCw, Eye, EyeOff, Home, BarChart2
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { VeyloPrepLogo } from "../../shared/components/logo/VeyloPrepLogo";
@@ -798,11 +798,11 @@ export default function MobileEmulator({
     }
   };
 
-  const themeBgClass = isDark ? "bg-[#09090B] text-zinc-100" : "bg-[#FAFAFA] text-zinc-900";
-  const themeCardClass = isDark ? "bg-[#121214] border-zinc-800" : "bg-white border-zinc-200";
-  const themeInputBg = isDark ? "bg-[#1E1E22] border-zinc-800 text-zinc-100 focus:border-blue-500 focus:ring-1 focus:ring-blue-500" : "bg-[#F4F4F5] border-zinc-200 text-zinc-900 focus:border-blue-600 focus:ring-1 focus:ring-blue-600";
-  const themeBorderClass = isDark ? "border-zinc-800" : "border-zinc-200";
-  const themeTextSubtle = isDark ? "text-zinc-400" : "text-zinc-500";
+  const themeBgClass = isDark ? "bg-black text-zinc-100" : "bg-[#FAFAFA] text-zinc-900";
+  const themeCardClass = isDark ? "bg-gradient-to-b from-[#1A1A1E] to-[#121214] border-[#2D2D32]" : "bg-white border-zinc-200";
+  const themeInputBg = isDark ? "bg-[#1E1E22] border-zinc-850 text-zinc-100 focus:border-blue-500 focus:ring-1 focus:ring-blue-500" : "bg-[#F4F4F5] border-zinc-200 text-zinc-900 focus:border-blue-600 focus:ring-1 focus:ring-blue-600";
+  const themeBorderClass = isDark ? "border-[#2D2D32]" : "border-zinc-200";
+  const themeTextSubtle = isDark ? "text-zinc-500" : "text-zinc-555";
 
   return (
     <div className={`flex-1 flex flex-col relative overflow-hidden font-sans select-none ${themeBgClass}`}>
@@ -1235,11 +1235,11 @@ export default function MobileEmulator({
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="absolute inset-0 flex flex-col h-full bg-[#09090B]"
+              className="absolute inset-0 flex flex-col h-full bg-[#000000]"
             >
               <div 
                 onScroll={handleScroll}
-                className={`flex-1 overflow-y-auto overflow-x-hidden ${currentScreen === "dashboard" ? "pt-5" : "pt-12"} pb-[84px] scrollbar-none`}
+                className={`flex-1 overflow-y-auto overflow-x-hidden ${currentScreen === "dashboard" ? "pt-5" : "pt-12"} pb-[104px] scrollbar-none`}
               >
                 {currentScreen === "dashboard" && (
                   <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-4 px-4">
@@ -1796,47 +1796,48 @@ export default function MobileEmulator({
                 initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-                className={`absolute bottom-5 left-4 right-4 h-[56px] rounded-full border px-4 flex items-center justify-around z-40 backdrop-blur-2xl transition-all duration-200 shadow-lg ${
+                className={`absolute bottom-5 left-4 right-4 h-[72px] rounded-full border px-2 flex items-center justify-between z-40 backdrop-blur-xl transition-all duration-200 ${
                   isDark 
-                    ? "bg-[#09090B]/90 border-white/[0.08] shadow-[0_12px_32px_rgba(0,0,0,0.4)]" 
-                    : "bg-white/90 border-zinc-200/80 shadow-[0_12px_32px_rgba(0,0,0,0.06)]"
+                    ? "bg-[#121214]/80 border-white/[0.08] shadow-[0_12px_42px_rgba(0,0,0,0.6)]" 
+                    : "bg-white/85 border-zinc-200/80 shadow-[0_12px_32px_rgba(0,0,0,0.03)]"
                 }`}
               >
                 {[
-                  { id: "dashboard", icon: <Home size={19} strokeWidth={2} />, label: "Home" },
-                  { id: "tracker", icon: <Briefcase size={19} strokeWidth={2} />, label: "Tracker" },
-                  { id: "deadlines", icon: <Calendar size={19} strokeWidth={2} />, label: "Today" },
-                  { id: "jobs", icon: <Search size={19} strokeWidth={2} />, label: "Jobs" },
-                  { id: "vault", icon: <User size={19} strokeWidth={2} />, label: "Profile" },
+                  { id: "dashboard", icon: <Home size={20} strokeWidth={2} />, label: "Home" },
+                  { id: "tracker", icon: <BarChart2 size={20} strokeWidth={2} />, label: "Tracker" },
+                  { id: "deadlines", icon: <Calendar size={20} strokeWidth={2} />, label: "Today" },
+                  { id: "jobs", icon: <Search size={20} strokeWidth={2} />, label: "Jobs" },
+                  { id: "vault", icon: <User size={20} strokeWidth={2} />, label: "Profile" },
                 ].map(tab => {
                   const isActive = currentScreen === tab.id;
                   return (
-                    <motion.button
+                    <button
                       key={tab.id}
                       onClick={() => setCurrentScreen(tab.id)}
-                      whileTap={{ scale: 0.92 }}
-                      transition={{ duration: 0.12, ease: "easeOut" }}
-                      className="flex items-center justify-center w-11 h-11 cursor-pointer relative"
+                      className="flex-1 flex items-center justify-center cursor-pointer relative"
                     >
-                      <div className="w-9.5 h-9.5 rounded-full flex items-center justify-center relative select-none">
+                      <div className={`w-full max-w-[62px] h-[54px] rounded-[20px] flex flex-col items-center justify-center relative select-none transition-all duration-255 ${
+                        isActive 
+                          ? isDark ? "bg-blue-500/10 border border-blue-500/20 text-blue-405" : "bg-blue-50 border border-blue-200 text-blue-600" 
+                          : isDark ? "text-zinc-500 hover:text-zinc-300" : "text-zinc-400 hover:text-zinc-700"
+                      }`}>
                         {isActive && (
                           <motion.div
-                            layoutId="activeTabCircle"
-                            className={`absolute inset-0 rounded-full -z-10 ${
-                              isDark ? "bg-blue-500/15 border border-blue-500/20" : "bg-blue-600 shadow-sm"
-                            }`}
-                            transition={{ type: "spring", stiffness: 450, damping: 30 }}
+                            layoutId="activeTabOutline"
+                            className="absolute inset-0 rounded-[20px] -z-10"
+                            transition={{ type: "spring", stiffness: 380, damping: 30 }}
                           />
                         )}
-                        <div className={`transition-colors duration-200 ${
+                        {tab.icon}
+                        <span className={`text-[10px] font-bold mt-0.5 transition-colors duration-250 select-none ${
                           isActive 
-                            ? isDark ? "text-blue-400" : "text-white" 
-                            : isDark ? "text-zinc-550 hover:text-zinc-350" : "text-zinc-400 hover:text-zinc-700"
+                            ? isDark ? "text-blue-400 font-extrabold" : "text-blue-600 font-extrabold"
+                            : isDark ? "text-zinc-500" : "text-zinc-400"
                         }`}>
-                          {tab.icon}
-                        </div>
+                          {tab.label}
+                        </span>
                       </div>
-                    </motion.button>
+                    </button>
                   );
                 })}
               </motion.div>

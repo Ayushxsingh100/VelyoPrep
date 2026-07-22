@@ -1,4 +1,5 @@
 export * from "./logo/VeyloPrepLogo";
+export * from "./logo/CompanyLogo";
 export * from "./buttons/AppButton";
 export * from "./cards/AppCard";
 export * from "./inputs/AppInput";

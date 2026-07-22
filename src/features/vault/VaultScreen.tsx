@@ -18,7 +18,10 @@ import {
   ExternalLink,
   Link2,
   Camera,
-  Upload
+  Upload,
+  Calendar,
+  GraduationCap,
+  TrendingUp
 } from "lucide-react";
 import { useAuth } from "../../providers/auth.provider";
 import { ResumeService } from "../../services/resume.service";
@@ -139,6 +142,7 @@ export const VaultScreen: React.FC<VaultScreenProps> = ({
   resumes,
   setResumes,
   vaultDocuments,
+  setVaultDocuments,
   simulateVaultFailure,
   setSimulateVaultFailure,
   offlineQueue,
@@ -213,6 +217,91 @@ export const VaultScreen: React.FC<VaultScreenProps> = ({
   };
 
   const documentService = React.useMemo(() => new DocumentService(), []);
+  
+  const coverLetterFileInputRef = useRef<HTMLInputElement | null>(null);
+  const portfolioFileInputRef = useRef<HTMLInputElement | null>(null);
+  const certFileInputRef = useRef<HTMLInputElement | null>(null);
+
+  const handleCoverLetterUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (!auth.user) {
+      showToast("Authentication required", "error");
+      return;
+    }
+    showToast(`Uploading Cover Letter: ${file.name}...`, "info");
+    const res = await documentService.uploadDocument(auth.user.id, file, "Cover Letter");
+    if (res.error) {
+      showToast(res.error, "error");
+    } else if (res.document) {
+      const newDocItem = {
+        id: res.document.id,
+        name: res.document.name,
+        category: "Cover Letter",
+        storagePath: res.document.storage_path,
+        fileSizeKb: res.document.file_size_kb || 500,
+        createdAt: new Date().toISOString().split("T")[0],
+        updatedAt: new Date().toISOString().split("T")[0]
+      };
+      setVaultDocuments((prev) => [newDocItem, ...prev]);
+      showToast("Cover Letter uploaded successfully", "success");
+    }
+  };
+
+  const handlePortfolioUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (!auth.user) {
+      showToast("Authentication required", "error");
+      return;
+    }
+    showToast(`Uploading Portfolio: ${file.name}...`, "info");
+    const res = await documentService.uploadDocument(auth.user.id, file, "Portfolio");
+    if (res.error) {
+      showToast(res.error, "error");
+    } else if (res.document) {
+      const newDocItem = {
+        id: res.document.id,
+        name: res.document.name,
+        category: "Portfolio",
+        storagePath: res.document.storage_path,
+        fileSizeKb: res.document.file_size_kb || 500,
+        createdAt: new Date().toISOString().split("T")[0],
+        updatedAt: new Date().toISOString().split("T")[0]
+      };
+      setVaultDocuments((prev) => [newDocItem, ...prev]);
+      if (res.document.storage_path) {
+        setLinkPortfolio(res.document.name);
+      }
+      showToast("Portfolio uploaded successfully", "success");
+    }
+  };
+
+  const handleCertUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (!auth.user) {
+      showToast("Authentication required", "error");
+      return;
+    }
+    showToast(`Uploading Certificate: ${file.name}...`, "info");
+    const res = await documentService.uploadDocument(auth.user.id, file, "Certificate");
+    if (res.error) {
+      showToast(res.error, "error");
+    } else if (res.document) {
+      const newDocItem = {
+        id: res.document.id,
+        name: res.document.name,
+        category: "Certificate",
+        storagePath: res.document.storage_path,
+        fileSizeKb: res.document.file_size_kb || 500,
+        createdAt: new Date().toISOString().split("T")[0],
+        updatedAt: new Date().toISOString().split("T")[0]
+      };
+      setVaultDocuments((prev) => [newDocItem, ...prev]);
+      showToast("Certificate uploaded successfully", "success");
+    }
+  };
 
   const handleViewDocument = async (doc: any) => {
     if (!doc?.storagePath) {
@@ -325,7 +414,7 @@ export const VaultScreen: React.FC<VaultScreenProps> = ({
     ? "bg-[#121214] border border-zinc-800 rounded-2xl shadow-[0_4px_12px_rgba(0,0,0,0.25)]" 
     : "bg-white border border-zinc-205 rounded-2xl shadow-[0_4px_12px_rgba(0,0,0,0.03)]";
 
-  const sectionHeaderClass = `text-[10px] font-bold ${isDark ? "text-zinc-500" : "text-zinc-450"} uppercase tracking-widest px-1 leading-none mb-2.5 block font-mono`;
+  const sectionHeaderClass = `text-[10px] font-bold ${isDark ? "text-zinc-500" : "text-zinc-450"} uppercase tracking-widest px-1 leading-none mb-2.5 block font-sans`;
 
   const inputClass = isDark 
     ? "w-full h-12 px-3.5 rounded-xl text-sm outline-none border border-zinc-800 bg-zinc-900 text-zinc-100 placeholder-zinc-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500/20 transition-all font-semibold text-left" 
@@ -730,172 +819,333 @@ export const VaultScreen: React.FC<VaultScreenProps> = ({
           </motion.div>
         ) : (
           <motion.div
-exit={{ opacity: 0, y: -10 }}
+            exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.18, ease: "easeOut" }}
             className="space-y-7"
           >
-            <div className="pt-4.5 flex flex-col items-start">
-              <span className="text-[10px] font-bold tracking-widest text-zinc-500 dark:text-zinc-455 block leading-none uppercase font-mono mb-1.5">
-                Digital Wallet
-              </span>
-              <h1 className={`text-[28px] font-extrabold tracking-tight leading-none ${isDark ? "text-white" : "text-zinc-950"}`}>
-                Career Vault
-              </h1>
+            <input
+              type="file"
+              ref={resumeFileInputRef}
+              onChange={handleResumeFileUpload}
+              accept=".pdf,.doc,.docx"
+              className="hidden"
+            />
+            <input
+              type="file"
+              ref={coverLetterFileInputRef}
+              onChange={handleCoverLetterUpload}
+              accept=".pdf,.doc,.docx"
+              className="hidden"
+            />
+            <input
+              type="file"
+              ref={portfolioFileInputRef}
+              onChange={handlePortfolioUpload}
+              accept=".pdf,.doc,.docx"
+              className="hidden"
+            />
+            <input
+              type="file"
+              ref={certFileInputRef}
+              onChange={handleCertUpload}
+              accept=".pdf,.doc,.docx"
+              className="hidden"
+            />
+
+            <div className="pt-4.5 flex items-center justify-between text-left">
+              <div className="flex flex-col items-start">
+                <span className="text-[10px] font-bold tracking-widest text-blue-500 dark:text-blue-400 block leading-none uppercase font-sans mb-2">
+                  DIGITAL WALLET
+                </span>
+                <h1 className={`text-[34px] font-extrabold tracking-tight leading-none ${isDark ? "text-white" : "text-zinc-950"}`}>
+                  Career Vault
+                </h1>
+              </div>
+              <button
+                onClick={handleOpenEdit}
+                className={`px-3.5 py-1.5 rounded-full border text-[11.5px] font-extrabold transition-all active:scale-95 shadow-xs cursor-pointer ${
+                  isDark 
+                    ? "bg-[#242428] border-[#3E3E42] text-zinc-300 hover:text-white" 
+                    : "bg-zinc-50 border-zinc-200 text-zinc-650 hover:bg-zinc-100 hover:text-zinc-900"
+                }`}
+              >
+                Edit Profile
+              </button>
             </div>
 
-            <div className={`${cardClass} p-6 space-y-5.5`}>
-              <div className="flex items-center justify-between gap-3.5">
-                <div className="flex items-center space-x-4 min-w-0">
-                  <div className="relative group">
-                    <input
-                      type="file"
-                      ref={fileInputRef}
-                      onChange={handleAvatarFileSelect}
-                      accept="image/png,image/jpeg,image/jpg,image/webp"
-                      className="hidden"
-                    />
-                    <div
-                      onClick={() => fileInputRef.current?.click()}
-                      className={`w-14 h-14 min-w-[56px] min-h-[56px] rounded-full overflow-hidden flex items-center justify-center shrink-0 border cursor-pointer relative ${
-                        isDark ? "bg-blue-500/10 border-blue-500/20 text-blue-400" : "bg-blue-50 border-blue-100 text-blue-600"
-                      }`}
-                      title="Click to upload avatar"
-                    >
-                      {auth.avatarSignedUrl ? (
-                        <img src={auth.avatarSignedUrl} alt={profileName} className="w-full h-full object-cover" />
-                      ) : (
-                        <span className="text-base font-bold">{getInitials(profileName || "User")}</span>
-                      )}
-                      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
-                        <Camera size={16} className="text-white" />
-                      </div>
+            <div className={`p-6 rounded-[22px] border relative ${
+              isDark ? "bg-[#0C0C0E]/95 border-zinc-800/80" : "bg-white border-zinc-200 shadow-xs"
+            }`}>
+              <div className="flex items-center gap-4">
+                <div className="relative group">
+                  <input
+                    type="file"
+                    ref={fileInputRef}
+                    onChange={handleAvatarFileSelect}
+                    accept="image/png,image/jpeg,image/jpg,image/webp"
+                    className="hidden"
+                  />
+                  <div
+                    onClick={() => fileInputRef.current?.click()}
+                    className={`w-20 h-20 min-w-[80px] min-h-[80px] rounded-full overflow-hidden flex items-center justify-center shrink-0 border-2 cursor-pointer relative ${
+                      isDark ? "bg-blue-950/20 border-blue-500/40 text-blue-400" : "bg-blue-50 border-blue-100 text-blue-600"
+                    }`}
+                    title="Click to upload avatar"
+                  >
+                    {auth.avatarSignedUrl ? (
+                      <img src={auth.avatarSignedUrl} alt={profileName} className="w-full h-full object-cover" />
+                    ) : (
+                      <span className="text-[28px] font-extrabold text-blue-455 dark:text-blue-400">{getInitials(profileName || "User").charAt(0)}</span>
+                    )}
+                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+                      <Camera size={18} className="text-white" />
                     </div>
                   </div>
-                  
-                  <div className="min-w-0">
-                    <h3 className={`text-lg font-extrabold tracking-tight leading-tight truncate ${isDark ? "text-white" : "text-zinc-900"}`}>
-                      {profileName || "Placement Candidate"}
-                    </h3>
-                    <p className={`text-sm ${isDark ? "text-zinc-400" : "text-zinc-500"} font-semibold truncate mt-0.5`}>
-                      {profileCollege || "University / College"}
-                    </p>
+                </div>
+                
+                <div className="min-w-0 text-left">
+                  <h3 className={`text-[22px] font-bold tracking-tight leading-tight truncate ${isDark ? "text-white" : "text-zinc-900"}`}>
+                    {profileName || "Placement Candidate"}
+                  </h3>
+                  <div className="flex items-center gap-1.5 text-zinc-500 mt-1.5 text-sm font-medium">
+                    <MapPin size={14} className="text-zinc-500 shrink-0" />
+                    <span className="truncate max-w-[200px]">{profileCollege || "University / College"}</span>
                   </div>
                 </div>
               </div>
 
-              {(profileDegree || profileCgpa || profileBranch || profileGradYear) && (
-                <div className={`pt-4.5 border-t ${isDark ? "border-zinc-800/20" : "border-zinc-100"} grid grid-cols-3 gap-4 text-center`}>
-                  <div className={`p-3 rounded-xl border ${isDark ? "bg-zinc-900/30 border-zinc-800/20" : "bg-zinc-50/50 border-zinc-100/30"}`}>
-                    <span className={`text-[9.5px] font-bold ${isDark ? "text-zinc-500" : "text-zinc-400"} uppercase tracking-wider block leading-none mb-1.5`}>Degree</span>
-                    <span className={`text-xs font-bold block leading-tight truncate ${isDark ? "text-zinc-300" : "text-zinc-700"}`}>
+              {(profileDegree || profileCgpa || profileGradYear) && (
+                <div className={`mt-6 pt-6 border-t ${isDark ? "border-zinc-805/30" : "border-zinc-150"} grid grid-cols-3 gap-3 text-center`}>
+                  <div className={`p-4 rounded-xl border flex flex-col justify-between items-center h-[116px] ${
+                    isDark ? "bg-[#111115] border-[#222226]" : "bg-zinc-50 border-zinc-200"
+                  }`}>
+                    <span className={`text-[9.5px] font-bold ${isDark ? "text-zinc-550" : "text-zinc-400"} uppercase tracking-wider block leading-none`}>DEGREE</span>
+                    <span className={`text-[13.5px] font-bold block leading-none truncate max-w-[70px] ${isDark ? "text-white" : "text-zinc-750"}`}>
                       {profileDegree || "B.Tech"}
                     </span>
+                    <div className="w-7.5 h-7.5 rounded-full flex items-center justify-center border border-blue-500/10 bg-blue-500/5 text-blue-500 dark:text-blue-450">
+                      <GraduationCap size={14} />
+                    </div>
                   </div>
-                  <div className={`p-3 rounded-xl border ${isDark ? "bg-zinc-900/30 border-zinc-800/20" : "bg-zinc-50/50 border-zinc-100/30"}`}>
-                    <span className={`text-[9.5px] font-bold ${isDark ? "text-zinc-500" : "text-zinc-400"} uppercase tracking-wider block leading-none mb-1.5`}>CGPA</span>
-                    <span className={`text-xs font-extrabold block leading-tight text-blue-500 dark:text-blue-400`}>
+
+                  <div className={`p-4 rounded-xl border flex flex-col justify-between items-center h-[116px] ${
+                    isDark ? "bg-[#111115] border-[#222226]" : "bg-zinc-50 border-zinc-200"
+                  }`}>
+                    <span className={`text-[9.5px] font-bold ${isDark ? "text-zinc-550" : "text-zinc-400"} uppercase tracking-wider block leading-none`}>CGPA</span>
+                    <span className="text-[13.5px] font-extrabold block leading-none text-[#0A84FF] dark:text-[#3B82F6]">
                       {profileCgpa || "N/A"}
                     </span>
+                    <div className="w-7.5 h-7.5 rounded-full flex items-center justify-center border border-blue-500/10 bg-blue-500/5 text-blue-500 dark:text-blue-450">
+                      <TrendingUp size={14} />
+                    </div>
                   </div>
-                  <div className={`p-3 rounded-xl border ${isDark ? "bg-zinc-900/30 border-zinc-800/20" : "bg-zinc-50/50 border-zinc-100/30"}`}>
-                    <span className={`text-[9.5px] font-bold ${isDark ? "text-zinc-500" : "text-zinc-400"} uppercase tracking-wider block leading-none mb-1.5`}>Grad Year</span>
-                    <span className={`text-xs font-bold block leading-tight truncate ${isDark ? "text-zinc-300" : "text-zinc-700"}`}>
+
+                  <div className={`p-4 rounded-xl border flex flex-col justify-between items-center h-[116px] ${
+                    isDark ? "bg-[#111115] border-[#222226]" : "bg-zinc-50 border-zinc-200"
+                  }`}>
+                    <span className={`text-[9.5px] font-bold ${isDark ? "text-zinc-550" : "text-zinc-400"} uppercase tracking-wider block leading-none`}>GRAD YEAR</span>
+                    <span className={`text-[13.5px] font-bold block leading-none truncate max-w-[70px] ${isDark ? "text-white" : "text-zinc-750"}`}>
                       {profileGradYear || "2027"}
                     </span>
+                    <div className="w-7.5 h-7.5 rounded-full flex items-center justify-center border border-blue-500/10 bg-blue-500/5 text-blue-500 dark:text-blue-450">
+                      <Calendar size={14} />
+                    </div>
                   </div>
                 </div>
               )}
             </div>
 
-            <div className="space-y-3.5">
-              <span className={sectionHeaderClass}>Quick Documents</span>
-              <div className={`${cardClass} p-6 space-y-2`}>
+            {/* Profile Progress Completion Bar */}
+            <div className="space-y-2 text-left">
+              <div className="flex items-center justify-between text-xs font-bold px-0.5">
+                <span className={isDark ? "text-zinc-400" : "text-zinc-500"}>Profile Completion</span>
+                <span className="text-blue-550 dark:text-blue-400 font-extrabold">{completion}% Complete</span>
+              </div>
+              <div className={`w-full h-1.5 rounded-full overflow-hidden ${isDark ? "bg-zinc-850" : "bg-zinc-150"}`}>
+                <motion.div
+                  initial={{ width: 0 }}
+                  animate={{ width: `${completion}%` }}
+                  transition={{ type: "spring", stiffness: 100, damping: 15 }}
+                  className="h-full bg-blue-600 dark:bg-blue-400 rounded-full"
+                />
+              </div>
+            </div>
+
+            <div className="space-y-3.5 text-left">
+              <span className="text-[10.5px] font-bold text-zinc-500 tracking-widest leading-none block uppercase font-sans">
+                QUICK DOCUMENTS
+              </span>
+              
+              <div className={`rounded-[22px] border divide-y divide-zinc-800/40 p-1.5 ${
+                isDark ? "bg-[#0C0C0E]/95 border-zinc-800/80" : "bg-white border-zinc-200 shadow-xs"
+              }`}>
+                {/* 1. Resume */}
                 <div 
                   onClick={() => {
                     const res = resumes.find(r => r.isDefault) || resumes[0];
                     if (res) {
-                      showToast(`Opening: ${res.name}`, "info");
+                      handleViewResume(res.storagePath, res.name);
                     } else {
-                      showToast("Resume is not uploaded. Tap Edit Profile.", "warning");
+                      resumeFileInputRef.current?.click();
                     }
                   }}
-                  className={`flex items-center justify-between py-4 px-4 rounded-xl cursor-pointer group ${isDark ? "hover:bg-white/[0.03] active:bg-white/[0.06]" : "hover:bg-zinc-100/40 active:bg-zinc-100/80"} transition-all duration-150 min-h-[56px]`}
+                  className="p-4 flex items-center justify-between transition-all duration-150 cursor-pointer hover:bg-white/[0.02]"
                 >
                   <div className="flex items-center space-x-3.5 min-w-0">
-                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-transform duration-200 group-hover:scale-105 ${isDark ? "bg-blue-500/15 text-blue-400" : "bg-blue-500/10 text-blue-500"}`}>
-                      <FileText size={17} />
+                    <div className={`w-11 h-11 rounded-[12px] flex items-center justify-center shrink-0 border ${
+                      isDark ? "bg-blue-500/10 border-blue-500/20 text-blue-400" : "bg-blue-50 border-blue-100 text-blue-650"
+                    }`}>
+                      <FileText size={20} />
                     </div>
-                    <span className={`text-sm font-semibold ${isDark ? "text-zinc-200" : "text-zinc-800"}`}>Resume</span>
+                    <div className="text-left min-w-0 space-y-0.5">
+                      <span className="text-sm font-bold text-white block leading-none font-sans">Resume</span>
+                      <span className="text-xs text-zinc-500 block truncate max-w-[170px] font-sans font-medium">
+                        Your latest resume
+                      </span>
+                    </div>
                   </div>
-                  <div className="flex items-center space-x-2 shrink-0 min-w-0">
-                    <span className={`text-xs ${isDark ? "text-zinc-450" : "text-zinc-500"} truncate max-w-[120px] font-normal`}>
-                      {resumes.find(r => r.isDefault)?.name || resumes[0]?.name || "Not uploaded"}
-                    </span>
-                    <ChevronRight size={14} className={`transition-colors shrink-0 ${isDark ? "text-zinc-650 group-hover:text-blue-400" : "text-zinc-300 group-hover:text-blue-600"}`} />
+                  
+                  <div className="flex items-center gap-2.5 shrink-0">
+                    {resumes[0] ? (
+                      <span className="px-3.5 h-6.5 flex items-center gap-1.5 rounded-full border text-[10.5px] font-bold tracking-wide uppercase leading-none bg-emerald-500/10 border-emerald-500/25 text-emerald-450 font-sans">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                        <span>Available</span>
+                      </span>
+                    ) : (
+                      <span className="px-3.5 h-6.5 flex items-center gap-1.5 rounded-full border text-[10.5px] font-bold tracking-wide uppercase leading-none bg-[#19191C] border-[#252529] text-zinc-400 font-sans">
+                        <span className="w-1.5 h-1.5 rounded-full bg-amber-550" />
+                        <span>Not uploaded</span>
+                      </span>
+                    )}
+                    <ChevronRight size={14} className="text-zinc-650" />
                   </div>
                 </div>
 
+                {/* 2. Cover Letter */}
                 <div 
                   onClick={() => {
-                    showToast("Opening: Standard Cover Letter.pdf", "info");
+                    const cl = vaultDocuments.find(d => d.category?.toLowerCase() === "cover letter");
+                    if (cl) {
+                      handleViewDocument(cl);
+                    } else {
+                      coverLetterFileInputRef.current?.click();
+                    }
                   }}
-                  className={`flex items-center justify-between py-4 px-4 rounded-xl cursor-pointer group ${isDark ? "hover:bg-white/[0.03] active:bg-white/[0.06]" : "hover:bg-zinc-100/40 active:bg-zinc-100/80"} transition-all duration-150 min-h-[56px]`}
+                  className="p-4 flex items-center justify-between transition-all duration-150 cursor-pointer hover:bg-white/[0.02]"
                 >
                   <div className="flex items-center space-x-3.5 min-w-0">
-                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-transform duration-200 group-hover:scale-105 ${isDark ? "bg-indigo-500/15 text-indigo-400" : "bg-indigo-500/10 text-indigo-500"}`}>
-                      <FileText size={17} />
+                    <div className={`w-11 h-11 rounded-[12px] flex items-center justify-center shrink-0 border ${
+                      isDark ? "bg-[#818CF8]/10 border-[#818CF8]/20 text-[#818CF8]" : "bg-purple-50 border-purple-100 text-purple-650"
+                    }`}>
+                      <FileText size={20} />
                     </div>
-                    <span className={`text-sm font-semibold ${isDark ? "text-zinc-200" : "text-zinc-800"}`}>Cover Letter</span>
+                    <div className="text-left min-w-0 space-y-0.5">
+                      <span className="text-sm font-bold text-white block leading-none font-sans">Cover Letter</span>
+                      <span className="text-xs text-zinc-500 block truncate max-w-[170px] font-sans font-medium">
+                        Standard Cover Letter
+                      </span>
+                    </div>
                   </div>
-                  <div className="flex items-center space-x-2 shrink-0 min-w-0">
-                    <span className={`text-xs ${isDark ? "text-zinc-450" : "text-zinc-500"} truncate max-w-[120px] font-normal`}>
-                      {vaultDocuments.find(d => d.category?.toLowerCase() === "cover letter")?.name || "Standard Cover Letter.pdf"}
-                    </span>
-                    <ChevronRight size={14} className={`transition-colors shrink-0 ${isDark ? "text-zinc-650 group-hover:text-indigo-400" : "text-zinc-300 group-hover:text-indigo-600"}`} />
+                  
+                  <div className="flex items-center gap-2.5 shrink-0">
+                    {vaultDocuments.find(d => d.category?.toLowerCase() === "cover letter") ? (
+                      <span className="px-3.5 h-6.5 flex items-center gap-1.5 rounded-full border text-[10.5px] font-bold tracking-wide uppercase leading-none bg-emerald-500/10 border-emerald-500/25 text-emerald-450 font-sans">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                        <span>Available</span>
+                      </span>
+                    ) : (
+                      <span className="px-3.5 h-6.5 flex items-center gap-1.5 rounded-full border text-[10.5px] font-bold tracking-wide uppercase leading-none bg-[#19191C] border-[#252529] text-zinc-400 font-sans">
+                        <span className="w-1.5 h-1.5 rounded-full bg-amber-550" />
+                        <span>Not uploaded</span>
+                      </span>
+                    )}
+                    <ChevronRight size={14} className="text-zinc-650" />
                   </div>
                 </div>
 
+                {/* 3. Portfolio */}
                 <div 
                   onClick={() => {
-                    if (linkPortfolio) {
+                    const port = vaultDocuments.find(d => d.category?.toLowerCase() === "portfolio");
+                    if (port) {
+                      handleViewDocument(port);
+                    } else if (linkPortfolio) {
                       window.open(linkPortfolio, "_blank", "noopener,noreferrer");
                     } else {
-                      showToast("Creative Portfolio is linked as virtual pdf", "info");
+                      portfolioFileInputRef.current?.click();
                     }
                   }}
-                  className={`flex items-center justify-between py-4 px-4 rounded-xl cursor-pointer group ${isDark ? "hover:bg-white/[0.03] active:bg-white/[0.06]" : "hover:bg-zinc-100/40 active:bg-zinc-100/80"} transition-all duration-150 min-h-[56px]`}
+                  className="p-4 flex items-center justify-between transition-all duration-150 cursor-pointer hover:bg-white/[0.02]"
                 >
                   <div className="flex items-center space-x-3.5 min-w-0">
-                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-transform duration-200 group-hover:scale-105 ${isDark ? "bg-amber-500/15 text-amber-400" : "bg-amber-500/10 text-amber-500"}`}>
-                      <Briefcase size={17} />
+                    <div className={`w-11 h-11 rounded-[12px] flex items-center justify-center shrink-0 border ${
+                      isDark ? "bg-amber-500/10 border-amber-500/20 text-amber-400" : "bg-amber-50 border-amber-100 text-amber-650"
+                    }`}>
+                      <Briefcase size={20} />
                     </div>
-                    <span className={`text-sm font-semibold ${isDark ? "text-zinc-200" : "text-zinc-800"}`}>Portfolio</span>
+                    <div className="text-left min-w-0 space-y-0.5">
+                      <span className="text-sm font-bold text-white block leading-none font-sans">Portfolio</span>
+                      <span className="text-xs text-zinc-500 block truncate max-w-[170px] font-sans font-medium">
+                        {linkPortfolio || "https://portfolio.dev"}
+                      </span>
+                    </div>
                   </div>
-                  <div className="flex items-center space-x-2 shrink-0 min-w-0">
-                    <span className={`text-xs ${isDark ? "text-zinc-450" : "text-zinc-500"} truncate max-w-[120px] font-normal`}>
-                      {linkPortfolio || "Creative Portfolio v2.pdf"}
-                    </span>
-                    <ChevronRight size={14} className={`transition-colors shrink-0 ${isDark ? "text-zinc-650 group-hover:text-amber-400" : "text-zinc-300 group-hover:text-amber-600"}`} />
+                  
+                  <div className="flex items-center gap-2.5 shrink-0">
+                    {vaultDocuments.find(d => d.category?.toLowerCase() === "portfolio") || linkPortfolio ? (
+                      <span className="px-3.5 h-6.5 flex items-center gap-1.5 rounded-full border text-[10.5px] font-bold tracking-wide uppercase leading-none bg-emerald-500/10 border-emerald-500/25 text-emerald-455 font-sans">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                        <span>Available</span>
+                      </span>
+                    ) : (
+                      <span className="px-3.5 h-6.5 flex items-center gap-1.5 rounded-full border text-[10.5px] font-bold tracking-wide uppercase leading-none bg-[#19191C] border-[#252529] text-zinc-400 font-sans">
+                        <span className="w-1.5 h-1.5 rounded-full bg-amber-550" />
+                        <span>Not uploaded</span>
+                      </span>
+                    )}
+                    <ChevronRight size={14} className="text-zinc-650" />
                   </div>
                 </div>
 
+                {/* 4. Certificates */}
                 <div 
                   onClick={() => {
-                    showToast("Opening Stored Credentials list", "info");
+                    const c = vaultDocuments.find(d => d.category?.toLowerCase() === "certificate");
+                    if (c) {
+                      handleViewDocument(c);
+                    } else {
+                      certFileInputRef.current?.click();
+                    }
                   }}
-                  className={`flex items-center justify-between py-4 px-4 rounded-xl cursor-pointer group ${isDark ? "hover:bg-white/[0.03] active:bg-white/[0.06]" : "hover:bg-zinc-100/40 active:bg-zinc-100/80"} transition-all duration-150 min-h-[56px]`}
+                  className="p-4 flex items-center justify-between transition-all duration-150 cursor-pointer hover:bg-white/[0.02]"
                 >
                   <div className="flex items-center space-x-3.5 min-w-0">
-                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-transform duration-200 group-hover:scale-105 ${isDark ? "bg-emerald-500/15 text-emerald-400" : "bg-emerald-500/10 text-emerald-500"}`}>
-                      <Award size={17} />
+                    <div className={`w-11 h-11 rounded-[12px] flex items-center justify-center shrink-0 border ${
+                      isDark ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-400" : "bg-emerald-50 border-emerald-100 text-emerald-650"
+                    }`}>
+                      <Award size={20} />
                     </div>
-                    <span className={`text-sm font-semibold ${isDark ? "text-zinc-200" : "text-zinc-800"}`}>Certificates</span>
+                    <div className="text-left min-w-0 space-y-0.5">
+                      <span className="text-sm font-bold text-white block leading-none font-sans">Certificates</span>
+                      <span className="text-xs text-zinc-500 block truncate max-w-[170px] font-sans font-medium">
+                        Your verified certificates
+                      </span>
+                    </div>
                   </div>
-                  <div className="flex items-center space-x-2 shrink-0 min-w-0">
-                    <span className={`text-xs ${isDark ? "text-zinc-450" : "text-zinc-500"} truncate max-w-[120px] font-normal`}>
-                      {vaultDocuments.length} Verified
-                    </span>
-                    <ChevronRight size={14} className={`transition-colors shrink-0 ${isDark ? "text-zinc-650 group-hover:text-emerald-400" : "text-zinc-300 group-hover:text-emerald-600"}`} />
+                  
+                  <div className="flex items-center gap-2.5 shrink-0">
+                    {vaultDocuments.filter(d => d.category?.toLowerCase() === "certificate").length > 0 ? (
+                      <span className="px-3.5 h-6.5 flex items-center gap-1.5 rounded-full border text-[10.5px] font-bold tracking-wide uppercase leading-none bg-emerald-500/10 border-emerald-500/25 text-emerald-450 font-sans">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                        <span>{vaultDocuments.filter(d => d.category?.toLowerCase() === "certificate").length} Verified</span>
+                      </span>
+                    ) : (
+                      <span className="px-3.5 h-6.5 flex items-center gap-1.5 rounded-full border text-[10.5px] font-bold tracking-wide uppercase leading-none bg-[#19191C] border-[#252529] text-zinc-400 font-sans">
+                        <span className="w-1.5 h-1.5 rounded-full bg-zinc-500" />
+                        <span>0 Verified</span>
+                      </span>
+                    )}
+                    <ChevronRight size={14} className="text-zinc-650" />
                   </div>
                 </div>
               </div>
@@ -910,12 +1160,12 @@ exit={{ opacity: 0, y: -10 }}
                       onClick={() => window.open(linkLeetcode, "_blank", "noopener,noreferrer")}
                       className={`flex items-center space-x-2.5 py-3 px-3.5 rounded-2xl cursor-pointer group ${isDark ? "hover:bg-white/[0.03] active:bg-white/[0.06] bg-[#1C1C1E] border-white/[0.04]" : "hover:bg-zinc-100/40 active:bg-zinc-100/80 bg-white border-zinc-150/50 shadow-[0_1px_2.5px_rgba(0,0,0,0.01)]"} border transition-all duration-150`}
                     >
-                      <div className={`w-7 h-7 rounded-[5px] flex items-center justify-center font-mono text-[10px] font-bold shrink-0 transition-transform duration-200 group-hover:scale-105 ${isDark ? "bg-amber-500/15 text-amber-400" : "bg-amber-500/10 text-amber-500"}`}>
+                      <div className={`w-7 h-7 rounded-[5px] flex items-center justify-center font-sans text-[10px] font-bold shrink-0 transition-transform duration-200 group-hover:scale-105 ${isDark ? "bg-amber-500/15 text-amber-400" : "bg-amber-500/10 text-amber-500"}`}>
                         LC
                       </div>
                       <div className="min-w-0 flex-1">
                         <span className={`text-xs font-bold block leading-none truncate ${isDark ? "text-zinc-200" : "text-zinc-800"}`}>LeetCode</span>
-                        <span className={`text-[10px] ${isDark ? "text-zinc-450" : "text-zinc-500"} font-mono truncate block mt-1`}>
+                        <span className={`text-[10px] ${isDark ? "text-zinc-450" : "text-zinc-500"} font-sans truncate block mt-1`}>
                           {linkLeetcode.replace(/\/$/, "").split("/").pop() || "Profile"}
                         </span>
                       </div>
@@ -928,12 +1178,12 @@ exit={{ opacity: 0, y: -10 }}
                       onClick={() => window.open(linkCodeforces, "_blank", "noopener,noreferrer")}
                       className={`flex items-center space-x-2.5 py-3 px-3.5 rounded-2xl cursor-pointer group ${isDark ? "hover:bg-white/[0.03] active:bg-white/[0.06] bg-[#1C1C1E] border-white/[0.04]" : "hover:bg-zinc-100/40 active:bg-zinc-100/80 bg-white border-zinc-150/50 shadow-[0_1px_2.5px_rgba(0,0,0,0.01)]"} border transition-all duration-150`}
                     >
-                      <div className={`w-7 h-7 rounded-[5px] flex items-center justify-center font-mono text-[10px] font-bold shrink-0 transition-transform duration-200 group-hover:scale-105 ${isDark ? "bg-blue-500/15 text-blue-400" : "bg-blue-500/10 text-blue-500"}`}>
+                      <div className={`w-7 h-7 rounded-[5px] flex items-center justify-center font-sans text-[10px] font-bold shrink-0 transition-transform duration-200 group-hover:scale-105 ${isDark ? "bg-blue-500/15 text-blue-400" : "bg-blue-500/10 text-blue-500"}`}>
                         CF
                       </div>
                       <div className="min-w-0 flex-1">
                         <span className={`text-xs font-bold block leading-none truncate ${isDark ? "text-zinc-200" : "text-zinc-800"}`}>Codeforces</span>
-                        <span className={`text-[10px] ${isDark ? "text-zinc-450" : "text-zinc-500"} font-mono truncate block mt-1`}>
+                        <span className={`text-[10px] ${isDark ? "text-zinc-450" : "text-zinc-500"} font-sans truncate block mt-1`}>
                           {linkCodeforces.replace(/\/$/, "").split("/").pop() || "Profile"}
                         </span>
                       </div>
@@ -980,9 +1230,14 @@ exit={{ opacity: 0, y: -10 }}
               </div>
             )}
 
-            <div className="space-y-1.5">
-              <span className={sectionHeaderClass}>Professional Links</span>
-              <div className={`${cardClass} py-1 px-2 space-y-0.5`}>
+            <div className="space-y-3.5 text-left">
+              <span className="text-[10.5px] font-bold text-zinc-500 tracking-widest leading-none block uppercase font-mono">
+                Professional Links
+              </span>
+              <div className={`rounded-[22px] border divide-y divide-zinc-800/40 p-1.5 ${
+                isDark ? "bg-[#0C0C0E]/95 border-zinc-800/80" : "bg-white border-zinc-200 shadow-xs"
+              }`}>
+                {/* LinkedIn */}
                 <div 
                   onClick={() => {
                     if (linkLinkedin) {
@@ -991,22 +1246,33 @@ exit={{ opacity: 0, y: -10 }}
                       showToast("No LinkedIn profile linked yet.", "warning");
                     }
                   }}
-                  className={`flex items-center justify-between py-2.5 px-2 rounded-xl cursor-pointer group ${isDark ? "hover:bg-white/[0.03] active:bg-white/[0.06]" : "hover:bg-zinc-100/40 active:bg-zinc-100/80"} transition-all duration-150 min-h-[44px]`}
+                  className="p-4 flex items-center justify-between transition-all duration-150 cursor-pointer hover:bg-white/[0.02]"
                 >
-                  <div className="flex items-center space-x-3 min-w-0">
-                    <div className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 transition-transform duration-200 group-hover:scale-105 ${isDark ? "bg-[#0077B5]/15 text-[#33a0ff]" : "bg-[#0077B5]/10 text-[#0077B5]"}`}>
-                      <Linkedin size={15} />
+                  <div className="flex items-center space-x-3.5 min-w-0">
+                    <div className={`w-11 h-11 rounded-[12px] flex items-center justify-center shrink-0 border ${
+                      isDark ? "bg-[#0077B5]/10 border-[#0077B5]/20 text-[#33a0ff]" : "bg-[#0077B5]/10 border-[#0077B5]/20 text-[#0077B5]"
+                    }`}>
+                      <Linkedin size={20} />
                     </div>
-                    <span className={`text-xs font-semibold truncate ${isDark ? "text-zinc-200" : "text-zinc-800"}`}>LinkedIn</span>
+                    <span className="text-sm font-bold text-white block leading-none font-sans">LinkedIn</span>
                   </div>
-                  <div className="flex items-center space-x-1.5 shrink-0 min-w-0">
-                    <span className={`text-[10px] ${isDark ? "text-zinc-450" : "text-zinc-500"} truncate max-w-[120px] font-normal`}>
-                      {linkLinkedin ? "Linked" : "Not linked"}
-                    </span>
-                    <ChevronRight size={12} className={`transition-colors shrink-0 ${isDark ? "text-zinc-600 group-hover:text-blue-400" : "text-zinc-300 group-hover:text-blue-600"}`} />
+                  <div className="flex items-center gap-2.5 shrink-0">
+                    {linkLinkedin ? (
+                      <span className="px-3.5 h-6.5 flex items-center gap-1.5 rounded-full border text-[10.5px] font-bold tracking-wide uppercase leading-none bg-emerald-500/10 border-emerald-500/25 text-emerald-450 font-sans">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                        <span>Linked</span>
+                      </span>
+                    ) : (
+                      <span className="px-3.5 h-6.5 flex items-center gap-1.5 rounded-full border text-[10.5px] font-bold tracking-wide uppercase leading-none bg-[#19191C] border-[#252529] text-zinc-400 font-sans">
+                        <span className="w-1.5 h-1.5 rounded-full bg-zinc-550" />
+                        <span>Not linked</span>
+                      </span>
+                    )}
+                    <ChevronRight size={14} className="text-zinc-650" />
                   </div>
                 </div>
 
+                {/* GitHub */}
                 <div 
                   onClick={() => {
                     if (linkGithub) {
@@ -1015,22 +1281,33 @@ exit={{ opacity: 0, y: -10 }}
                       showToast("No GitHub profile linked yet.", "warning");
                     }
                   }}
-                  className={`flex items-center justify-between py-2.5 px-2 rounded-xl cursor-pointer group ${isDark ? "hover:bg-white/[0.03] active:bg-white/[0.06]" : "hover:bg-zinc-100/40 active:bg-zinc-100/80"} transition-all duration-150 min-h-[44px]`}
+                  className="p-4 flex items-center justify-between transition-all duration-150 cursor-pointer hover:bg-white/[0.02]"
                 >
-                  <div className="flex items-center space-x-3 min-w-0">
-                    <div className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 transition-transform duration-200 group-hover:scale-105 ${isDark ? "bg-zinc-600/15 text-zinc-300" : "bg-zinc-600/10 text-zinc-700"}`}>
-                      <Github size={15} />
+                  <div className="flex items-center space-x-3.5 min-w-0">
+                    <div className={`w-11 h-11 rounded-[12px] flex items-center justify-center shrink-0 border ${
+                      isDark ? "bg-zinc-800/30 border-zinc-700/30 text-zinc-300" : "bg-zinc-600/10 border-zinc-600/20 text-zinc-700"
+                    }`}>
+                      <Github size={20} />
                     </div>
-                    <span className={`text-xs font-semibold truncate ${isDark ? "text-zinc-200" : "text-zinc-800"}`}>GitHub</span>
+                    <span className="text-sm font-bold text-white block leading-none font-sans">GitHub</span>
                   </div>
-                  <div className="flex items-center space-x-1.5 shrink-0 min-w-0">
-                    <span className={`text-[10px] ${isDark ? "text-zinc-450" : "text-zinc-500"} truncate max-w-[120px] font-normal`}>
-                      {linkGithub ? "Linked" : "Not linked"}
-                    </span>
-                    <ChevronRight size={12} className={`transition-colors shrink-0 ${isDark ? "text-zinc-600 group-hover:text-blue-400" : "text-zinc-300 group-hover:text-blue-600"}`} />
+                  <div className="flex items-center gap-2.5 shrink-0">
+                    {linkGithub ? (
+                      <span className="px-3.5 h-6.5 flex items-center gap-1.5 rounded-full border text-[10.5px] font-bold tracking-wide uppercase leading-none bg-emerald-500/10 border-emerald-500/25 text-emerald-455 font-sans">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                        <span>Linked</span>
+                      </span>
+                    ) : (
+                      <span className="px-3.5 h-6.5 flex items-center gap-1.5 rounded-full border text-[10.5px] font-bold tracking-wide uppercase leading-none bg-[#19191C] border-[#252529] text-zinc-400 font-sans">
+                        <span className="w-1.5 h-1.5 rounded-full bg-zinc-555" />
+                        <span>Not linked</span>
+                      </span>
+                    )}
+                    <ChevronRight size={14} className="text-zinc-650" />
                   </div>
                 </div>
 
+                {/* Portfolio */}
                 <div 
                   onClick={() => {
                     if (linkPersonalWebsite) {
@@ -1041,27 +1318,39 @@ exit={{ opacity: 0, y: -10 }}
                       showToast("No portfolio website linked yet.", "warning");
                     }
                   }}
-                  className={`flex items-center justify-between py-2.5 px-2 rounded-xl cursor-pointer group ${isDark ? "hover:bg-white/[0.03] active:bg-white/[0.06]" : "hover:bg-zinc-100/40 active:bg-zinc-100/80"} transition-all duration-150 min-h-[44px]`}
+                  className="p-4 flex items-center justify-between transition-all duration-150 cursor-pointer hover:bg-white/[0.02]"
                 >
-                  <div className="flex items-center space-x-3 min-w-0">
-                    <div className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 transition-transform duration-200 group-hover:scale-105 ${isDark ? "bg-cyan-500/15 text-cyan-400" : "bg-cyan-500/10 text-cyan-500"}`}>
-                      <Globe size={15} />
+                  <div className="flex items-center space-x-3.5 min-w-0">
+                    <div className={`w-11 h-11 rounded-[12px] flex items-center justify-center shrink-0 border ${
+                      isDark ? "bg-cyan-500/10 border-cyan-500/20 text-cyan-400" : "bg-cyan-500/10 border-cyan-500/20 text-cyan-600"
+                    }`}>
+                      <Globe size={20} />
                     </div>
-                    <span className={`text-xs font-semibold truncate ${isDark ? "text-zinc-200" : "text-zinc-800"}`}>Portfolio Website</span>
+                    <span className="text-sm font-bold text-white block leading-none font-sans">Portfolio Website</span>
                   </div>
-                  <div className="flex items-center space-x-1.5 shrink-0 min-w-0">
-                    <span className={`text-[10px] ${isDark ? "text-zinc-450" : "text-zinc-500"} truncate max-w-[120px] font-normal`}>
-                      {(linkPersonalWebsite || linkPortfolio) ? "Linked" : "Not linked"}
-                    </span>
-                    <ChevronRight size={12} className={`transition-colors shrink-0 ${isDark ? "text-zinc-600 group-hover:text-blue-400" : "text-zinc-300 group-hover:text-blue-600"}`} />
+                  <div className="flex items-center gap-2.5 shrink-0">
+                    {(linkPersonalWebsite || linkPortfolio) ? (
+                      <span className="px-3.5 h-6.5 flex items-center gap-1.5 rounded-full border text-[10.5px] font-bold tracking-wide uppercase leading-none bg-emerald-500/10 border-emerald-500/25 text-emerald-455 font-sans">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                        <span>Linked</span>
+                      </span>
+                    ) : (
+                      <span className="px-3.5 h-6.5 flex items-center gap-1.5 rounded-full border text-[10.5px] font-bold tracking-wide uppercase leading-none bg-[#19191C] border-[#252529] text-zinc-400 font-sans">
+                        <span className="w-1.5 h-1.5 rounded-full bg-zinc-555" />
+                        <span>Not linked</span>
+                      </span>
+                    )}
+                    <ChevronRight size={14} className="text-zinc-650" />
                   </div>
                 </div>
               </div>
             </div>
 
-            <div className="space-y-1">
-              <div className="flex items-center justify-between px-1.5 mb-1.5">
-                <span className={sectionHeaderClass}>Copyable Links Vault</span>
+            <div className="space-y-3">
+              <div className="flex items-center justify-between px-1.5">
+                <span className="text-[10.5px] font-bold text-zinc-500 tracking-widest leading-none block uppercase font-mono">
+                  Copyable Links Vault
+                </span>
                 <button
                   onClick={() => setShowAddForm(!showAddForm)}
                   className={`text-[9.5px] font-bold flex items-center space-x-1 ${isDark ? "text-blue-400 hover:text-blue-350" : "text-[#007AFF] hover:text-blue-700"} transition-colors cursor-pointer`}
@@ -1072,7 +1361,7 @@ exit={{ opacity: 0, y: -10 }}
               </div>
 
               {showAddForm && (
-                <div className={`${cardClass} p-3 mb-2 space-y-2.5`}>
+                <div className={`${cardClass} p-4.5 space-y-3 rounded-[22px]`}>
                   <div className="space-y-1">
                     <label className={labelClass}>Link Label / Description</label>
                     <input
@@ -1085,7 +1374,7 @@ exit={{ opacity: 0, y: -10 }}
                   </div>
                   <div className="space-y-1">
                     <label className={labelClass}>URL</label>
-                    <div className="flex space-x-1.5">
+                    <div className="flex space-x-2">
                       <input
                         type="text"
                         placeholder="e.g. github.com/username/project"
@@ -1095,7 +1384,7 @@ exit={{ opacity: 0, y: -10 }}
                       />
                       <button
                         onClick={handleAddCustomLink}
-                        className={`px-3 py-1.5 rounded-lg text-[10.5px] font-bold ${isDark ? "bg-[#0A84FF] hover:bg-[#007AFF] text-white" : "bg-[#007AFF] hover:bg-[#0066D6] text-white"} transition-colors cursor-pointer`}
+                        className={`px-4 py-2 rounded-xl text-[11px] font-bold shrink-0 ${isDark ? "bg-[#0A84FF] hover:bg-[#007AFF] text-white" : "bg-[#007AFF] hover:bg-[#0066D6] text-white"} transition-colors cursor-pointer`}
                       >
                         Save
                       </button>
@@ -1104,163 +1393,178 @@ exit={{ opacity: 0, y: -10 }}
                 </div>
               )}
 
-              <div className={`${cardClass} py-1.5 px-2 space-y-1.5`}>
-                {activeLinksList.length === 0 && customLinks.length === 0 ? (
-                  <div className="text-center py-4 px-2">
-                    <Link2 size={16} className={`mx-auto mb-1 ${isDark ? "text-zinc-700" : "text-zinc-300"}`} />
-                    <p className={`text-[10px] ${isDark ? "text-zinc-500" : "text-zinc-400"} font-medium`}>
-                      No links saved yet. Edit profile or add a custom link above!
-                    </p>
-                  </div>
-                ) : (
-                  <div className="space-y-1.5 max-h-[220px] overflow-y-auto pr-0.5 scrollbar-thin">
-                    {activeLinksList.map((item) => {
-                      const id = `std_${item.label.toLowerCase()}`;
-                      const isCopied = copiedLinkId === id;
-                      return (
-                        <div
-                          key={id}
-                          className={`flex items-center justify-between p-1.5 rounded-xl ${isDark ? "bg-zinc-900/30 border border-white/[0.01]" : "bg-zinc-50/60 border border-zinc-150/40"} transition-all duration-150`}
-                        >
-                          <div className="min-w-0 flex-1 pr-2">
-                            <span className="text-xs font-semibold block leading-none text-zinc-800 dark:text-zinc-200">{item.label}</span>
-                            <span className="text-[10px] text-zinc-550 dark:text-zinc-450 truncate block mt-1 font-mono">
-                              {item.url}
-                            </span>
-                          </div>
-                          <div className="flex items-center space-x-1 shrink-0">
-                            <button
-                              onClick={() => handleCopy(item.url, id, item.label)}
-                              className={`w-7 h-7 rounded-xl flex items-center justify-center transition-colors ${
-                                isCopied
-                                  ? "bg-emerald-500/10 text-emerald-500"
-                                  : isDark
-                                  ? "bg-zinc-805 hover:bg-zinc-700 text-zinc-400 hover:text-zinc-200"
-                                  : "bg-zinc-100 hover:bg-zinc-200 text-zinc-600 hover:text-zinc-800"
-                              } cursor-pointer`}
-                              title={`Copy ${item.label} URL`}
-                            >
-                              {isCopied ? <Check size={11.5} /> : <Copy size={11.5} />}
-                            </button>
-                            <button
-                              onClick={() => window.open(item.url, "_blank", "noopener,noreferrer")}
-                              className={`w-7 h-7 rounded-xl flex items-center justify-center transition-colors ${
-                                isDark
-                                  ? "bg-zinc-805 hover:bg-zinc-700 text-zinc-400 hover:text-zinc-200"
-                                  : "bg-zinc-100 hover:bg-zinc-200 text-zinc-600 hover:text-zinc-800"
-                              } cursor-pointer`}
-                              title="Visit URL"
-                            >
-                              <ExternalLink size={11} />
-                            </button>
-                          </div>
+              {activeLinksList.length === 0 && customLinks.length === 0 ? (
+                <div className={`${cardClass} py-6 px-4 text-center rounded-[22px]`}>
+                  <Link2 size={18} className={`mx-auto mb-1.5 ${isDark ? "text-zinc-700" : "text-zinc-300"}`} />
+                  <p className={`text-xs ${isDark ? "text-zinc-500" : "text-zinc-400"} font-medium`}>
+                    No links saved yet. Edit profile or add a custom link above!
+                  </p>
+                </div>
+              ) : (
+                <div className="space-y-2.5">
+                  {activeLinksList.map((item) => {
+                    const id = `std_${item.label.toLowerCase()}`;
+                    const isCopied = copiedLinkId === id;
+                    return (
+                      <div
+                        key={id}
+                        className={`p-4.5 rounded-[22px] border flex items-center justify-between transition-all duration-150 ${
+                          isDark ? "bg-[#0C0C0E]/95 border-zinc-805/80" : "bg-white border-zinc-200 shadow-xs"
+                        }`}
+                      >
+                        <div className="min-w-0 flex-1 pr-4 text-left">
+                          <span className="text-sm font-bold text-white block leading-none font-sans">{item.label}</span>
+                          <span className="text-xs text-zinc-500 block truncate mt-1.5 font-medium font-sans">
+                            {item.url}
+                          </span>
                         </div>
-                      );
-                    })}
+                        <div className="flex items-center space-x-2 shrink-0">
+                          <button
+                            onClick={() => handleCopy(item.url, id, item.label)}
+                            className={`w-9 h-9 rounded-full border flex items-center justify-center transition-all ${
+                              isCopied
+                                ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-450"
+                                : isDark
+                                ? "bg-[#242428] border-[#3E3E42] text-zinc-400 hover:text-white"
+                                : "bg-zinc-50 border-zinc-200 text-zinc-650 hover:bg-zinc-100"
+                            } cursor-pointer`}
+                            title={`Copy ${item.label} URL`}
+                          >
+                            {isCopied ? <Check size={13} /> : <Copy size={13} />}
+                          </button>
+                          <button
+                            onClick={() => window.open(item.url, "_blank", "noopener,noreferrer")}
+                            className={`w-9 h-9 rounded-full border flex items-center justify-center transition-all ${
+                              isDark
+                                ? "bg-[#242428] border-[#3E3E42] text-zinc-400 hover:text-white"
+                                : "bg-zinc-50 border-zinc-200 text-zinc-650 hover:bg-zinc-100"
+                            } cursor-pointer`}
+                            title="Visit Link"
+                          >
+                            <ExternalLink size={13} />
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  })}
 
-                    {customLinks.map((item) => {
-                      const isCopied = copiedLinkId === item.id;
-                      return (
-                        <div
-                          key={item.id}
-                          className={`flex items-center justify-between p-1.5 rounded-xl ${isDark ? "bg-zinc-900/30 border border-white/[0.01]" : "bg-zinc-50/60 border border-zinc-150/40"} transition-all duration-150`}
-                        >
-                          <div className="min-w-0 flex-1 pr-2">
-                            <span className="text-xs font-semibold block leading-none text-zinc-800 dark:text-zinc-200">{item.label}</span>
-                            <span className="text-[10px] text-zinc-550 dark:text-zinc-455 truncate block mt-1 font-mono">
-                              {item.url}
-                            </span>
-                          </div>
-                          <div className="flex items-center space-x-1 shrink-0">
-                            <button
-                              onClick={() => handleCopy(item.url, item.id, item.label)}
-                              className={`w-7 h-7 rounded-xl flex items-center justify-center transition-colors ${
-                                isCopied
-                                  ? "bg-emerald-500/10 text-emerald-500"
-                                  : isDark
-                                  ? "bg-zinc-808 hover:bg-zinc-700 text-zinc-400 hover:text-zinc-200"
-                                  : "bg-zinc-100 hover:bg-zinc-200 text-zinc-600 hover:text-zinc-800"
-                              } cursor-pointer`}
-                              title="Copy URL"
-                            >
-                              {isCopied ? <Check size={11.5} /> : <Copy size={11.5} />}
-                            </button>
-                            <button
-                              onClick={() => window.open(item.url, "_blank", "noopener,noreferrer")}
-                              className={`w-7 h-7 rounded-xl flex items-center justify-center transition-colors ${
-                                isDark
-                                  ? "bg-zinc-808 hover:bg-zinc-700 text-zinc-400 hover:text-zinc-200"
-                                  : "bg-zinc-100 hover:bg-zinc-200 text-zinc-600 hover:text-zinc-805"
-                              } cursor-pointer`}
-                              title="Visit URL"
-                            >
-                              <ExternalLink size={11} />
-                            </button>
-                            <button
-                              onClick={() => handleDeleteCustomLink(item.id, item.label)}
-                              className={`w-7 h-7 rounded-xl flex items-center justify-center transition-colors ${
-                                isDark
-                                  ? "bg-red-950/20 hover:bg-red-900/30 text-red-400"
-                                  : "bg-red-50 hover:bg-red-105 text-red-500"
-                              } cursor-pointer`}
-                              title="Delete Link"
-                            >
-                              <Trash2 size={11} />
-                            </button>
-                          </div>
+                  {customLinks.map((item) => {
+                    const isCopied = copiedLinkId === item.id;
+                    return (
+                      <div
+                        key={item.id}
+                        className={`p-4.5 rounded-[22px] border flex items-center justify-between transition-all duration-150 ${
+                          isDark ? "bg-[#0C0C0E]/95 border-zinc-805/80" : "bg-white border-zinc-200 shadow-xs"
+                        }`}
+                      >
+                        <div className="min-w-0 flex-1 pr-4 text-left">
+                          <span className="text-sm font-bold text-white block leading-none font-sans">{item.label}</span>
+                          <span className="text-xs text-zinc-500 block truncate mt-1.5 font-medium font-sans">
+                            {item.url}
+                          </span>
                         </div>
-                      );
-                    })}
-                  </div>
-                )}
-              </div>
+                        <div className="flex items-center space-x-2 shrink-0">
+                          <button
+                            onClick={() => handleCopy(item.url, item.id, item.label)}
+                            className={`w-9 h-9 rounded-full border flex items-center justify-center transition-all ${
+                              isCopied
+                                ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-450"
+                                : isDark
+                                ? "bg-[#242428] border-[#3E3E42] text-zinc-400 hover:text-white"
+                                : "bg-zinc-50 border-zinc-200 text-zinc-650 hover:bg-zinc-100"
+                            } cursor-pointer`}
+                            title="Copy URL"
+                          >
+                            {isCopied ? <Check size={13} /> : <Copy size={13} />}
+                          </button>
+                          <button
+                            onClick={() => window.open(item.url, "_blank", "noopener,noreferrer")}
+                            className={`w-9 h-9 rounded-full border flex items-center justify-center transition-all ${
+                              isDark
+                                ? "bg-[#242428] border-[#3E3E42] text-zinc-400 hover:text-white"
+                                : "bg-zinc-50 border-zinc-200 text-zinc-650 hover:bg-zinc-100"
+                            } cursor-pointer`}
+                            title="Visit URL"
+                          >
+                            <ExternalLink size={13} />
+                          </button>
+                          <button
+                            onClick={() => handleDeleteCustomLink(item.id, item.label)}
+                            className={`w-9 h-9 rounded-full border flex items-center justify-center transition-all ${
+                              isDark
+                                ? "bg-red-950/20 border-red-900/30 text-red-400 hover:bg-red-900/30"
+                                : "bg-red-50 border-red-200 text-red-500 hover:bg-red-100"
+                            } cursor-pointer`}
+                            title="Delete Link"
+                          >
+                            <Trash2 size={13} />
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
             </div>
 
-            <div className="space-y-1">
-              <span className={sectionHeaderClass}>Personal Information</span>
-              <div className={`${cardClass} py-1 px-1.5 space-y-0.5`}>
-                <div className="flex items-center justify-between py-1.5 px-2 rounded-xl">
-                  <div className="flex items-center space-x-2.5 min-w-0">
-                    <div className={`w-6 h-6 rounded-lg flex items-center justify-center shrink-0 ${isDark ? "bg-rose-500/15 text-rose-400" : "bg-rose-500/10 text-rose-500"}`}>
-                      <Mail size={12.5} />
+            <div className="space-y-3.5 text-left">
+              <span className="text-[10.5px] font-bold text-zinc-500 tracking-widest leading-none block uppercase font-mono">
+                Personal Information
+              </span>
+              <div className={`rounded-[22px] border divide-y divide-zinc-800/40 p-1.5 ${
+                isDark ? "bg-[#0C0C0E]/95 border-zinc-800/80" : "bg-white border-zinc-200 shadow-xs"
+              }`}>
+                {/* Email */}
+                <div className="p-4 flex items-center justify-between min-h-[56px]">
+                  <div className="flex items-center min-w-0">
+                    <div className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 ${
+                      isDark ? "bg-rose-500/10 text-rose-400" : "bg-rose-50 border border-rose-100 text-rose-500"
+                    }`}>
+                      <Mail size={16} />
                     </div>
-                    <span className={`text-xs font-medium ${isDark ? "text-zinc-205" : "text-zinc-800"}`}>Email</span>
+                    <span className="text-sm font-semibold text-white block leading-none font-sans ml-3">Email</span>
                   </div>
-                  <span className={`text-xs font-semibold truncate max-w-[170px] text-right ${isDark ? "text-zinc-350" : "text-zinc-600"}`}>
+                  <span className="text-sm font-medium text-zinc-400 truncate max-w-[180px] text-right font-sans">
                     {profileEmail || "No email"}
                   </span>
                 </div>
 
-                <div className="flex items-center justify-between py-1.5 px-2 rounded-xl">
-                  <div className="flex items-center space-x-2.5 min-w-0">
-                    <div className={`w-6 h-6 rounded-lg flex items-center justify-center shrink-0 ${isDark ? "bg-emerald-500/15 text-emerald-400" : "bg-emerald-500/10 text-emerald-500"}`}>
-                      <Phone size={12.5} />
+                {/* Phone */}
+                <div className="p-4 flex items-center justify-between min-h-[56px]">
+                  <div className="flex items-center min-w-0">
+                    <div className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 ${
+                      isDark ? "bg-emerald-500/10 text-emerald-400" : "bg-emerald-50 border border-emerald-100 text-emerald-500"
+                    }`}>
+                      <Phone size={16} />
                     </div>
-                    <span className={`text-xs font-medium ${isDark ? "text-zinc-205" : "text-zinc-800"}`}>Phone</span>
+                    <span className="text-sm font-semibold text-white block leading-none font-sans ml-3">Phone</span>
                   </div>
-                  <span className={`text-xs font-semibold text-right ${isDark ? "text-zinc-350" : "text-zinc-600"}`}>
+                  <span className="text-sm font-medium text-zinc-400 text-right font-sans">
                     {profilePhone || "No phone"}
                   </span>
                 </div>
 
-                <div className="flex items-center justify-between py-1.5 px-2 rounded-xl">
-                  <div className="flex items-center space-x-2.5 min-w-0">
-                    <div className={`w-6 h-6 rounded-lg flex items-center justify-center shrink-0 ${isDark ? "bg-red-500/15 text-red-400" : "bg-red-500/10 text-red-500"}`}>
-                      <MapPin size={12.5} />
+                {/* Location */}
+                <div className="p-4 flex items-center justify-between min-h-[56px]">
+                  <div className="flex items-center min-w-0">
+                    <div className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 ${
+                      isDark ? "bg-blue-500/10 text-blue-450" : "bg-blue-50 border border-blue-100 text-blue-500"
+                    }`}>
+                      <MapPin size={16} />
                     </div>
-                    <span className={`text-xs font-medium ${isDark ? "text-zinc-205" : "text-zinc-800"}`}>Location</span>
+                    <span className="text-sm font-semibold text-white block leading-none font-sans ml-3">Location</span>
                   </div>
-                  <span className={`text-xs font-semibold text-right truncate max-w-[150px] ${isDark ? "text-zinc-350" : "text-zinc-600"}`}>
+                  <span className="text-sm font-medium text-zinc-400 text-right truncate max-w-[180px] font-sans">
                     {profileAddress || "No location"}
                   </span>
                 </div>
               </div>
             </div>
 
-            <div className="pt-1">
+            <div className="pt-2">
               <button
                 onClick={handleOpenEdit}
-                className={`w-full h-11 rounded-xl ${isDark ? "bg-[#0A84FF] hover:bg-[#007AFF] text-white" : "bg-[#007AFF] hover:bg-[#0066D6] text-white"} font-semibold text-xs shadow-sm cursor-pointer transition-all active:scale-[0.98] flex items-center justify-center space-x-1.5`}
+                className="w-full h-13.5 rounded-[22px] bg-[#0A84FF] hover:bg-[#007AFF] text-white font-extrabold text-[13.5px] shadow-lg shadow-blue-500/10 cursor-pointer transition-all active:scale-[0.97] flex items-center justify-center space-x-1.5 mt-2"
               >
                 <span>Edit Profile</span>
               </button>

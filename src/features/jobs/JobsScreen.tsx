@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { Search, X, ArrowUpRight, Plus, Trash2 } from "lucide-react";
+import { Search, X, ArrowUpRight, Plus, Trash2, MoreHorizontal, Edit } from "lucide-react";
 
 const BRAND_THEMES: Record<string, { bg: string; text: string; gradient: string }> = {
   linkedin: { bg: "bg-blue-500/10 dark:bg-blue-400/10", text: "text-blue-600 dark:text-blue-400", gradient: "from-blue-500/20 to-indigo-500/10" },
@@ -265,12 +265,17 @@ export const JobsScreen: React.FC<JobsScreenProps> = (props) => {
   const [searchVal, setSearchVal] = useState("");
   const [isSearchFocused, setIsSearchFocused] = useState(false);
 
-  const [customPortals, setCustomPortals] = useState<{ id: string; name: string; url: string; desc: string }[]>(() => {
+  const [portals, setPortals] = useState<{ id: string; name: string; url: string; desc: string }[]>(() => {
     try {
-      const saved = localStorage.getItem("jobhub_custom_portals_v3");
-      return saved ? JSON.parse(saved) : [];
+      const saved = localStorage.getItem("jobhub_portals_v4");
+      if (saved) return JSON.parse(saved);
+    } catch {}
+    try {
+      const savedCustom = localStorage.getItem("jobhub_custom_portals_v3");
+      const customs = savedCustom ? JSON.parse(savedCustom) : [];
+      return [...DEFAULT_WEBSITES, ...customs];
     } catch {
-      return [];
+      return DEFAULT_WEBSITES;
     }
   });
 
@@ -278,12 +283,25 @@ export const JobsScreen: React.FC<JobsScreenProps> = (props) => {
   const [newName, setNewName] = useState("");
   const [newUrl, setNewUrl] = useState("");
   const [newDesc, setNewDesc] = useState("");
+  const [portalToDelete, setPortalToDelete] = useState<{ id: string; name: string } | null>(null);
+  
+  const [activeMenuId, setActiveMenuId] = useState<string | null>(null);
+  const [editPortalItem, setEditPortalItem] = useState<{ id: string; name: string; url: string; desc: string } | null>(null);
+  const [editName, setEditName] = useState("");
+  const [editUrl, setEditUrl] = useState("");
+  const [editDesc, setEditDesc] = useState("");
 
   useEffect(() => {
-    localStorage.setItem("jobhub_custom_portals_v3", JSON.stringify(customPortals));
-  }, [customPortals]);
+    localStorage.setItem("jobhub_portals_v4", JSON.stringify(portals));
+  }, [portals]);
 
-  const combinedPortals = [...DEFAULT_WEBSITES, ...customPortals];
+  useEffect(() => {
+    if (editPortalItem) {
+      setEditName(editPortalItem.name);
+      setEditUrl(editPortalItem.url);
+      setEditDesc(editPortalItem.desc);
+    }
+  }, [editPortalItem]);
 
   const handleAddWebsite = (e: React.FormEvent) => {
     e.preventDefault();
@@ -310,7 +328,7 @@ export const JobsScreen: React.FC<JobsScreenProps> = (props) => {
       desc: newDesc.trim() || "User added custom directory link."
     };
 
-    setCustomPortals(prev => [...prev, newPortal]);
+    setPortals(prev => [...prev, newPortal]);
     showToast(`Added ${newName} to portals`, "success");
 
     setNewName("");
@@ -319,10 +337,11 @@ export const JobsScreen: React.FC<JobsScreenProps> = (props) => {
     setIsAdding(false);
   };
 
-  const handleDeletePortal = (id: string, name: string, e: React.MouseEvent) => {
-    e.stopPropagation();
-    setCustomPortals(prev => prev.filter(item => item.id !== id));
-    showToast(`Deleted ${name} portal`, "info");
+  const confirmDeletePortal = () => {
+    if (!portalToDelete) return;
+    setPortals(prev => prev.filter(item => item.id !== portalToDelete.id));
+    showToast(`Deleted ${portalToDelete.name} portal`, "info");
+    setPortalToDelete(null);
   };
 
   const launchPortal = (url: string, name: string) => {
@@ -330,7 +349,7 @@ export const JobsScreen: React.FC<JobsScreenProps> = (props) => {
     window.open(url, "_blank", "noopener,noreferrer");
   };
 
-  const filteredWebsites = combinedPortals.filter(portal => {
+  const filteredWebsites = portals.filter(portal => {
     const q = searchVal.trim().toLowerCase();
     if (!q) return true;
     return portal.name.toLowerCase().includes(q) || portal.desc.toLowerCase().includes(q);
@@ -340,42 +359,32 @@ export const JobsScreen: React.FC<JobsScreenProps> = (props) => {
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="space-y-7 pb-10 font-sans text-left"
+      className="space-y-6 pb-4 font-sans text-left"
     >
       <div className="pt-4 flex items-center justify-between">
         <div>
-          <span className="text-[10px] font-bold tracking-widest text-zinc-500 dark:text-zinc-450 uppercase font-mono leading-none block mb-1">
+          <span className="text-[11px] font-semibold tracking-wider text-zinc-555 dark:text-zinc-500 uppercase block mb-1.5 leading-none">
             Explore Directory
           </span>
-          <h1 className={`text-[28px] font-extrabold tracking-tight leading-none ${isDark ? "text-white" : "text-zinc-950"}`}>
+          <h1 className={`text-[34px] font-extrabold tracking-tight leading-[1.1] ${isDark ? "text-white" : "text-zinc-950"}`}>
             Job Hub
           </h1>
         </div>
 
         <motion.button
-          whileHover={{ 
-            scale: 1.05
-          }}
-          whileTap={{ scale: 0.95 }}
+          whileHover={{ scale: 1.03 }}
+          whileTap={{ scale: 0.95, opacity: 0.85 }}
           onClick={() => setIsAdding(!isAdding)}
           title={isAdding ? "Close Panel" : "Add Custom Portal"}
           aria-label={isAdding ? "Close Panel" : "Add Custom Portal"}
-          className={`relative overflow-hidden w-11 h-11 rounded-xl flex items-center justify-center shrink-0 transition-all duration-300 border shadow-sm active:scale-95 ${
+          className={`relative overflow-hidden w-11 h-11 rounded-[14px] flex items-center justify-center shrink-0 transition-all duration-200 border shadow-lg active:scale-95 ${
             isAdding
               ? isDark
-                ? "bg-[#121214] border-zinc-800 text-red-400 hover:text-red-350"
-                : "bg-white border-zinc-200 text-red-600 hover:text-red-700 hover:bg-zinc-50"
+                ? "bg-[#18181C] border-[#252529] text-red-400"
+                : "bg-white border-zinc-200 text-red-600 hover:bg-zinc-50"
               : "bg-blue-600 border-blue-500 hover:bg-blue-550 text-white shadow-sm"
           }`}
         >
-          {!isAdding && (
-            <motion.span
-              animate={{ x: ["-100%", "200%"] }}
-              transition={{ repeat: Infinity, duration: 2.2, ease: "easeInOut", repeatDelay: 1 }}
-              className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-12"
-            />
-          )}
-          
           <motion.div
             animate={{ rotate: isAdding ? 135 : 0 }}
             transition={{ type: "spring", stiffness: 300, damping: 20 }}
@@ -393,65 +402,65 @@ export const JobsScreen: React.FC<JobsScreenProps> = (props) => {
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ type: "spring", stiffness: 350, damping: 26 }}
-            className={`overflow-hidden border rounded-2xl p-6 space-y-5.5 ${
-              isDark ? "bg-[#121214] border-zinc-800" : "bg-white border-zinc-200 shadow-sm"
-            }`}
+            className="overflow-hidden"
           >
-            <h2 className={`text-base font-extrabold tracking-tight text-left ${isDark ? "text-zinc-100" : "text-zinc-850"}`}>
-              Add Custom Website Link
-            </h2>
+            <form onSubmit={handleAddWebsite} className={`p-6 rounded-[22px] border space-y-4 ${
+              isDark ? "bg-[#18181C] border-[#252529]" : "bg-white border-zinc-200 shadow-sm"
+            }`}>
+              <h2 className={`text-base font-extrabold tracking-tight text-left ${isDark ? "text-zinc-100" : "text-zinc-850"}`}>
+                Add Custom Website Link
+              </h2>
 
-            <form onSubmit={handleAddWebsite} className="space-y-4 text-left">
               <div className="space-y-1">
-                <label className="text-[10px] font-bold tracking-wider text-zinc-400 uppercase font-mono block">Portal Name</label>
+                <label className="text-[10px] font-bold tracking-wider text-zinc-505 uppercase block">Portal Name</label>
                 <input
                   type="text"
                   placeholder="e.g. RemoteOK, My Job Board"
                   value={newName}
                   onChange={(e) => setNewName(e.target.value)}
-                  className={`w-full h-12 px-3.5 rounded-xl text-sm font-semibold outline-none border transition-all duration-150 ${
+                  className={`w-full h-12 px-3.5 rounded-xl text-sm font-semibold outline-none border transition-all duration-150 placeholder-zinc-500 ${
                     isDark
-                      ? "bg-zinc-900 border-zinc-800 text-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500/20 font-semibold"
-                      : "bg-[#FAFAFA] border-zinc-200 text-zinc-900 focus:border-blue-500 font-semibold"
+                      ? "bg-zinc-900 border-zinc-800 text-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500/20"
+                      : "bg-[#FAFAFA] border-zinc-200 text-zinc-900 focus:border-blue-500"
                   }`}
                   required
                 />
               </div>
 
               <div className="space-y-1">
-                <label className="text-[10px] font-bold tracking-wider text-zinc-400 uppercase font-mono block">Website URL</label>
+                <label className="text-[10px] font-bold tracking-wider text-zinc-550 uppercase block">Website URL</label>
                 <input
                   type="text"
                   placeholder="e.g. remoteok.com"
                   value={newUrl}
                   onChange={(e) => setNewUrl(e.target.value)}
-                  className={`w-full h-12 px-3.5 rounded-xl text-sm font-semibold outline-none border transition-all duration-150 ${
+                  className={`w-full h-12 px-3.5 rounded-xl text-sm font-semibold outline-none border transition-all duration-150 placeholder-zinc-500 ${
                     isDark
-                      ? "bg-zinc-900 border-zinc-800 text-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500/20 font-semibold"
-                      : "bg-[#FAFAFA] border-[#E4E4E7] text-zinc-900 focus:border-blue-500 font-semibold"
+                      ? "bg-zinc-900 border-zinc-800 text-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500/20"
+                      : "bg-[#FAFAFA] border-zinc-200 text-zinc-900 focus:border-blue-500"
                   }`}
                   required
                 />
               </div>
 
               <div className="space-y-1">
-                <label className="text-[10px] font-bold tracking-wider text-zinc-400 uppercase font-mono block">Short Description (Optional)</label>
+                <label className="text-[10px] font-bold tracking-wider text-zinc-555 uppercase block">Short Description (Optional)</label>
                 <input
                   type="text"
                   placeholder="e.g. Curated tech & remote channels."
                   value={newDesc}
                   onChange={(e) => setNewDesc(e.target.value)}
-                  className={`w-full h-12 px-3.5 rounded-xl text-sm font-semibold outline-none border transition-all duration-150 ${
+                  className={`w-full h-12 px-3.5 rounded-xl text-sm font-semibold outline-none border transition-all duration-150 placeholder-zinc-500 ${
                     isDark
-                      ? "bg-zinc-900 border-zinc-800 text-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500/20 font-semibold"
-                      : "bg-[#FAFAFA] border-[#E4E4E7] text-zinc-900 focus:border-blue-500 font-semibold"
+                      ? "bg-zinc-900 border-zinc-800 text-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500/20"
+                      : "bg-[#FAFAFA] border-[#E4E4E7] text-zinc-900 focus:border-blue-500"
                   }`}
                 />
               </div>
 
               <button
                 type="submit"
-                className="w-full h-12 rounded-xl bg-blue-600 hover:bg-blue-550 active:scale-98 text-white font-bold text-sm tracking-wider transition-colors shadow-md shadow-blue-600/10 cursor-pointer animate-none"
+                className="w-full h-12 rounded-xl bg-blue-600 hover:bg-blue-550 active:scale-98 text-white font-bold text-sm tracking-wider transition-colors shadow-md shadow-blue-600/10 cursor-pointer"
               >
                 Add Portal to Hub
               </button>
@@ -463,13 +472,13 @@ export const JobsScreen: React.FC<JobsScreenProps> = (props) => {
       <motion.div
         animate={{ scale: isSearchFocused ? 1.002 : 1 }}
         transition={{ type: "spring", stiffness: 350, damping: 25 }}
-        className={`relative flex items-center h-14 px-5 rounded-2xl border transition-all duration-200 ${
+        className={`relative flex items-center h-12 px-4 rounded-[16px] border transition-all duration-200 ${
           isSearchFocused
             ? isDark
-              ? "border-blue-500 ring-1 ring-blue-500/25 bg-[#121214]"
+              ? "border-blue-500 ring-1 ring-blue-500/25 bg-[#18181C]"
               : "border-blue-500 ring-1 ring-blue-500/10 bg-white"
             : isDark
-            ? "bg-[#121214] border-zinc-800 text-white"
+            ? "bg-[#18181C] border-[#252529] text-white"
             : "bg-white border-zinc-200 text-zinc-900 shadow-sm"
         }`}
       >
@@ -481,7 +490,7 @@ export const JobsScreen: React.FC<JobsScreenProps> = (props) => {
           onChange={(e) => setSearchVal(e.target.value)}
           onFocus={() => setIsSearchFocused(true)}
           onBlur={() => setIsSearchFocused(false)}
-          className={`flex-1 min-w-0 h-full bg-transparent outline-none text-sm px-3.5 font-semibold placeholder-zinc-550 ${
+          className={`flex-1 min-w-0 h-full bg-transparent outline-none text-sm px-3.5 font-semibold placeholder-zinc-500 ${
             isDark ? "text-white" : "text-zinc-900"
           }`}
         />
@@ -489,7 +498,7 @@ export const JobsScreen: React.FC<JobsScreenProps> = (props) => {
           <button
             onClick={() => setSearchVal("")}
             className={`w-6 h-6 rounded-full flex items-center justify-center transition-colors ${
-              isDark ? "bg-zinc-800 text-zinc-200 hover:bg-zinc-700" : "bg-zinc-100 text-zinc-550 hover:bg-zinc-200"
+              isDark ? "bg-zinc-800 text-zinc-200 hover:bg-zinc-700" : "bg-zinc-100 text-zinc-555 hover:bg-zinc-200"
             }`}
           >
             <X className="w-4 h-4" />
@@ -499,28 +508,52 @@ export const JobsScreen: React.FC<JobsScreenProps> = (props) => {
 
       <div className="space-y-3.5">
         <div className="flex items-center justify-between px-1">
-          <span className={`text-xs font-bold uppercase tracking-widest block leading-none ${
-            isDark ? "text-zinc-400" : "text-zinc-550"
+          <span className={`text-xs font-bold uppercase tracking-wider block leading-none ${
+            isDark ? "text-zinc-500" : "text-zinc-500"
           }`}>
             {searchVal ? `Matches (${filteredWebsites.length})` : "Portals Available"}
           </span>
-          <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${
-            isDark ? "bg-zinc-800/80 text-zinc-300" : "bg-zinc-100 text-zinc-600"
+          <span className={`text-[10px] font-bold px-3 py-1.5 rounded-full border leading-none tracking-wide uppercase font-sans ${
+            isDark ? "bg-zinc-800/40 border-zinc-750 text-zinc-400" : "bg-zinc-100 border-zinc-205 text-zinc-650"
           }`}>
             {filteredWebsites.length} Active Channels
           </span>
         </div>
 
         <motion.div layout className="grid grid-cols-1 gap-3.5">
-          {filteredWebsites.length === 0 ? (
+          {portals.length === 0 ? (
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className={`p-12 text-center rounded-2xl border border-dashed ${
-                isDark ? "border-zinc-800 bg-[#121214]" : "border-zinc-200 bg-white"
+              className={`py-14 text-center rounded-[22px] border border-dashed ${
+                isDark ? "border-zinc-855 bg-[#18181C]/30" : "border-zinc-200 bg-white"
               }`}
             >
-              <p className={`text-xs font-bold ${isDark ? "text-zinc-400" : "text-zinc-500"}`}>
+              <div className="max-w-xs mx-auto space-y-4">
+                <div className="space-y-2">
+                  <span className="text-zinc-500 font-bold text-xs tracking-wider uppercase block leading-none">No Portals Remaining</span>
+                  <p className="text-[12.5px] leading-relaxed text-zinc-450">
+                    Your directory is completely empty. Press the add portal button to register a new job board link.
+                  </p>
+                </div>
+                <button
+                  onClick={() => setIsAdding(true)}
+                  className="mx-auto px-5 h-9 rounded-xl bg-blue-600 hover:bg-blue-550 text-white text-xs font-bold transition-all active:scale-95 shadow-sm shadow-blue-500/10 cursor-pointer flex items-center gap-1.5"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>Add Portal</span>
+                </button>
+              </div>
+            </motion.div>
+          ) : filteredWebsites.length === 0 ? (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className={`py-12 text-center rounded-[22px] border border-dashed ${
+                isDark ? "border-zinc-855 bg-[#18181C]/30" : "border-zinc-205 bg-white"
+              }`}
+            >
+              <p className={`text-xs font-bold ${isDark ? "text-zinc-500" : "text-zinc-500"}`}>
                 No matching portals found. Try typing another keyword or create a custom one!
               </p>
             </motion.div>
@@ -549,82 +582,325 @@ export const JobsScreen: React.FC<JobsScreenProps> = (props) => {
                     initial={{ opacity: 0, scale: 0.97 }}
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.97 }}
-                    whileHover={{ y: -2, scale: 1.005 }}
+                    whileHover={{ y: -2, scale: 1.003 }}
                     whileTap={{ scale: 0.98 }}
                     transition={{ type: "spring", stiffness: 450, damping: 28 }}
                     onClick={() => launchPortal(portal.url, portal.name)}
-                    className={`relative overflow-hidden p-6 rounded-[20px] border transition-all duration-200 cursor-pointer group ${
+                    className={`relative p-5 rounded-[22px] border transition-all duration-200 cursor-pointer group ${
                       isDark
-                        ? "bg-[#121214] border-zinc-800/90 hover:bg-[#18181b] hover:border-zinc-700 text-white"
-                        : "bg-white border-zinc-200/80 hover:bg-zinc-50/50 hover:border-zinc-300 shadow-[0_2px_8px_rgba(0,0,0,0.015)] text-zinc-950"
+                        ? "bg-[#18181C] border-[#252529] hover:bg-[#1E1E24]/60 hover:border-[#2D2D32] text-white"
+                        : "bg-white border-zinc-200/80 hover:bg-zinc-50/50 hover:border-zinc-300 shadow-sm text-zinc-950"
                     }`}
                   >
-                    <div className={`absolute left-0 top-4.5 bottom-4.5 w-1 bg-gradient-to-b ${theme.gradient} rounded-r-full`} />
+                    <div className={`absolute left-0 top-4 bottom-4 w-[3px] bg-gradient-to-b ${theme.gradient} rounded-r-full`} />
 
                     <div className="flex items-center justify-between min-w-0">
                       <div className="flex items-center space-x-4 min-w-0">
-                        <div className={`w-13 h-13 rounded-2xl flex items-center justify-center shrink-0 ${theme.bg} ${theme.text} transition-transform duration-300 group-hover:scale-105`}>
+                        <div className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 ${theme.bg} ${theme.text} transition-transform duration-300 group-hover:scale-105`}>
                           {isCustom ? (
                             <span className="text-base font-extrabold uppercase">
                               {portal.name.charAt(0)}
                             </span>
                           ) : (
-                            <LogoIcon id={portal.id} className="w-6.5 h-6.5" />
+                            <LogoIcon id={portal.id} className="w-6 h-6" />
                           )}
                         </div>
 
-                        <div className="min-w-0 text-left space-y-1">
+                        <div className="min-w-0 text-left space-y-1.5">
                           <div className="flex items-center gap-2 flex-wrap">
-                            <h3 className={`text-[15px] font-extrabold tracking-tight leading-tight ${
-                              isDark ? "text-white" : "text-zinc-900"
+                            <h3 className={`text-[15px] font-extrabold tracking-tight leading-none ${
+                              isDark ? "text-white" : "text-zinc-950"
                             }`}>
                               {portal.name}
                             </h3>
                             {isCustom && (
-                              <span className="text-[9.5px] font-bold uppercase bg-blue-500/10 text-blue-500 px-2 py-0.5 rounded font-sans tracking-wide">
+                              <span className="text-[9px] font-bold uppercase bg-blue-500/10 text-blue-500 px-1.5 py-0.5 rounded font-sans tracking-wide">
                                 Custom
                               </span>
                             )}
                           </div>
                           <p className={`text-[13px] font-bold leading-relaxed truncate pr-2 ${
-                            isDark ? "text-zinc-350" : "text-zinc-650"
+                            isDark ? "text-zinc-400" : "text-zinc-650"
                           }`}>
                             {portal.desc}
                           </p>
                         </div>
                       </div>
 
-                      <div className="flex items-center gap-2.5 shrink-0">
-                        {isCustom && (
+                      <div className="flex items-center gap-2 shrink-0">
+                        <div className="relative">
                           <button
-                            onClick={(e) => handleDeletePortal(portal.id, portal.name, e)}
-                            className={`w-9.5 h-9.5 rounded-full flex items-center justify-center border transition-all hover:bg-red-500/10 hover:text-red-500 ${
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setActiveMenuId(activeMenuId === portal.id ? null : portal.id);
+                            }}
+                            className={`w-9 h-9 rounded-full flex items-center justify-center border transition-all ${
                               isDark 
-                                ? "bg-zinc-800 border-zinc-700 text-zinc-400" 
-                                : "bg-zinc-50 border-zinc-200 text-zinc-500"
+                                ? "bg-[#242428] border-[#3E3E42] text-zinc-400 hover:bg-[#2F2F34] hover:text-white" 
+                                : "bg-zinc-50 border-zinc-200 text-zinc-550 hover:bg-zinc-100 hover:text-zinc-900"
                             }`}
-                            title="Delete custom website"
                           >
-                            <Trash2 className="w-4 h-4" />
+                            <MoreHorizontal size={15} />
                           </button>
-                        )}
+
+                          <AnimatePresence>
+                            {activeMenuId === portal.id && (
+                              <>
+                                <div 
+                                  className="fixed inset-0 z-40" 
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setActiveMenuId(null);
+                                  }}
+                                />
+                                <motion.div
+                                  initial={{ opacity: 0, y: 4, scale: 0.98 }}
+                                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                                  exit={{ opacity: 0, y: 4, scale: 0.98 }}
+                                  transition={{ duration: 0.1 }}
+                                  className={`absolute right-0 mt-1.5 w-32 rounded-xl border p-1 z-50 shadow-lg ${
+                                    isDark 
+                                      ? "bg-[#18181C] border-zinc-800 text-zinc-200" 
+                                      : "bg-white border-zinc-200 text-zinc-700"
+                                  }`}
+                                  onClick={(e) => e.stopPropagation()}
+                                >
+                                  <button
+                                    onClick={() => {
+                                      setActiveMenuId(null);
+                                      launchPortal(portal.url, portal.name);
+                                    }}
+                                    className="w-full text-left px-2 py-1.5 text-xs font-semibold rounded-lg hover:bg-zinc-900 dark:hover:bg-zinc-850 transition-colors flex items-center gap-2 cursor-pointer"
+                                  >
+                                    <ArrowUpRight size={12} />
+                                    <span>Open</span>
+                                  </button>
+                                  <button
+                                    onClick={() => {
+                                      setActiveMenuId(null);
+                                      setEditPortalItem(portal);
+                                    }}
+                                    className="w-full text-left px-2 py-1.5 text-xs font-semibold rounded-lg hover:bg-zinc-900 dark:hover:bg-zinc-850 transition-colors flex items-center gap-2 cursor-pointer"
+                                  >
+                                    <Edit size={12} />
+                                    <span>Edit</span>
+                                  </button>
+                                  <button
+                                    onClick={() => {
+                                      setActiveMenuId(null);
+                                      setPortalToDelete({ id: portal.id, name: portal.name });
+                                    }}
+                                    className="w-full text-left px-2 py-1.5 text-xs font-semibold rounded-lg text-red-500 hover:bg-red-500/5 transition-colors flex items-center gap-2 cursor-pointer"
+                                  >
+                                    <Trash2 size={12} />
+                                    <span>Delete</span>
+                                  </button>
+                                </motion.div>
+                              </>
+                            )}
+                          </AnimatePresence>
+                        </div>
                         
-                        <div className={`w-9.5 h-9.5 rounded-full flex items-center justify-center border transition-all duration-200 ${
+                        <div className={`w-9 h-9 rounded-full flex items-center justify-center border transition-all duration-200 ${
                           isDark 
-                            ? "bg-zinc-800 border-zinc-700 text-zinc-300 group-hover:bg-blue-500 group-hover:text-white group-hover:border-blue-500" 
-                            : "bg-zinc-50 border-zinc-200 text-zinc-600 group-hover:bg-blue-500 group-hover:text-white group-hover:border-blue-500"
+                            ? "bg-[#242428] border-[#3E3E42] text-zinc-300 group-hover:bg-blue-500 group-hover:text-white group-hover:border-blue-500" 
+                            : "bg-zinc-50 border-zinc-200 text-zinc-650 group-hover:bg-blue-500 group-hover:text-white group-hover:border-blue-500"
                         }`}>
-                          <ArrowUpRight className="w-4.5 h-4.5" />
+                          <ArrowUpRight className="w-4 h-4" />
                         </div>
                       </div>
                     </div>
                   </motion.div>
                 );
               })}
+
+              <motion.div
+                whileHover={{ y: -2, scale: 1.003 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={() => {
+                  setIsAdding(true);
+                  window.scrollTo({ top: 0, behavior: "smooth" });
+                }}
+                className={`p-5 rounded-[22px] border border-dashed transition-all duration-200 cursor-pointer flex items-center justify-between gap-4 ${
+                  isDark 
+                    ? "bg-[#18181C]/40 border-zinc-805 hover:border-zinc-700 text-white" 
+                    : "bg-zinc-50/50 border-zinc-250 hover:bg-zinc-100/50 hover:border-zinc-300 text-zinc-900"
+                }`}
+              >
+                <div className="flex items-center space-x-4 min-w-0">
+                  <div className={`w-11 h-11 rounded-xl flex items-center justify-center shrink-0 border ${
+                    isDark ? "bg-zinc-900 border-zinc-800 text-zinc-400" : "bg-white border-zinc-200 text-zinc-550"
+                  }`}>
+                    <Plus className="w-5 h-5" />
+                  </div>
+                  <div className="min-w-0 text-left space-y-1">
+                    <h4 className="text-[13.5px] font-extrabold tracking-tight leading-none">
+                      Can't find a portal? Add your own.
+                    </h4>
+                    <p className={`text-xs font-semibold leading-relaxed truncate pr-2 ${
+                      isDark ? "text-zinc-450" : "text-zinc-550"
+                    }`}>
+                      Register custom job boards or careers pages in your dashboard.
+                    </p>
+                  </div>
+                </div>
+                <div className={`w-8.5 h-8.5 rounded-full flex items-center justify-center border transition-all shrink-0 ${
+                  isDark ? "bg-[#242428] border-[#3E3E42] text-zinc-400" : "bg-white border-zinc-200 text-zinc-550"
+                }`}>
+                  <ArrowUpRight className="w-4 h-4" />
+                </div>
+              </motion.div>
             </AnimatePresence>
           )}
         </motion.div>
       </div>
+
+      <AnimatePresence>
+        {portalToDelete && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-black/60 backdrop-blur-xs"
+              onClick={() => setPortalToDelete(null)}
+            />
+            
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 15 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 15 }}
+              className={`relative w-full max-w-sm rounded-[22px] border p-6 z-10 shadow-2xl ${
+                isDark 
+                  ? "bg-[#18181C] border-[#252529] text-white" 
+                  : "bg-white border-zinc-200 text-zinc-900"
+              }`}
+            >
+              <h3 className="text-base font-extrabold tracking-tight text-center mb-2">Delete Portal?</h3>
+              <p className={`text-xs text-center leading-relaxed mb-5 ${isDark ? "text-zinc-400" : "text-zinc-500"}`}>
+                Are you sure you want to remove <span className="font-bold">{portalToDelete.name}</span>? This will hide it from your directory.
+              </p>
+
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setPortalToDelete(null)}
+                  className={`flex-1 h-9 rounded-xl border text-xs font-semibold cursor-pointer ${
+                    isDark ? 'border-zinc-850 hover:bg-zinc-800' : 'border-zinc-200 hover:bg-zinc-100'
+                  }`}
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={confirmDeletePortal}
+                  className="flex-1 h-9 rounded-xl bg-red-600 hover:bg-red-500 text-white text-xs font-semibold flex items-center justify-center cursor-pointer transition-colors"
+                >
+                  Confirm Delete
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {editPortalItem && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-black/60 backdrop-blur-xs"
+              onClick={() => setEditPortalItem(null)}
+            />
+            
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 15 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 15 }}
+              className={`relative w-full max-w-sm rounded-[22px] border p-6 z-10 shadow-2xl ${
+                isDark 
+                  ? "bg-[#18181C] border-[#252529] text-white" 
+                  : "bg-white border-zinc-200 text-zinc-900"
+              }`}
+            >
+              <h3 className="text-base font-extrabold tracking-tight text-left mb-4">Edit Portal</h3>
+              
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  let formattedUrl = editUrl.trim();
+                  if (!/^https?:\/\//i.test(formattedUrl)) {
+                    formattedUrl = `https://${formattedUrl}`;
+                  }
+                  setPortals(prev => prev.map(p => p.id === editPortalItem.id ? {
+                    ...p,
+                    name: editName.trim(),
+                    url: formattedUrl,
+                    desc: editDesc.trim()
+                  } : p));
+                  showToast("Portal updated successfully", "success");
+                  setEditPortalItem(null);
+                }}
+                className="space-y-4 text-left"
+              >
+                <div className="space-y-1">
+                  <label className="text-[10px] font-bold tracking-wider text-zinc-550 uppercase block">Portal Name</label>
+                  <input
+                    type="text"
+                    value={editName}
+                    onChange={(e) => setEditName(e.target.value)}
+                    className={`w-full h-12 px-3.5 rounded-xl text-sm font-semibold outline-none border transition-all placeholder-zinc-500 ${
+                      isDark ? "bg-zinc-900 border-zinc-800 text-white focus:border-blue-500" : "bg-zinc-50 border-zinc-200 text-zinc-900 focus:border-blue-500"
+                    }`}
+                    required
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className="text-[10px] font-bold tracking-wider text-zinc-550 uppercase block">Website URL</label>
+                  <input
+                    type="text"
+                    value={editUrl}
+                    onChange={(e) => setEditUrl(e.target.value)}
+                    className={`w-full h-12 px-3.5 rounded-xl text-sm font-semibold outline-none border transition-all placeholder-zinc-500 ${
+                      isDark ? "bg-zinc-900 border-zinc-800 text-white focus:border-blue-500" : "bg-zinc-50 border-zinc-200 text-zinc-900 focus:border-blue-500"
+                    }`}
+                    required
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className="text-[10px] font-bold tracking-wider text-zinc-555 uppercase block">Description</label>
+                  <input
+                    type="text"
+                    value={editDesc}
+                    onChange={(e) => setEditDesc(e.target.value)}
+                    className={`w-full h-12 px-3.5 rounded-xl text-sm font-semibold outline-none border transition-all placeholder-zinc-500 ${
+                      isDark ? "bg-zinc-900 border-zinc-800 text-white focus:border-blue-500" : "bg-zinc-50 border-zinc-200 text-zinc-900 focus:border-blue-500"
+                    }`}
+                  />
+                </div>
+                
+                <div className="flex gap-3 pt-2">
+                  <button
+                    type="button"
+                    onClick={() => setEditPortalItem(null)}
+                    className={`flex-1 h-10 rounded-xl border text-xs font-semibold cursor-pointer ${
+                      isDark ? 'border-zinc-850 hover:bg-zinc-800' : 'border-zinc-200 hover:bg-zinc-100'
+                    }`}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="flex-1 h-10 rounded-xl bg-blue-600 hover:bg-blue-550 text-white text-xs font-semibold flex items-center justify-center cursor-pointer transition-colors"
+                  >
+                    Save Changes
+                  </button>
+                </div>
+              </form>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </motion.div>
   );
 };

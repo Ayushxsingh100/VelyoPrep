@@ -3,47 +3,9 @@ import { motion, AnimatePresence } from "motion/react";
 import { 
   Plus, Search, Trash2, ArrowLeft, ExternalLink, HelpCircle,
   ChevronRight, Share2, Archive, MoreHorizontal, Edit, Check,
-  X
+  X, MapPin, DollarSign, Globe, Link, Clock, Calendar
 } from "lucide-react";
-
-const getCompanyLogo = (companyName: string, isDark: boolean, sizeClasses = "w-[22px] h-[22px] text-[9px]") => {
-  const firstLetter = companyName.charAt(0).toUpperCase();
-  const lower = companyName.toLowerCase();
-
-  let bgClass = isDark ? "bg-[#18181B] border-white/[0.04] text-zinc-400" : "bg-zinc-100 border-zinc-200 text-zinc-600";
-  let logoContent = <span className="font-semibold tracking-tight">{firstLetter}</span>;
-
-  if (lower.includes("stripe")) {
-    bgClass = isDark ? "bg-[#635BFF]/10 border-[#635BFF]/15 text-[#7970FF]" : "bg-[#635BFF]/5 border-[#635BFF]/12 text-[#635BFF]";
-  } else if (lower.includes("google")) {
-    bgClass = isDark ? "bg-[#4285F4]/10 border-[#4285F4]/15 text-[#4285F4]" : "bg-[#4285F4]/5 border-[#4285F4]/12 text-[#4285F4]";
-    logoContent = (
-      <svg className="w-2.5 h-2.5" viewBox="0 0 24 24" fill="none">
-        <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="currentColor" />
-        <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="currentColor" />
-        <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" fill="currentColor" />
-        <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="currentColor" />
-      </svg>
-    );
-  } else if (lower.includes("apple")) {
-    bgClass = isDark ? "bg-zinc-800 border-white/5 text-zinc-300" : "bg-zinc-100 border-zinc-200 text-zinc-800";
-    logoContent = (
-      <svg className="w-2.5 h-2.5 fill-current" viewBox="0 0 24 24">
-        <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 4.17c.66-.81 1.11-1.93.99-3.06-1 .04-2.21.67-2.93 1.49-.62.69-1.16 1.84-1.01 2.96 1.12.09 2.27-.57 2.95-1.39z" />
-      </svg>
-    );
-  } else if (lower.includes("netflix")) {
-    bgClass = isDark ? "bg-[#E50914]/10 border-[#E50914]/15 text-[#E50914]" : "bg-[#E50914]/5 border-[#E50914]/12 text-[#E50914]";
-  } else if (lower.includes("meta") || lower.includes("facebook")) {
-    bgClass = isDark ? "bg-[#0668E1]/10 border-[#0668E1]/15 text-[#3B82F6]" : "bg-[#0668E1]/5 border-[#0668E1]/12 text-[#0668E1]";
-  }
-
-  return (
-    <div className={`${sizeClasses} rounded-full border ${bgClass} flex items-center justify-center shrink-0`}>
-      {logoContent}
-    </div>
-  );
-};
+import { CompanyLogo } from "../../shared/components";
 
 const getTimelineActiveIndex = (status: string) => {
   const s = status.toLowerCase();
@@ -220,20 +182,20 @@ export const TrackerScreen: React.FC<TrackerScreenProps> = ({
 
   if (currentScreen === "tracker") {
     return (
-      <div className="space-y-7 select-none font-sans relative pb-6 text-left">
+      <div className="space-y-6 select-none font-sans relative pb-4 text-left">
         <div className="pt-4 flex items-center justify-between">
           <div>
-            <span className="text-[10px] font-bold tracking-widest text-zinc-500 uppercase font-mono leading-none block mb-1">
+            <span className="text-[11px] font-semibold tracking-wider text-zinc-550 dark:text-zinc-500 uppercase block mb-1.5 leading-none">
               Active Pipeline
             </span>
-            <h1 className={`text-[28px] font-extrabold tracking-tight leading-none ${isDark ? 'text-white' : 'text-zinc-950'}`}>
+            <h1 className={`text-[34px] font-extrabold tracking-tight leading-[1.1] ${isDark ? 'text-white' : 'text-zinc-950'}`}>
               Applications
             </h1>
           </div>
           
           <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
+            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.95, opacity: 0.85 }}
             onClick={() => {
               setNewCompany("");
               setNewRole("");
@@ -246,10 +208,10 @@ export const TrackerScreen: React.FC<TrackerScreenProps> = ({
               setNewStatus("Applied");
               setActiveBottomSheet({ type: "add_app" });
             }}
-            className={`w-11 h-11 rounded-xl flex items-center justify-center transition-all cursor-pointer border shadow-sm active:scale-95 ${
+            className={`w-11 h-11 rounded-full flex items-center justify-center transition-all cursor-pointer border shadow-lg ${
               isDark 
-                ? "bg-blue-600 border-blue-500 hover:bg-blue-550 text-white" 
-                : "bg-blue-600 border-blue-600 hover:bg-blue-700 text-white shadow-blue-600/10"
+                ? "bg-blue-600 border-blue-500 hover:bg-blue-500 text-white shadow-blue-500/10" 
+                : "bg-blue-600 border-blue-650 hover:bg-blue-700 text-white shadow-blue-600/15"
             }`}
           >
             <Plus size={20} strokeWidth={2.5} />
@@ -258,16 +220,16 @@ export const TrackerScreen: React.FC<TrackerScreenProps> = ({
 
         <div>
           <div className="relative">
-            <Search size={15} className={`absolute left-4 top-1/2 -translate-y-1/2 ${isDark ? 'text-zinc-500' : 'text-zinc-405'}`} />
+            <Search size={15} className={`absolute left-4.5 top-1/2 -translate-y-1/2 ${isDark ? 'text-zinc-550' : 'text-zinc-400'}`} />
             <input
               type="text"
               placeholder="Search company, role..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className={`w-full h-12 pl-11 pr-4 rounded-xl text-sm font-semibold outline-none border transition-all duration-155 ${
+              className={`w-full h-11 pl-11 pr-4 rounded-2xl text-sm font-semibold outline-none border transition-all duration-155 ${
                 isDark 
-                  ? "bg-[#121214] border-zinc-800 text-zinc-100 placeholder-zinc-550 focus:bg-zinc-900 focus:border-blue-500/50" 
-                  : "bg-zinc-100/90 border-zinc-200 text-zinc-900 placeholder-zinc-400 focus:bg-white focus:border-blue-500/50"
+                  ? "bg-[#18181C] border-[#252529] text-zinc-100 placeholder-zinc-500 focus:border-blue-500/40" 
+                  : "bg-zinc-100/70 border-zinc-200 text-zinc-900 placeholder-zinc-400 focus:bg-white focus:border-blue-500/40"
               }`}
             />
           </div>
@@ -347,9 +309,9 @@ export const TrackerScreen: React.FC<TrackerScreenProps> = ({
               <motion.button
                 key={status}
                 whileHover={{ scale: 1.015, y: -0.5 }}
-                whileTap={{ scale: 0.98 }}
+                whileTap={{ scale: 0.95, opacity: 0.85 }}
                 onClick={() => setSelectedStatusTab(status)}
-                className={`h-9 px-4 rounded-full flex items-center justify-between text-xs font-bold tracking-tight transition-all cursor-pointer border shrink-0 space-x-1.5 ${
+                className={`h-[34px] px-3.5 rounded-full flex items-center justify-between text-xs font-semibold tracking-tight transition-all cursor-pointer border shrink-0 space-x-1.5 ${
                   isSelected ? activeStyles : inactiveStyles
                 }`}
               >
@@ -407,46 +369,25 @@ export const TrackerScreen: React.FC<TrackerScreenProps> = ({
                 const isAppSelected = selectedApp?.id === app.id;
                 const compLabel = app.compensation > 1000 ? `$${Math.round(app.compensation/1000)}k` : `$${app.compensation}/mo`;
 
-                let cardBorderClass = "";
-                let cardBgClass = "";
-                let cardShadowClass = "";
+                let cardBorderClass = isDark ? "border-[#252529] hover:border-zinc-700" : "border-zinc-200/80 hover:border-zinc-300";
+                let cardBgClass = isDark ? "bg-[#18181C]" : "bg-white";
+                let cardShadowClass = isDark ? "shadow-[0_12px_24px_rgba(0,0,0,0.55)]" : "shadow-[0_4px_12px_rgba(0,0,0,0.02)]";
                 let accentGlow = "";
 
                 const s = app.status?.toLowerCase() || "";
                 if (s === "wishlist" || s === "planning") {
-                  cardBorderClass = isDark ? "border-zinc-850 hover:border-zinc-700" : "border-zinc-200/60 hover:border-zinc-300";
-                  cardBgClass = isDark ? "bg-[#121214]" : "bg-zinc-50/[0.2]";
-                  cardShadowClass = "shadow-xs";
                   accentGlow = isDark ? "bg-zinc-500" : "bg-zinc-400";
                 } else if (s === "applied") {
-                  cardBorderClass = isDark ? "border-blue-500/20 hover:border-blue-500/35" : "border-blue-200 hover:border-blue-300";
-                  cardBgClass = isDark ? "bg-[#121214]" : "bg-blue-50/[0.15]";
-                  cardShadowClass = isDark ? "shadow-[0_2px_8px_rgba(59,130,246,0.06)]" : "shadow-[0_2px_8px_rgba(59,130,246,0.02)]";
                   accentGlow = "bg-blue-500";
                 } else if (s.includes("scheduled") || s.includes("oa")) {
-                  cardBorderClass = isDark ? "border-amber-500/20 hover:border-amber-500/35" : "border-amber-200 hover:border-amber-300";
-                  cardBgClass = isDark ? "bg-[#121214]" : "bg-amber-50/[0.15]";
-                  cardShadowClass = isDark ? "shadow-[0_2px_8px_rgba(245,158,11,0.06)]" : "shadow-[0_2px_8px_rgba(245,158,11,0.02)]";
                   accentGlow = "bg-amber-500";
                 } else if (s === "interview") {
-                  cardBorderClass = isDark ? "border-indigo-500/25 hover:border-indigo-500/40" : "border-indigo-200 hover:border-indigo-300";
-                  cardBgClass = isDark ? "bg-[#121214]" : "bg-indigo-50/[0.15]";
-                  cardShadowClass = isDark ? "shadow-[0_2px_8px_rgba(99,102,241,0.06)]" : "shadow-[0_2px_8px_rgba(99,102,241,0.02)]";
                   accentGlow = "bg-indigo-500";
                 } else if (s === "offer") {
-                  cardBorderClass = isDark ? "border-emerald-500/25 hover:border-emerald-500/40" : "border-emerald-200 hover:border-emerald-300";
-                  cardBgClass = isDark ? "bg-[#121214]" : "bg-emerald-50/[0.15]";
-                  cardShadowClass = isDark ? "shadow-[0_2px_8px_rgba(16,185,129,0.06)]" : "shadow-[0_2px_8px_rgba(16,185,129,0.02)]";
-                  accentGlow = "bg-emerald-500";
+                  accentGlow = "bg-[#10B981]";
                 } else if (s === "rejected") {
-                  cardBorderClass = isDark ? "border-red-500/15 hover:border-red-500/30" : "border-red-200 hover:border-red-300";
-                  cardBgClass = isDark ? "bg-[#121214]" : "bg-red-50/[0.02]";
-                  cardShadowClass = "shadow-xs";
                   accentGlow = "bg-red-500";
                 } else {
-                  cardBorderClass = isDark ? "border-zinc-800 hover:border-zinc-700" : "border-zinc-200/60 hover:border-zinc-300";
-                  cardBgClass = isDark ? "bg-[#121214]" : "bg-white";
-                  cardShadowClass = "shadow-xs";
                   accentGlow = "bg-zinc-500";
                 }
 
@@ -459,13 +400,13 @@ export const TrackerScreen: React.FC<TrackerScreenProps> = ({
                         y: -0.5,
                         backgroundColor: isDark ? "rgba(255,255,255,0.015)" : "rgba(0,0,0,0.003)"
                       }}
-                      whileTap={{ scale: 0.98, y: 0 }}
+                      whileTap={{ scale: 0.95, opacity: 0.85 }}
                       transition={{ duration: 0.12, ease: "easeOut" }}
                       onClick={() => {
                         setSelectedApp(app);
                         setCurrentScreen("tracker_detail");
                       }}
-                      className={`group p-6 flex items-center justify-between cursor-pointer border rounded-2xl transition-all relative select-none ${cardBorderClass} ${cardShadowClass} ${cardBgClass} ${
+                      className={`group p-5 flex items-center justify-between cursor-pointer border rounded-2xl transition-all relative select-none ${cardBorderClass} ${cardShadowClass} ${cardBgClass} ${
                         isAppSelected 
                           ? isDark 
                             ? "ring-1 ring-blue-500/20 bg-blue-950/5" 
@@ -477,7 +418,7 @@ export const TrackerScreen: React.FC<TrackerScreenProps> = ({
 
                       <div className="flex items-center space-x-4 min-w-0 pl-1">
                         <div className="shrink-0 flex items-center justify-center">
-                          {getCompanyLogo(app.company, isDark, "w-[28px] h-[28px] text-[10px] font-bold rounded-full")}
+                          <CompanyLogo companyName={app.company} isDark={isDark} sizeClasses="w-11 h-11 text-base font-bold" />
                         </div>
 
                         <div className="min-w-0 flex flex-col justify-center text-left">
@@ -491,7 +432,7 @@ export const TrackerScreen: React.FC<TrackerScreenProps> = ({
                               {app.isInternship ? "Intern" : "FTE"}
                             </span>
                           </div>
-                          <p className={`text-[13px] font-semibold tracking-tight mt-[5px] leading-tight ${isDark ? "text-zinc-300" : "text-zinc-750"}`}>
+                          <p className={`text-[13px] font-semibold tracking-tight mt-1 leading-tight ${isDark ? "text-zinc-300" : "text-zinc-750"}`}>
                             {app.role}
                           </p>
                           <p className={`text-xs font-medium leading-none mt-1.5 ${isDark ? "text-zinc-500" : "text-zinc-405"}`}>
@@ -500,19 +441,23 @@ export const TrackerScreen: React.FC<TrackerScreenProps> = ({
                         </div>
                       </div>
 
-                      <div className="flex items-center space-x-2 shrink-0 ml-3">
-                        <span className={`text-[11px] font-extrabold uppercase tracking-wider leading-none ${
-                          s === "wishlist" || s === "planning" ? (isDark ? "text-zinc-500" : "text-zinc-400") :
-                          s === "applied" ? "text-blue-500 dark:text-blue-400" :
-                          s.includes("oa") || s.includes("assessment") ? "text-amber-500 dark:text-amber-400" :
-                          s === "interview" ? "text-indigo-500 dark:text-indigo-400" :
-                          s === "offer" ? "text-emerald-500 dark:text-emerald-400" :
-                          s === "rejected" ? "text-red-500 dark:text-red-400" :
-                          isDark ? "text-zinc-400" : "text-zinc-500"
+                      <div className="flex items-center space-x-2.5 shrink-0 ml-3">
+                        <span className={`text-[10px] tracking-wider font-sans font-bold uppercase select-none px-2.5 py-1 rounded-full border leading-none ${
+                          s === "wishlist" || s === "planning" ? (isDark ? "bg-zinc-850 border-zinc-750 text-zinc-400" : "bg-zinc-150 border-zinc-200 text-zinc-500") :
+                          s === "applied" ? (isDark ? "bg-blue-500/[0.08] border-blue-500/[0.18] text-blue-400" : "bg-blue-50 border-blue-200/60 text-blue-700") :
+                          s.includes("oa") || s.includes("assessment") ? (isDark ? "bg-amber-500/[0.08] border-amber-500/[0.18] text-amber-400" : "bg-amber-50 border-amber-200/60 text-amber-700") :
+                          s === "interview" ? (isDark ? "bg-indigo-500/[0.08] border-indigo-500/[0.18] text-indigo-400" : "bg-indigo-50 border-indigo-200/60 text-indigo-700") :
+                          s === "offer" ? (isDark ? "bg-emerald-500/[0.08] border-emerald-500/[0.18] text-[#10B981] bg-[#04261C]" : "bg-emerald-50 border-emerald-200/60 text-emerald-700") :
+                          s === "rejected" ? (isDark ? "bg-red-500/[0.08] border-red-500/[0.18] text-red-400" : "bg-red-50 border-red-200/60 text-red-700") :
+                          (isDark ? "bg-zinc-800/40 border-zinc-750 text-zinc-455" : "bg-zinc-100 border-zinc-250 text-zinc-600")
                         }`}>
                           {statusStyle.label}
                         </span>
-                        <ChevronRight size={13} className={isDark ? "text-zinc-650 group-hover:text-zinc-400" : "text-zinc-455 group-hover:text-zinc-600"} />
+                        <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 border ${
+                          isDark ? "bg-[#242428] border-[#3E3E42] text-zinc-400" : "bg-zinc-50 border-zinc-200 text-zinc-450"
+                        }`}>
+                          <ChevronRight size={14} className={`${isDark ? 'text-zinc-400' : 'text-zinc-550'}`} />
+                        </div>
                       </div>
                     </motion.div>
                   );
@@ -656,12 +601,16 @@ export const TrackerScreen: React.FC<TrackerScreenProps> = ({
               setSelectedApp(null);
               setCurrentScreen("tracker");
             }}
-            className="flex items-center text-xs font-bold text-zinc-400 hover:text-zinc-200 cursor-pointer transition-colors"
+            className={`h-9 px-3.5 rounded-xl border text-xs font-bold flex items-center gap-1.5 cursor-pointer transition-all active:scale-95 ${
+              isDark 
+                ? "bg-[#18181C] border-[#252529] text-zinc-350 hover:bg-[#202025] hover:text-white" 
+                : "bg-zinc-100/80 border-transparent text-zinc-650 hover:bg-zinc-200/50 hover:text-zinc-900"
+            }`}
           >
-            <ArrowLeft size={14} className="mr-1.5" /> Back
+            <ArrowLeft size={14} /> <span>Back</span>
           </button>
 
-          <div className="flex items-center space-x-2.5 relative">
+          <div className="flex items-center space-x-2 relative">
             <button
               onClick={() => {
                 setEditCompany(selectedApp.company);
@@ -679,8 +628,8 @@ export const TrackerScreen: React.FC<TrackerScreenProps> = ({
               }}
               className={`h-9 px-3.5 rounded-xl border text-xs font-bold flex items-center gap-1.5 cursor-pointer transition-all active:scale-95 ${
                 isDark 
-                  ? "bg-zinc-900 border-zinc-800 text-zinc-300 hover:bg-zinc-850 hover:text-white" 
-                  : "bg-white border-zinc-200 text-zinc-650 hover:bg-zinc-50 hover:text-zinc-900 shadow-xs"
+                  ? "bg-[#18181C] border-[#252529] text-zinc-200 hover:bg-[#202025] hover:text-white" 
+                  : "bg-white border-zinc-200 text-zinc-650 hover:bg-zinc-50 hover:text-zinc-900 shadow-sm"
               }`}
             >
               <Edit size={13} />
@@ -692,8 +641,8 @@ export const TrackerScreen: React.FC<TrackerScreenProps> = ({
                 onClick={() => setShowOverflowMenu(!showOverflowMenu)}
                 className={`h-9 w-9 rounded-xl border flex items-center justify-center cursor-pointer transition-all active:scale-95 ${
                   isDark 
-                    ? "bg-zinc-900 border-zinc-800 text-zinc-300 hover:bg-zinc-850" 
-                    : "bg-white border-zinc-200 text-zinc-600 hover:bg-zinc-50 shadow-xs"
+                    ? "bg-[#18181C] border-[#252529] text-zinc-200 hover:bg-[#202025]" 
+                    : "bg-white border-zinc-200 text-zinc-650 hover:bg-zinc-50 shadow-sm"
                 }`}
               >
                 <MoreHorizontal size={14} />
@@ -755,73 +704,82 @@ export const TrackerScreen: React.FC<TrackerScreenProps> = ({
           </div>
         </div>
 
-        <div className="flex items-start space-x-4 pt-2">
-          {getCompanyLogo(selectedApp.company, isDark, "w-14 h-14 text-xl font-bold mt-1")}
-          <div className="space-y-2 flex-1 min-w-0">
-            <div>
-              <h1 className={`text-2xl font-extrabold tracking-tight leading-tight truncate ${isDark ? "text-white" : "text-zinc-950"}`}>
+        <div className="flex items-center space-x-4.5 pt-3 pb-1">
+          <CompanyLogo companyName={selectedApp.company} isDark={isDark} sizeClasses="w-[60px] h-[60px] text-2xl font-bold rounded-2xl" />
+          <div className="space-y-1.5 flex-1 min-w-0">
+            <div className="flex items-center gap-2">
+              <h1 className={`text-[26px] font-extrabold tracking-tight leading-none truncate ${isDark ? "text-white" : "text-zinc-955"}`}>
                 {selectedApp.company}
               </h1>
-              <p className={`text-[15px] font-bold tracking-tight leading-tight mt-1.5 ${isDark ? "text-zinc-300" : "text-zinc-700"} truncate`}>
-                {selectedApp.role}
-              </p>
+              <span className={`text-[9px] uppercase font-bold tracking-wider px-1.5 py-0.5 rounded-md shrink-0 ${
+                isDark ? "bg-zinc-800 text-zinc-400" : "bg-zinc-100 text-zinc-500"
+              }`}>
+                {selectedApp.isInternship ? "Intern" : "FTE"}
+              </span>
             </div>
+            <p className={`text-[15px] font-bold tracking-tight leading-none ${isDark ? "text-zinc-300" : "text-zinc-750"} truncate`}>
+              {selectedApp.role}
+            </p>
             
-            <div className="flex flex-wrap items-center gap-2 text-sm font-semibold">
-              <span className="text-zinc-400 dark:text-zinc-550 font-medium">
+            <div className="flex flex-wrap items-center gap-2 text-xs font-semibold leading-none pt-0.5">
+              <span className="text-zinc-400 dark:text-zinc-505 font-medium">
                 {selectedApp.location || "Remote"}
               </span>
-              <span className="text-zinc-350 dark:text-zinc-800">•</span>
-              <span className="font-bold text-emerald-600 dark:text-emerald-400">
+              <span className="text-zinc-300 dark:text-zinc-800">•</span>
+              <span className="font-bold text-emerald-600 dark:text-emerald-450">
                 {formattedComp}
-              </span>
-            </div>
-
-            <div className="pt-0.5">
-              <span className={`text-xs font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full border ${
-                normalizedStage === "Applied"
-                  ? "bg-blue-500/[0.04] text-blue-500 border-blue-500/20"
-                  : normalizedStage === "Assessment"
-                    ? "bg-orange-500/[0.04] text-orange-550 border-orange-500/20"
-                    : normalizedStage === "Interview"
-                      ? "bg-purple-500/[0.04] text-purple-500 border-purple-500/20"
-                      : normalizedStage === "Offer"
-                        ? "bg-emerald-500/[0.04] text-emerald-500 border-emerald-500/20"
-                        : "bg-zinc-500/[0.04] text-zinc-500 border-zinc-500/20"
-              }`}>
-                {normalizedStage}
               </span>
             </div>
           </div>
         </div>
 
+        <div className="pt-1">
+          <span className={`text-[10px] tracking-wider font-sans font-bold uppercase select-none px-3.5 py-1.5 rounded-full border leading-none ${
+            normalizedStage === "Applied" ? (isDark ? "bg-blue-500/[0.08] border-blue-500/[0.18] text-blue-400" : "bg-blue-50 border-blue-200/60 text-blue-700") :
+            normalizedStage === "Assessment" ? (isDark ? "bg-amber-500/[0.08] border-amber-500/[0.18] text-amber-400" : "bg-amber-50 border-amber-200/60 text-amber-700") :
+            normalizedStage === "Interview" ? (isDark ? "bg-purple-500/[0.08] border-purple-500/[0.18] text-purple-400" : "bg-purple-50 border-purple-200/60 text-purple-700") :
+            normalizedStage === "Offer" ? (isDark ? "bg-emerald-500/[0.08] border-emerald-500/[0.18] text-[#10B981] bg-[#04261C]" : "bg-emerald-50 border-emerald-200/60 text-emerald-700") :
+            (isDark ? "bg-zinc-800/40 border-zinc-750 text-zinc-400" : "bg-zinc-100 border-zinc-200 text-zinc-600")
+          }`}>
+            {normalizedStage}
+          </span>
+        </div>
+
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          className={`p-6 rounded-2xl border flex items-start gap-4 ${stageAction.colorClass}`}
+          className={`p-6 rounded-[22px] border flex items-start gap-4 ${
+            isDark 
+              ? "bg-[#18181C] border-[#252529] shadow-[0_16px_36px_rgba(0,0,0,0.6)]" 
+              : "bg-white border-zinc-200 shadow-md shadow-zinc-200/40"
+          }`}
         >
-          <div className="space-y-1.5 flex-1 pl-1">
-            <div className="flex items-center gap-1.5">
-              <span className="text-xs font-bold uppercase tracking-wider">{stageAction.tag}</span>
+          <div className="space-y-2 flex-1 pl-1">
+            <div className="flex items-center gap-2">
+              <span className={`text-[10px] tracking-wider font-sans font-bold uppercase select-none px-2.5 py-0.5 rounded-full border leading-none ${
+                normalizedStage === "Offer" ? "bg-emerald-500/10 border-emerald-500/20 text-[#10B981]" : "bg-zinc-800/40 border-zinc-750 text-zinc-400"
+              }`}>
+                {stageAction.tag}
+              </span>
               <span className={`w-1.5 h-1.5 rounded-full ${stageAction.dotClass}`} />
-              <span className="text-[9.5px] text-zinc-400 uppercase tracking-widest font-mono font-bold">NEXT STEP</span>
+              <span className="text-[10px] text-zinc-500 font-bold tracking-wider uppercase leading-none">NEXT STEP</span>
             </div>
             
-            <h3 className={`text-base font-bold tracking-tight leading-snug ${isDark ? "text-zinc-100" : "text-zinc-900"}`}>
+            <h3 className={`text-lg font-extrabold tracking-tight leading-snug ${isDark ? "text-white" : "text-zinc-950"}`}>
               {stageAction.title}
             </h3>
             
-            <p className={`text-sm leading-relaxed ${isDark ? "text-zinc-400" : "text-zinc-600"}`}>
+            <p className={`text-sm leading-relaxed ${isDark ? "text-zinc-400" : "text-zinc-650"}`}>
               {stageAction.desc}
             </p>
           </div>
         </motion.div>
 
-        <div className={`p-6 rounded-2xl border ${
-          isDark ? "bg-[#121214] border-zinc-800 shadow-[0_4px_12px_rgba(0,0,0,0.25)]" : "bg-white border-zinc-200 shadow-xs"
+        <div className={`p-6 rounded-[22px] border ${
+          isDark ? "bg-[#18181C] border-[#252529] shadow-[0_12px_24px_rgba(0,0,0,0.5)]" : "bg-white border-zinc-200 shadow-sm"
         }`}>
           <div className="flex items-center justify-between relative py-3.5 px-1.5">
-            <div className="absolute left-[8%] right-[8%] top-[30px] h-[1px] bg-zinc-200 dark:bg-zinc-800 z-0" />
+            <div className="absolute left-[8%] right-[8%] top-[32px] h-[1px] bg-zinc-200 dark:bg-zinc-800 z-0" />
 
             {timelineStages.map((stage, idx) => {
               const isCurrent = stage === normalizedStage;
@@ -839,12 +797,12 @@ export const TrackerScreen: React.FC<TrackerScreenProps> = ({
                   onClick={() => handleTimelineClick(idx)}
                   className="flex flex-col items-center z-10 relative group cursor-pointer"
                 >
-                  <div className={`w-[36px] h-[36px] rounded-full flex items-center justify-center transition-all ${
+                  <div className={`w-9 h-9 rounded-full flex items-center justify-center transition-all ${
                     isCurrent 
                       ? `${colors.fill} text-white ring-4 ${colors.ring}` 
                       : isDone 
                         ? `${colors.fill} text-white` 
-                        : "bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-zinc-400"
+                        : "bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800/80 text-zinc-400"
                   }`}>
                     {isDone ? (
                       <Check size={14} strokeWidth={3.5} />
@@ -865,35 +823,63 @@ export const TrackerScreen: React.FC<TrackerScreenProps> = ({
           </div>
         </div>
 
-        <div className={`p-6 rounded-2xl border ${
-          isDark ? "bg-[#121214] border-zinc-800 shadow-[0_4px_12px_rgba(0,0,0,0.25)]" : "bg-white border-zinc-200 shadow-xs"
+        <div className={`p-6 rounded-[22px] border ${
+          isDark ? "bg-[#18181C] border-[#252529] shadow-[0_12px_24px_rgba(0,0,0,0.5)]" : "bg-white border-zinc-200 shadow-sm"
         }`}>
-          <h4 className="text-xs font-bold text-zinc-400 dark:text-zinc-555 uppercase tracking-wider mb-5.5 font-mono">Job Details</h4>
+          <h4 className="text-xs font-bold text-zinc-505 dark:text-zinc-500 uppercase tracking-wider mb-5">Job Details</h4>
           
           <div className="divide-y divide-zinc-150 dark:divide-zinc-800/60 text-sm">
-            <div className="flex items-center justify-between py-3.5">
-              <span className="text-zinc-500 font-semibold text-xs tracking-wider uppercase shrink-0">Location</span>
+            <div className="flex items-center justify-between py-3">
+              <div className="flex items-center space-x-2.5 min-w-0">
+                <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 border ${
+                  isDark ? "bg-[#242428] border-[#3E3E42] text-zinc-400" : "bg-zinc-50 border-zinc-200 text-zinc-550"
+                }`}>
+                  <MapPin size={13} />
+                </div>
+                <span className="text-zinc-505 dark:text-zinc-400 font-semibold text-xs tracking-wider uppercase">Location</span>
+              </div>
               <span className={`font-semibold text-right truncate pl-4 flex-1 min-w-0 ${isDark ? "text-zinc-200" : "text-zinc-800"}`}>
                 {selectedApp.location || "Remote"}
               </span>
             </div>
             
-            <div className="flex items-center justify-between py-3.5">
-              <span className="text-zinc-500 font-semibold text-xs tracking-wider uppercase shrink-0">Salary</span>
+            <div className="flex items-center justify-between py-3">
+              <div className="flex items-center space-x-2.5 min-w-0">
+                <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 border ${
+                  isDark ? "bg-[#242428] border-[#3E3E42] text-zinc-400" : "bg-zinc-50 border-zinc-200 text-zinc-550"
+                }`}>
+                  <DollarSign size={13} />
+                </div>
+                <span className="text-zinc-505 dark:text-zinc-400 font-semibold text-xs tracking-wider uppercase">Salary</span>
+              </div>
               <span className="font-semibold text-emerald-600 dark:text-emerald-450 text-right truncate pl-4 flex-1 min-w-0">
                 {formattedComp}
               </span>
             </div>
             
-            <div className="flex items-center justify-between py-3.5">
-              <span className="text-zinc-500 font-semibold text-xs tracking-wider uppercase shrink-0">Applied Date</span>
+            <div className="flex items-center justify-between py-3">
+              <div className="flex items-center space-x-2.5 min-w-0">
+                <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 border ${
+                  isDark ? "bg-[#242428] border-[#3E3E42] text-zinc-400" : "bg-zinc-50 border-zinc-200 text-zinc-550"
+                }`}>
+                  <Calendar size={13} />
+                </div>
+                <span className="text-zinc-505 dark:text-zinc-400 font-semibold text-xs tracking-wider uppercase">Applied Date</span>
+              </div>
               <span className={`font-semibold text-right truncate pl-4 flex-1 min-w-0 ${isDark ? "text-zinc-200" : "text-zinc-800"}`}>
                 {new Date(selectedApp.appliedDate).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })}
               </span>
             </div>
             
-            <div className="flex items-center justify-between py-3.5">
-              <span className="text-zinc-500 font-semibold text-xs tracking-wider uppercase shrink-0">Deadline</span>
+            <div className="flex items-center justify-between py-3">
+              <div className="flex items-center space-x-2.5 min-w-0">
+                <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 border ${
+                  isDark ? "bg-[#242428] border-[#3E3E42] text-zinc-400" : "bg-zinc-50 border-zinc-200 text-zinc-550"
+                }`}>
+                  <Clock size={13} />
+                </div>
+                <span className="text-zinc-555 dark:text-zinc-400 font-semibold text-xs tracking-wider uppercase">Deadline</span>
+              </div>
               <span className={`font-semibold text-right truncate pl-4 flex-1 min-w-0 ${isDark ? "text-zinc-200" : "text-zinc-800"}`}>
                 {selectedApp.deadline 
                   ? new Date(selectedApp.deadline).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' }) 
@@ -902,15 +888,29 @@ export const TrackerScreen: React.FC<TrackerScreenProps> = ({
               </span>
             </div>
             
-            <div className="flex items-center justify-between py-3.5">
-              <span className="text-zinc-500 font-semibold text-xs tracking-wider uppercase shrink-0">Source</span>
+            <div className="flex items-center justify-between py-3">
+              <div className="flex items-center space-x-2.5 min-w-0">
+                <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 border ${
+                  isDark ? "bg-[#242428] border-[#3E3E42] text-zinc-400" : "bg-zinc-50 border-zinc-200 text-zinc-550"
+                }`}>
+                  <Globe size={13} />
+                </div>
+                <span className="text-zinc-505 dark:text-zinc-400 font-semibold text-xs tracking-wider uppercase">Source</span>
+              </div>
               <span className={`font-semibold text-right truncate pl-4 flex-1 min-w-0 ${isDark ? "text-zinc-200" : "text-zinc-800"}`}>
                 {selectedApp.source || "Direct"}
               </span>
             </div>
             
-            <div className="flex items-center justify-between py-3.5">
-              <span className="text-zinc-500 font-semibold text-xs tracking-wider uppercase shrink-0 text-left">External Link</span>
+            <div className="flex items-center justify-between py-3">
+              <div className="flex items-center space-x-2.5 min-w-0">
+                <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 border ${
+                  isDark ? "bg-[#242428] border-[#3E3E42] text-zinc-400" : "bg-zinc-50 border-zinc-200 text-zinc-550"
+                }`}>
+                  <Link size={13} />
+                </div>
+                <span className="text-zinc-555 dark:text-zinc-400 font-semibold text-xs tracking-wider uppercase text-left">External Link</span>
+              </div>
               {selectedApp.jobUrl ? (
                 <a 
                   href={selectedApp.jobUrl} 

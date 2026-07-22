@@ -225,28 +225,30 @@ export const DeadlinesScreen: React.FC<DeadlinesScreenProps> = ({
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="space-y-7 pb-10 font-sans text-left relative"
+      className="space-y-6 pb-4 font-sans text-left relative"
     >
       <div className="flex items-center justify-between pt-4">
         <div>
-          <span className="text-[10px] font-bold tracking-widest text-zinc-500 dark:text-zinc-450 block leading-none uppercase font-mono">
+          <span className="text-[11px] font-semibold tracking-wider text-zinc-550 dark:text-zinc-500 uppercase block mb-1.5 leading-none">
             Today's Milestones
           </span>
-          <h1 className={`text-[28px] font-extrabold mt-1.5 tracking-tight leading-none ${textPrimary}`}>
+          <h1 className={`text-[34px] font-extrabold tracking-tight leading-[1.1] ${textPrimary}`}>
             {new Date().toLocaleDateString("en-US", { weekday: "long", month: "short", day: "numeric" })}
           </h1>
         </div>
 
-        <button
+        <motion.button
+          whileHover={{ scale: 1.03 }}
+          whileTap={{ scale: 0.95, opacity: 0.85 }}
           onClick={() => setShowAddForm(!showAddForm)}
-          className={`w-11 h-11 rounded-xl flex items-center justify-center transition-all border active:scale-95 ${
+          className={`w-11 h-11 rounded-full flex items-center justify-center transition-all border shadow-lg cursor-pointer ${
             isDark
-              ? "bg-[#121214] border-zinc-800 hover:bg-zinc-850 text-zinc-100"
+              ? "bg-[#18181C] border-[#252529] hover:bg-[#202025] text-zinc-100"
               : "bg-white border-zinc-200 hover:bg-zinc-50 text-zinc-900 shadow-sm"
-          } cursor-pointer`}
+          }`}
         >
           {showAddForm ? <X size={20} /> : <Plus size={20} />}
-        </button>
+        </motion.button>
       </div>
 
       <AnimatePresence>
@@ -257,47 +259,47 @@ export const DeadlinesScreen: React.FC<DeadlinesScreenProps> = ({
             exit={{ opacity: 0, height: 0 }}
             className="overflow-hidden"
           >
-            <form onSubmit={handleAddSchedule} className={`${cardClass} p-5 space-y-4`}>
+            <form onSubmit={handleAddSchedule} className={`${isDark ? "bg-[#18181C] border-[#252529]" : "bg-white border-zinc-200"} p-5 rounded-[22px] border space-y-4`}>
               <div className="space-y-1">
-                <label className="text-[10px] font-bold tracking-wider text-zinc-400 uppercase font-mono block">Milestone Title</label>
+                <label className="text-[10px] font-bold tracking-wider text-zinc-500 uppercase block">Milestone Title</label>
                 <input
                   type="text"
                   required
                   placeholder="e.g. Google Interview"
                   value={newTitle}
                   onChange={(e) => setNewTitle(e.target.value)}
-                  className={`w-full h-12 px-3.5 rounded-xl text-sm font-semibold outline-none border transition-all placeholder-zinc-550 ${
+                  className={`w-full h-12 px-3.5 rounded-xl text-sm font-semibold outline-none border transition-all placeholder-zinc-500 ${
                     isDark 
-                      ? "bg-zinc-900 border-zinc-800 text-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500/20 font-semibold" 
-                      : "bg-white border-zinc-300 text-zinc-900 focus:border-blue-500 font-semibold"
+                      ? "bg-zinc-900 border-zinc-800 text-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500/20" 
+                      : "bg-white border-zinc-300 text-zinc-900 focus:border-blue-500"
                   }`}
                 />
               </div>
 
               <div className="grid grid-cols-1 min-[360px]:grid-cols-2 gap-3.5">
                 <div className="space-y-1">
-                  <label className="text-[10px] font-bold tracking-wider text-zinc-400 uppercase font-mono block">Company</label>
+                  <label className="text-[10px] font-bold tracking-wider text-zinc-500 uppercase block">Company</label>
                   <input
                     type="text"
                     placeholder="e.g. Google"
                     value={newCompany}
                     onChange={(e) => setNewCompany(e.target.value)}
-                    className={`w-full h-12 px-3.5 rounded-xl text-sm font-semibold outline-none border transition-all placeholder-zinc-550 ${
+                    className={`w-full h-12 px-3.5 rounded-xl text-sm font-semibold outline-none border transition-all placeholder-zinc-500 ${
                       isDark 
-                        ? "bg-zinc-900 border-zinc-800 text-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500/20 font-semibold" 
-                        : "bg-white border-zinc-300 text-zinc-900 focus:border-blue-500 font-semibold"
+                        ? "bg-zinc-900 border-zinc-800 text-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500/20" 
+                        : "bg-white border-zinc-300 text-zinc-900 focus:border-blue-500"
                     }`}
                   />
                 </div>
                 <div className="space-y-1">
-                  <label className="text-[10px] font-bold tracking-wider text-zinc-400 uppercase font-mono block">Type</label>
+                  <label className="text-[10px] font-bold tracking-wider text-zinc-500 uppercase block">Type</label>
                   <select
                     value={newType}
                     onChange={(e) => setNewType(e.target.value)}
                     className={`w-full h-12 px-3.5 rounded-xl text-sm font-semibold outline-none border transition-all ${
                       isDark 
-                        ? "bg-zinc-900 border-zinc-800 text-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500/20 font-semibold" 
-                        : "bg-white border-zinc-300 text-zinc-900 focus:border-blue-500 font-semibold"
+                        ? "bg-zinc-900 border-zinc-800 text-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500/20" 
+                        : "bg-white border-zinc-300 text-zinc-900 focus:border-blue-500"
                     }`}
                   >
                     <option value="Interview">Interview</option>
@@ -309,29 +311,29 @@ export const DeadlinesScreen: React.FC<DeadlinesScreenProps> = ({
 
               <div className="grid grid-cols-1 min-[360px]:grid-cols-2 gap-3.5">
                 <div className="space-y-1">
-                  <label className="text-[10px] font-bold tracking-wider text-zinc-400 uppercase font-mono block">Time</label>
+                  <label className="text-[10px] font-bold tracking-wider text-zinc-500 uppercase block">Time</label>
                   <input
                     type="time"
                     value={newTime}
                     onChange={(e) => setNewTime(e.target.value)}
                     className={`w-full h-12 px-3.5 rounded-xl text-sm font-semibold outline-none border transition-all ${
                       isDark 
-                        ? "bg-zinc-900 border-zinc-800 text-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500/20 font-semibold" 
-                        : "bg-white border-zinc-300 text-zinc-900 focus:border-blue-500 font-semibold"
+                        ? "bg-zinc-900 border-zinc-800 text-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500/20" 
+                        : "bg-white border-zinc-300 text-zinc-900 focus:border-blue-500"
                     }`}
                   />
                 </div>
                 <div className="space-y-1">
-                  <label className="text-[10px] font-bold tracking-wider text-zinc-400 uppercase font-mono block">Notes</label>
+                  <label className="text-[10px] font-bold tracking-wider text-zinc-500 uppercase block">Notes</label>
                   <input
                     type="text"
                     placeholder="Review core coding topics"
                     value={newNotes}
                     onChange={(e) => setNewNotes(e.target.value)}
-                    className={`w-full h-12 px-3.5 rounded-xl text-sm font-semibold outline-none border transition-all placeholder-zinc-550 ${
+                    className={`w-full h-12 px-3.5 rounded-xl text-sm font-semibold outline-none border transition-all placeholder-zinc-500 ${
                       isDark 
-                        ? "bg-zinc-900 border-zinc-800 text-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500/20 font-semibold" 
-                        : "bg-white border-zinc-300 text-zinc-900 focus:border-blue-500 font-semibold"
+                        ? "bg-zinc-900 border-zinc-800 text-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500/20" 
+                        : "bg-white border-zinc-300 text-zinc-900 focus:border-blue-500"
                     }`}
                   />
                 </div>
@@ -355,39 +357,47 @@ export const DeadlinesScreen: React.FC<DeadlinesScreenProps> = ({
             initial={{ opacity: 0, y: 6 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0 }}
-            className={`${cardClass} p-6 relative overflow-hidden text-left`}
+            className={`p-6 rounded-[22px] border relative overflow-hidden text-left ${
+              isDark 
+                ? "bg-[#18181C] border-[#252529] shadow-[0_16px_36px_rgba(0,0,0,0.6)]" 
+                : "bg-white border-zinc-200 shadow-md shadow-zinc-200/40"
+            }`}
           >
-            <div className={`absolute left-0 top-0 bottom-0 w-1 ${getColorStyles(nextEvent.type, false).dot} rounded-r-full`} />
+            <div className={`absolute left-0 top-4 bottom-4 w-1 ${getColorStyles(nextEvent.type, false).dot} rounded-r-full`} />
 
-            <div className="pl-4 space-y-3.5 font-sans">
+            <div className="pl-3.5 space-y-3.5 font-sans">
               <div className="flex items-center justify-between">
-                <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded ${getColorStyles(nextEvent.type, false).text} ${getColorStyles(nextEvent.type, false).bg} border border-[#27272A]/10`}>
+                <span className={`text-[10px] tracking-wider font-sans font-bold uppercase select-none px-2.5 py-0.5 rounded-full border leading-none ${
+                  nextEvent.type.toLowerCase().includes("interview") ? (isDark ? "bg-blue-500/[0.08] border-blue-500/[0.18] text-blue-400" : "bg-blue-50 border-blue-200/60 text-blue-700") :
+                  nextEvent.type.toLowerCase().includes("assessment") || nextEvent.type.toLowerCase().includes("oa") ? (isDark ? "bg-amber-500/[0.08] border-amber-500/[0.18] text-amber-400" : "bg-amber-50 border-amber-200/60 text-amber-700") :
+                  (isDark ? "bg-zinc-800/40 border-zinc-750 text-zinc-450" : "bg-zinc-100 border-zinc-200 text-zinc-600")
+                }`}>
                   {nextEvent.type}
                 </span>
-                <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest font-mono">Next up</span>
+                <span className="text-[10px] text-zinc-500 font-bold tracking-wider uppercase leading-none">NEXT UP</span>
               </div>
 
               <div>
-                <h3 className={`text-[17px] font-extrabold tracking-tight leading-snug ${textPrimary}`}>
+                <h3 className={`text-lg font-extrabold tracking-tight leading-snug ${textPrimary}`}>
                   {nextEvent.company && nextEvent.company !== "Personal" ? `${nextEvent.company} • ` : ""}{nextEvent.title}
                 </h3>
-                <p className="text-xs text-zinc-400 mt-1.5 font-bold tracking-wide">
+                <p className="text-xs text-zinc-400 font-bold tracking-wide mt-1.5">
                   Today • {nextEvent.dueTime}
                 </p>
               </div>
 
               <div className="flex items-center justify-between pt-3 border-t border-zinc-800/40">
-                <p className="text-xs text-zinc-500 dark:text-zinc-450 italic max-w-[200px] truncate leading-none">
+                <p className="text-xs text-zinc-550 dark:text-zinc-500 italic max-w-[200px] truncate leading-none">
                   {nextEvent.notes ? `"${nextEvent.notes}"` : "Prepare for milestone"}
                 </p>
                 <button
                   onClick={() => setActivePrepId(activePrepId === nextEvent.id ? null : nextEvent.id)}
-                  className={`px-4 h-[32px] rounded-full text-xs font-extrabold text-white transition-all cursor-pointer active:scale-95 ${
+                  className={`px-4.5 h-8.5 rounded-full text-xs font-bold text-white transition-all cursor-pointer active:scale-95 flex items-center justify-center ${
                     getColorStyles(nextEvent.type, false).dot.includes("blue")
-                      ? "bg-blue-600 hover:bg-blue-500 shadow-sm"
+                      ? "bg-blue-600 hover:bg-blue-500 shadow-sm shadow-blue-500/10"
                       : getColorStyles(nextEvent.type, false).dot.includes("amber") || getColorStyles(nextEvent.type, false).dot.includes("orange")
-                      ? "bg-orange-500 hover:bg-orange-650 shadow-sm"
-                      : "bg-purple-600 hover:bg-purple-550 shadow-sm"
+                      ? "bg-orange-500 hover:bg-orange-600 shadow-sm shadow-orange-500/10"
+                      : "bg-purple-600 hover:bg-purple-550 shadow-sm shadow-purple-500/10"
                   }`}
                 >
                   {activePrepId === nextEvent.id ? "Close" : "Prepare"}
@@ -435,17 +445,22 @@ export const DeadlinesScreen: React.FC<DeadlinesScreenProps> = ({
       </AnimatePresence>
 
       <div className="space-y-4 text-left">
-        <span className="text-[10px] font-bold text-zinc-500 dark:text-zinc-450 uppercase tracking-widest font-mono block px-1 leading-none">
+        <span className="text-[10px] font-bold text-zinc-505 dark:text-zinc-500 uppercase tracking-wider block px-1 leading-none">
           Today's Timeline
         </span>
 
         <div className="relative">
           {todayEvents.length > 0 && (
-            <div className={`absolute left-[80px] top-3.5 bottom-3.5 w-[1px] ${isDark ? "bg-zinc-800" : "bg-zinc-200"}`} />
+            <div className={`absolute left-[80px] top-4.5 bottom-4.5 w-[1px] ${isDark ? "bg-zinc-850" : "bg-zinc-200"}`} />
           )}
 
           {todayEvents.length === 0 ? (
-            <p className="text-xs text-zinc-500 italic py-2 pl-2">No other milestones scheduled today.</p>
+            <div className={`py-8 text-center text-zinc-500 text-xs p-4 rounded-[16px] border ${
+              isDark ? "bg-[#18181C]/40 border-zinc-850" : "bg-white border-zinc-200"
+            }`}>
+              <span className="text-zinc-505 dark:text-zinc-400 font-bold block mb-1">No Active Milestones</span>
+              <span className="text-[11px] text-zinc-500">Your timeline is completely clear for the rest of today.</span>
+            </div>
           ) : (
             <div className="space-y-4">
               {todayEvents.map((event) => {
@@ -453,7 +468,7 @@ export const DeadlinesScreen: React.FC<DeadlinesScreenProps> = ({
                 return (
                   <div key={event.id} className="flex items-center gap-4 min-h-[32px]">
                     <div className="w-14 text-right shrink-0">
-                      <span className="text-xs font-bold font-mono text-zinc-500 dark:text-zinc-400">
+                      <span className="text-xs font-bold font-mono text-zinc-400">
                         {event.dueTime}
                       </span>
                     </div>
@@ -466,12 +481,17 @@ export const DeadlinesScreen: React.FC<DeadlinesScreenProps> = ({
                       />
                     </div>
 
-                    <div className="flex-1 min-w-0 flex items-center justify-between gap-2.5">
-                      <span className={`text-sm font-bold truncate ${textPrimary}`}>
-                        {event.title}
-                      </span>
+                    <div className={`flex-1 p-4 rounded-xl border flex items-center justify-between gap-2.5 transition-colors duration-150 ${
+                      isDark ? "bg-[#18181C] border-[#252529] hover:border-zinc-700" : "bg-white border-zinc-200/80 hover:border-zinc-300"
+                    }`}>
+                      <div className="min-w-0">
+                        <h4 className={`text-sm font-bold truncate leading-none ${textPrimary}`}>
+                          {event.title}
+                        </h4>
+                        <span className="text-[10px] text-zinc-500 font-semibold block mt-1.5 leading-none">{event.company}</span>
+                      </div>
                       <span className={`text-[9.5px] font-extrabold px-1.5 py-0.5 rounded shrink-0 ${styles.text} ${styles.bg} border border-[#27272A]/10`}>
-                        {event.company}
+                        {event.type}
                       </span>
                     </div>
                   </div>
@@ -483,24 +503,29 @@ export const DeadlinesScreen: React.FC<DeadlinesScreenProps> = ({
       </div>
 
       <div className="space-y-3 text-left">
-        <span className="text-[10px] font-bold text-zinc-500 dark:text-zinc-450 uppercase tracking-widest font-mono block px-1 leading-none">
+        <span className="text-[10px] font-bold text-zinc-505 dark:text-zinc-500 uppercase tracking-wider block px-1 leading-none">
           Upcoming
         </span>
 
-        <div className={`${cardClass} p-6 divide-y ${isDark ? "divide-zinc-800/60" : "divide-zinc-100"}`}>
+        <div className={`p-6 rounded-[22px] border divide-y ${
+          isDark 
+            ? "bg-[#18181C] border-[#252529] shadow-[0_12px_24px_rgba(0,0,0,0.5)] divide-zinc-800/40" 
+            : "bg-white border-zinc-200 shadow-sm divide-zinc-100"
+        }`}>
           {upcomingEvents.length === 0 ? (
-            <div className="p-4 text-center">
-              <p className="text-xs text-zinc-550 font-semibold">No upcoming milestone events scheduled.</p>
+            <div className="py-8 text-center text-zinc-550 text-xs">
+              <span className="text-zinc-505 dark:text-zinc-400 font-bold block mb-1">No Upcoming Schedules</span>
+              <span className="text-[11px] text-zinc-500">Add an interview or OA to start tracking deadlines.</span>
             </div>
           ) : (
             upcomingEvents.map((item) => {
               const styles = getColorStyles(item.type, false);
               return (
-                <div key={item.id} className="py-3.5 px-1.5 flex items-center justify-between hover:opacity-90 transition-opacity">
+                <div key={item.id} className="py-3 flex items-center justify-between hover:opacity-95 transition-opacity">
                   <div className="flex items-center space-x-3.5 min-w-0 flex-1">
                     <span className={`w-2 h-2 rounded-full ${styles.dot} shrink-0`} />
                     <div className="min-w-0 flex-1 text-left">
-                      <h4 className={`text-sm font-bold truncate leading-none ${textPrimary}`}>
+                      <h4 className={`text-sm font-extrabold truncate leading-none ${textPrimary}`}>
                         {item.company}
                       </h4>
                       <p className="text-xs text-zinc-400 truncate mt-1.5 font-semibold">
@@ -508,7 +533,7 @@ export const DeadlinesScreen: React.FC<DeadlinesScreenProps> = ({
                       </p>
                     </div>
                   </div>
-                  <span className="text-xs font-bold text-zinc-500 dark:text-zinc-400 font-sans shrink-0 ml-2">
+                  <span className="text-[10px] font-bold text-zinc-500 dark:text-zinc-450 bg-zinc-800/30 border border-zinc-850 px-2 py-0.5 rounded-md shrink-0 ml-2 select-none">
                     {item.dueDate}
                   </span>
                 </div>
@@ -521,7 +546,7 @@ export const DeadlinesScreen: React.FC<DeadlinesScreenProps> = ({
       <div className="space-y-2 text-left">
         <button
           onClick={() => setIsCompletedCollapsed(!isCompletedCollapsed)}
-          className="flex items-center justify-between w-full text-[10px] font-bold text-zinc-500 dark:text-zinc-450 uppercase tracking-widest font-mono py-1 cursor-pointer focus:outline-none"
+          className="flex items-center justify-between w-full text-[10px] font-bold text-zinc-555 dark:text-zinc-450 uppercase tracking-wider py-1 cursor-pointer focus:outline-none"
         >
           <span>Completed Today ({completedSchedules.length})</span>
           {isCompletedCollapsed ? <ChevronRight size={13} /> : <ChevronDown size={13} />}
@@ -535,7 +560,11 @@ export const DeadlinesScreen: React.FC<DeadlinesScreenProps> = ({
               exit={{ opacity: 0, height: 0 }}
               className="overflow-hidden"
             >
-              <div className={`${cardClass} p-6 divide-y ${isDark ? "divide-zinc-800/60" : "divide-zinc-100"}`}>
+              <div className={`p-6 rounded-[22px] border divide-y ${
+                isDark 
+                  ? "bg-[#18181C] border-[#252529] divide-zinc-800/40" 
+                  : "bg-white border-zinc-200 divide-zinc-100"
+              }`}>
                 {completedSchedules.length === 0 ? (
                   <p className="text-xs text-zinc-500 italic p-3 text-center select-none font-semibold">No completed tasks today.</p>
                 ) : (
@@ -557,7 +586,7 @@ export const DeadlinesScreen: React.FC<DeadlinesScreenProps> = ({
                           </p>
                         </div>
                       </div>
-                      <span className="text-[10px] text-zinc-500 dark:text-zinc-450 font-bold uppercase shrink-0 ml-2 select-none">
+                      <span className="text-[10px] text-zinc-505 dark:text-zinc-500 font-bold uppercase shrink-0 ml-2 select-none">
                         Done
                       </span>
                     </div>
