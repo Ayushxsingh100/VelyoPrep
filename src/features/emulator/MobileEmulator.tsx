@@ -806,7 +806,10 @@ export default function MobileEmulator({
 
   return (
     <div className={`flex-1 flex flex-col relative overflow-hidden font-sans select-none ${themeBgClass}`}>
-        <AnimatePresence mode="wait">
+      
+
+
+      <AnimatePresence mode="wait">
           {currentScreen === "splash" && (
             <motion.div
               key="splash"
@@ -825,67 +828,73 @@ export default function MobileEmulator({
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="absolute inset-0 flex flex-col p-6 pt-10 overflow-y-auto bg-[#09090B] text-zinc-100"
+              className="absolute inset-0 flex flex-col p-6 pt-16 overflow-y-auto bg-[#09090B] text-zinc-100"
             >
               <motion.div
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.35, delay: 0.04, ease: [0.16, 1, 0.3, 1] }}
-                className="w-8 h-8 rounded-lg bg-[#121214] border border-zinc-850 flex items-center justify-center text-white mb-6"
+                className="w-10 h-10 rounded-xl bg-[#121214] border border-zinc-800 flex items-center justify-center text-white mb-6 shadow-sm shadow-black/40"
               >
-                <VeyloPrepLogo className="w-5 h-5" />
+                <VeyloPrepLogo className="w-6 h-6" />
               </motion.div>
 
               <motion.div
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.35, delay: 0.08, ease: [0.16, 1, 0.3, 1] }}
-                className="mb-8"
+                className="mb-8 text-left"
               >
-                <h2 className="text-2xl font-semibold tracking-tight text-white">Welcome back.</h2>
-                <p className="text-xs text-zinc-500 mt-1.5 leading-relaxed">Sign in to continue your career journey.</p>
+                <h2 className="text-3xl font-extrabold tracking-tight text-white font-display">Welcome back.</h2>
+                <p className="text-sm text-zinc-400 mt-2 leading-relaxed font-sans">Sign in to continue your career journey.</p>
               </motion.div>
 
-              <form onSubmit={handleLogin} className="flex-1 flex flex-col space-y-4">
+              <form onSubmit={handleLogin} className="flex flex-col space-y-4">
                 <motion.div
                   initial={{ opacity: 0, y: 8 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.35, delay: 0.12, ease: [0.16, 1, 0.3, 1] }}
-                  className="space-y-3"
+                  className="bg-[#121214] border border-zinc-800/80 rounded-2xl p-5 space-y-4.5 shadow-xl"
                 >
-                  <div className="relative">
-                    <Mail size={13} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-600" />
-                    <input
-                      type="email"
-                      value={loginEmail}
-                      onChange={(e) => setLoginEmail(e.target.value)}
-                      required
-                      placeholder="University email"
-                      className="w-full h-12 pl-10 pr-4 bg-[#121214] border border-zinc-800 rounded-xl text-xs text-zinc-100 placeholder-zinc-500 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/20 transition-all"
-                    />
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-bold tracking-wider text-zinc-400 uppercase font-mono">University Email</label>
+                    <div className="relative">
+                      <Mail size={15} className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500" />
+                      <input
+                        type="email"
+                        value={loginEmail}
+                        onChange={(e) => setLoginEmail(e.target.value)}
+                        required
+                        placeholder="e.g. student@college.edu"
+                        className="w-full h-12 pl-11 pr-3.5 bg-zinc-900 border border-zinc-800 rounded-xl text-sm text-zinc-100 placeholder-zinc-550 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/20 transition-all duration-150 font-semibold"
+                      />
+                    </div>
                   </div>
 
-                  <div className="relative">
-                    <Lock size={13} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-600" />
-                    <input
-                      type={showLoginPassword ? "text" : "password"}
-                      value={loginPassword}
-                      onChange={(e) => setLoginPassword(e.target.value)}
-                      required
-                      placeholder="Password"
-                      className="w-full h-12 pl-10 pr-10 bg-[#121214] border border-zinc-800 rounded-xl text-xs text-zinc-100 placeholder-zinc-500 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/20 transition-all"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowLoginPassword(!showLoginPassword)}
-                      className="absolute right-3.5 top-1/2 -translate-y-1/2 text-zinc-600 hover:text-zinc-400 transition-colors"
-                    >
-                      {showLoginPassword ? <EyeOff size={14} /> : <Eye size={14} />}
-                    </button>
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-bold tracking-wider text-zinc-400 uppercase font-mono">Password</label>
+                    <div className="relative">
+                      <Lock size={15} className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500" />
+                      <input
+                        type={showLoginPassword ? "text" : "password"}
+                        value={loginPassword}
+                        onChange={(e) => setLoginPassword(e.target.value)}
+                        required
+                        placeholder="Enter password"
+                        className="w-full h-12 pl-11 pr-11 bg-zinc-900 border border-zinc-800 rounded-xl text-sm text-zinc-100 placeholder-zinc-550 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/20 transition-all duration-150 font-semibold"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowLoginPassword(!showLoginPassword)}
+                        className="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-zinc-350 transition-colors"
+                      >
+                        {showLoginPassword ? <EyeOff size={15} /> : <Eye size={15} />}
+                      </button>
+                    </div>
                   </div>
 
                   {loginError && (
-                    <p className="text-[11px] text-red-400 mt-1 flex items-center gap-1.5 font-medium px-0.5">
+                    <p className="text-xs text-red-400 mt-1 flex items-center gap-1.5 font-medium px-0.5">
                       <span>⚠</span> {loginError}
                     </p>
                   )}
@@ -905,7 +914,7 @@ export default function MobileEmulator({
                           style={{ x: rememberMe ? 14 : 0 }}
                         />
                       </button>
-                      <span className="text-xs text-zinc-400">Keep me signed in</span>
+                      <span className="text-xs text-zinc-400 font-semibold">Keep me signed in</span>
                     </div>
 
                     <button
@@ -916,7 +925,7 @@ export default function MobileEmulator({
                         setForgotEmail("");
                         setCurrentScreen("forgot");
                       }}
-                      className="text-xs text-zinc-500 hover:text-blue-500 transition-colors font-medium"
+                      className="text-xs text-zinc-400 hover:text-blue-500 transition-colors font-bold"
                     >
                       Forgot?
                     </button>
@@ -931,7 +940,7 @@ export default function MobileEmulator({
                   <button
                     type="submit"
                     disabled={loginLoading}
-                    className="w-full h-12 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold transition-all flex items-center justify-center cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed mt-2"
+                    className="w-full h-12 rounded-xl bg-blue-600 hover:bg-blue-550 active:scale-98 text-white text-sm font-bold transition-all duration-150 flex items-center justify-center cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed shadow-md shadow-blue-600/10"
                   >
                     {loginLoading ? "Signing in..." : "Sign In"}
                   </button>
@@ -942,14 +951,14 @@ export default function MobileEmulator({
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.35, delay: 0.20, ease: [0.16, 1, 0.3, 1] }}
-                className="mt-3"
+                className="mt-4"
               >
                 <button
                   onClick={handleGoogleSignIn}
                   disabled={loginLoading}
-                  className="w-full h-12 rounded-xl border border-zinc-800 bg-transparent hover:bg-zinc-900/40 text-xs text-zinc-300 font-semibold transition-all flex items-center justify-center space-x-2.5 cursor-pointer disabled:opacity-50"
+                  className="w-full h-12 rounded-xl border border-zinc-800 bg-transparent hover:bg-zinc-900/50 text-sm text-zinc-300 font-bold transition-all duration-150 flex items-center justify-center space-x-2.5 cursor-pointer disabled:opacity-50 active:scale-98 shadow-sm shadow-black/20"
                 >
-                  <svg className="w-3.5 h-3.5" viewBox="0 0 24 24">
+                  <svg className="w-4 h-4" viewBox="0 0 24 24">
                     <path fill="#EA4335" d="M12 5.04c1.62 0 3.08.56 4.22 1.64l3.15-3.15C17.45 1.73 14.92 1 12 1 7.35 1 3.4 3.65 1.48 7.5l3.77 2.92C6.18 7.02 8.87 5.04 12 5.04z" />
                     <path fill="#4285F4" d="M23.49 12.27c0-.81-.07-1.59-.2-2.36H12v4.47h6.44c-.28 1.47-1.11 2.71-2.36 3.55l3.66 2.84c2.14-1.97 3.75-4.88 3.75-8.5z" />
                     <path fill="#FBBC05" d="M5.25 14.58c-.24-.71-.38-1.47-.38-2.27s.14-1.56.38-2.27L1.48 7.12C.54 9 0 11.1 0 13.3c0 2.2.54 4.3 1.48 6.18l3.77-2.9z" />
@@ -963,7 +972,7 @@ export default function MobileEmulator({
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.35, delay: 0.24, ease: [0.16, 1, 0.3, 1] }}
-                className="mt-auto text-center pt-6 pb-2 flex flex-col items-center gap-3"
+                className="mt-6 text-center pb-2 flex flex-col items-center gap-3"
               >
                 <button
                   type="button"
@@ -972,12 +981,12 @@ export default function MobileEmulator({
                     setLoginPassword("password");
                     showToast("Demo credentials loaded.", "info");
                   }}
-                  className="text-[11px] text-zinc-600 hover:text-zinc-400 transition-colors font-medium underline underline-offset-4 cursor-pointer"
+                  className="text-xs text-zinc-550 hover:text-zinc-350 transition-colors font-bold underline underline-offset-4 cursor-pointer"
                 >
                   Use demo account
                 </button>
 
-                <div className="text-xs text-zinc-500">
+                <div className="text-xs text-zinc-400 font-semibold mt-1">
                   Need an account?{" "}
                   <button
                     type="button"
@@ -989,7 +998,7 @@ export default function MobileEmulator({
                       setRegConfirmPass("");
                       setCurrentScreen("signup");
                     }}
-                    className="text-blue-500 font-bold hover:underline cursor-pointer"
+                    className="text-blue-500 font-bold hover:text-blue-400 transition-colors cursor-pointer"
                   >
                     Create Profile
                   </button>
@@ -1004,137 +1013,139 @@ export default function MobileEmulator({
               initial={{ x: 100, opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
               exit={{ x: -100, opacity: 0 }}
-              className="absolute inset-0 flex flex-col p-5 pt-8 overflow-y-auto"
+              className="absolute inset-0 flex flex-col p-6 pt-16 overflow-y-auto bg-[#09090B] text-zinc-100"
             >
-              <div className="mb-4">
+              <div className="mb-6 text-left">
                 <button 
                   onClick={() => {
                     setLoginError("");
                     setCurrentScreen("login");
                   }} 
-                  className="flex items-center text-[10px] font-bold text-zinc-500 uppercase tracking-wider mb-2 hover:text-zinc-300"
+                  className="flex items-center text-xs font-bold text-zinc-400 hover:text-zinc-200 transition-colors uppercase tracking-wider mb-3 cursor-pointer"
                 >
-                  <ArrowLeft size={12} className="mr-1" /> Back
+                  <ArrowLeft size={14} className="mr-1.5" /> Back
                 </button>
-                <h2 className="text-xl font-bold tracking-tight">Create Profile</h2>
-                <p className="text-xs text-zinc-500">Establish your career identity.</p>
+                <h2 className="text-3xl font-extrabold tracking-tight text-white font-display">Create Profile</h2>
+                <p className="text-sm text-zinc-400 mt-2 leading-relaxed">Establish your career identity.</p>
               </div>
 
-              <form onSubmit={handleSignup} className="space-y-3">
-                <div>
-                  <label className="text-[10px] font-bold tracking-wider text-zinc-500 uppercase font-mono">Full Name</label>
-                  <input
-                    type="text"
-                    required
-                    value={regName}
-                    onChange={(e) => setRegName(e.target.value)}
-                    placeholder="e.g. Ayush Singh"
-                    className={`w-full h-10 px-3 mt-1 rounded-lg text-xs outline-none border transition-all ${themeInputBg}`}
-                  />
-                </div>
-
-                <div>
-                  <label className="text-[10px] font-bold tracking-wider text-zinc-500 uppercase font-mono">University Email</label>
-                  <input
-                    type="email"
-                    required
-                    value={regEmail}
-                    onChange={(e) => setRegEmail(e.target.value)}
-                    placeholder="e.g. student@college.edu"
-                    className={`w-full h-10 px-3 mt-1 rounded-lg text-xs outline-none border transition-all ${themeInputBg}`}
-                  />
-                </div>
-
-                <div>
-                  <label className="text-[10px] font-bold tracking-wider text-zinc-500 uppercase font-mono">Password</label>
-                  <div className="relative mt-1">
+              <form onSubmit={handleSignup} className="space-y-4">
+                <div className="bg-[#121214] border border-zinc-800/80 rounded-2xl p-5 space-y-4 shadow-xl">
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-bold tracking-wider text-zinc-400 uppercase font-mono block">Full Name</label>
                     <input
-                      type={showRegPassword ? "text" : "password"}
+                      type="text"
                       required
-                      value={regPass}
-                      onChange={(e) => setRegPass(e.target.value)}
-                      placeholder="Min. 8 characters"
-                      className={`w-full h-10 pl-3 pr-10 rounded-lg text-xs outline-none border transition-all ${themeInputBg}`}
+                      value={regName}
+                      onChange={(e) => setRegName(e.target.value)}
+                      placeholder="e.g. Ayush Singh"
+                      className="w-full h-12 px-3.5 bg-zinc-900 border border-zinc-800 rounded-xl text-sm text-zinc-100 placeholder-zinc-550 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/20 transition-all duration-150 font-semibold"
                     />
-                    <button
-                      type="button"
-                      onClick={() => setShowRegPassword(!showRegPassword)}
-                      className="absolute right-3 top-2.5 text-zinc-500 hover:text-zinc-300"
-                    >
-                      {showRegPassword ? <EyeOff size={13} /> : <Eye size={13} />}
-                    </button>
                   </div>
 
-                  {regPass && (
-                    <div className="mt-1.5 space-y-1">
-                      <div className="flex items-center justify-between text-[9px]">
-                        <span className="font-mono uppercase text-zinc-500">Password Strength:</span>
-                        <span className={`font-bold ${
-                          getPasswordStrength(regPass).score <= 1 ? 'text-red-500' :
-                          getPasswordStrength(regPass).score === 2 ? 'text-yellow-500' :
-                          getPasswordStrength(regPass).score === 3 ? 'text-blue-500' : 'text-emerald-500'
-                        }`}>{getPasswordStrength(regPass).text}</span>
-                      </div>
-                      <div className="h-1 bg-zinc-800 rounded-full overflow-hidden flex space-x-0.5">
-                        {[1, 2, 3, 4].map((step) => (
-                          <div 
-                            key={step}
-                            className={`h-full flex-1 transition-all ${
-                              getPasswordStrength(regPass).score >= step 
-                                ? getPasswordStrength(regPass).color
-                                : "bg-zinc-800/80"
-                            }`}
-                          />
-                        ))}
-                      </div>
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-bold tracking-wider text-zinc-400 uppercase font-mono block">University Email</label>
+                    <input
+                      type="email"
+                      required
+                      value={regEmail}
+                      onChange={(e) => setRegEmail(e.target.value)}
+                      placeholder="e.g. student@college.edu"
+                      className="w-full h-12 px-3.5 bg-zinc-900 border border-zinc-800 rounded-xl text-sm text-zinc-100 placeholder-zinc-550 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/20 transition-all duration-150 font-semibold"
+                    />
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-bold tracking-wider text-zinc-400 uppercase font-mono block">Password</label>
+                    <div className="relative">
+                      <input
+                        type={showRegPassword ? "text" : "password"}
+                        required
+                        value={regPass}
+                        onChange={(e) => setRegPass(e.target.value)}
+                        placeholder="Min. 8 characters"
+                        className="w-full h-12 pl-3.5 pr-10 bg-zinc-900 border border-zinc-800 rounded-xl text-sm text-zinc-100 placeholder-zinc-550 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/20 transition-all duration-150 font-semibold"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowRegPassword(!showRegPassword)}
+                        className="absolute right-3.5 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-zinc-350 transition-colors"
+                      >
+                        {showRegPassword ? <EyeOff size={15} /> : <Eye size={15} />}
+                      </button>
                     </div>
-                  )}
-                </div>
 
-                <div>
-                  <label className="text-[10px] font-bold tracking-wider text-zinc-500 uppercase font-mono">Confirm Password</label>
-                  <div className="relative mt-1">
-                    <input
-                      type={showRegConfirmPassword ? "text" : "password"}
-                      required
-                      value={regConfirmPass}
-                      onChange={(e) => setRegConfirmPass(e.target.value)}
-                      placeholder="Repeat secret password"
-                      className={`w-full h-10 pl-3 pr-10 rounded-lg text-xs outline-none border transition-all ${themeInputBg}`}
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowRegConfirmPassword(!showRegConfirmPassword)}
-                      className="absolute right-3 top-2.5 text-zinc-500 hover:text-zinc-300"
-                    >
-                      {showRegConfirmPassword ? <EyeOff size={13} /> : <Eye size={13} />}
-                    </button>
+                    {regPass && (
+                      <div className="mt-2 space-y-1.5">
+                        <div className="flex items-center justify-between text-[9px]">
+                          <span className="font-mono uppercase text-zinc-500">Password Strength:</span>
+                          <span className={`font-bold ${
+                            getPasswordStrength(regPass).score <= 1 ? 'text-red-500' :
+                            getPasswordStrength(regPass).score === 2 ? 'text-yellow-500' :
+                            getPasswordStrength(regPass).score === 3 ? 'text-blue-500' : 'text-emerald-500'
+                          }`}>{getPasswordStrength(regPass).text}</span>
+                        </div>
+                        <div className="h-1 bg-zinc-800 rounded-full overflow-hidden flex space-x-0.5">
+                          {[1, 2, 3, 4].map((step) => (
+                            <div 
+                              key={step}
+                              className={`h-full flex-1 transition-all ${
+                                getPasswordStrength(regPass).score >= step 
+                                  ? getPasswordStrength(regPass).color
+                                  : "bg-zinc-800/80"
+                              }`}
+                            />
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </div>
-                </div>
 
-                <div className="flex items-start space-x-2 py-1">
-                  <input 
-                    type="checkbox" 
-                    required 
-                    checked={regAcceptedTerms}
-                    onChange={(e) => setRegAcceptedTerms(e.target.checked)}
-                    className="mt-0.5 rounded text-blue-600 accent-blue-600 w-3.5 h-3.5 focus:ring-0 cursor-pointer" 
-                    id="terms" 
-                  />
-                  <label htmlFor="terms" className="text-[10px] text-zinc-500 leading-tight cursor-pointer select-none">I agree to the secure guidelines and VeyloPrep terms of use.</label>
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-bold tracking-wider text-zinc-400 uppercase font-mono block">Confirm Password</label>
+                    <div className="relative">
+                      <input
+                        type={showRegConfirmPassword ? "text" : "password"}
+                        required
+                        value={regConfirmPass}
+                        onChange={(e) => setRegConfirmPass(e.target.value)}
+                        placeholder="Repeat secret password"
+                        className="w-full h-12 pl-3.5 pr-10 bg-zinc-900 border border-zinc-800 rounded-xl text-sm text-zinc-100 placeholder-zinc-550 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/20 transition-all duration-150 font-semibold"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowRegConfirmPassword(!showRegConfirmPassword)}
+                        className="absolute right-3.5 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-zinc-350 transition-colors"
+                      >
+                        {showRegConfirmPassword ? <EyeOff size={15} /> : <Eye size={15} />}
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start space-x-2.5 py-1">
+                    <input 
+                      type="checkbox" 
+                      required 
+                      checked={regAcceptedTerms}
+                      onChange={(e) => setRegAcceptedTerms(e.target.checked)}
+                      className="mt-0.5 rounded text-blue-600 accent-blue-600 w-4 h-4 focus:ring-0 cursor-pointer border-zinc-800 bg-zinc-900" 
+                      id="terms" 
+                    />
+                    <label htmlFor="terms" className="text-xs text-zinc-400 leading-tight cursor-pointer select-none font-semibold">I agree to the secure guidelines and VeyloPrep terms of use.</label>
+                  </div>
                 </div>
 
                 {regError && (
-                  <div className="p-2 rounded bg-red-500/10 border border-red-500/20 text-red-500 text-[10px] flex items-start space-x-1">
-                    <AlertTriangle size={12} className="mt-0.5 flex-shrink-0" />
-                    <span>{regError}</span>
+                  <div className="p-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-xs flex items-start space-x-2">
+                    <AlertTriangle size={14} className="mt-0.5 flex-shrink-0 text-red-400" />
+                    <span className="font-semibold">{regError}</span>
                   </div>
                 )}
 
                 <button
                   type="submit"
                   disabled={regLoading}
-                  className="w-full h-10 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold transition-all flex items-center justify-center cursor-pointer disabled:opacity-50"
+                  className="w-full h-12 rounded-xl bg-blue-600 hover:bg-blue-550 active:scale-98 text-white text-sm font-bold transition-all duration-150 flex items-center justify-center cursor-pointer disabled:opacity-50 shadow-md shadow-blue-600/10 mt-2"
                 >
                   {regLoading ? "Configuring Vault..." : "Establish Profile"}
                 </button>
@@ -1148,29 +1159,29 @@ export default function MobileEmulator({
               initial={{ x: 100, opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
               exit={{ x: -100, opacity: 0 }}
-              className="absolute inset-0 flex flex-col p-5 pt-8"
+              className="absolute inset-0 flex flex-col p-6 pt-16 overflow-y-auto bg-[#09090B] text-zinc-100"
             >
-              <div className="mb-4">
+              <div className="mb-6 text-left">
                 <button 
                   onClick={() => {
                     setLoginError("");
                     setCurrentScreen("login");
                   }} 
-                  className="flex items-center text-[10px] font-bold text-zinc-500 uppercase tracking-wider mb-2 hover:text-zinc-300"
+                  className="flex items-center text-xs font-bold text-zinc-400 hover:text-zinc-200 transition-colors uppercase tracking-wider mb-3 cursor-pointer"
                 >
-                  <ArrowLeft size={12} className="mr-1" /> Back to login
+                  <ArrowLeft size={14} className="mr-1.5" /> Back to login
                 </button>
-                <h2 className="text-xl font-bold tracking-tight">Recover Session</h2>
-                <p className="text-xs text-zinc-500">We'll synchronize a dynamic reset link.</p>
+                <h2 className="text-3xl font-extrabold tracking-tight text-white font-display">Recover Session</h2>
+                <p className="text-sm text-zinc-400 mt-2 leading-relaxed">We'll synchronize a dynamic reset link.</p>
               </div>
 
               {forgotSuccess ? (
-                <div className="space-y-4 py-4 text-center">
+                <div className="bg-[#121214] border border-zinc-800/80 rounded-2xl p-5 space-y-4 shadow-xl text-center">
                   <div className="w-12 h-12 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 flex items-center justify-center mx-auto mb-2">
-                    <CheckCircle size={22} />
+                    <CheckCircle size={24} />
                   </div>
-                  <h4 className="text-xs font-bold uppercase tracking-wider text-emerald-500 font-mono">Dispatch Successful</h4>
-                  <p className="text-[11px] text-zinc-400 leading-normal px-2">A password authorization ticket has been securely routed to <span className="font-semibold text-zinc-200">{forgotEmail}</span>.</p>
+                  <h4 className="text-sm font-bold uppercase tracking-wider text-emerald-400 font-mono">Dispatch Successful</h4>
+                  <p className="text-xs text-zinc-400 leading-relaxed px-2 font-semibold">A password authorization ticket has been securely routed to <span className="font-bold text-white">{forgotEmail}</span>.</p>
                   
                   <button
                     onClick={() => {
@@ -1178,36 +1189,38 @@ export default function MobileEmulator({
                       setLoginEmail(forgotEmail);
                       setCurrentScreen("login");
                     }}
-                    className="w-full h-10 rounded-lg bg-zinc-800 text-white text-xs font-bold hover:bg-zinc-700 transition-all cursor-pointer"
+                    className="w-full h-12 rounded-xl bg-zinc-800 text-white text-sm font-bold hover:bg-zinc-750 active:scale-98 transition-all cursor-pointer shadow-sm"
                   >
                     Return to Login
                   </button>
                 </div>
               ) : (
                 <form onSubmit={handleForgotPassword} className="space-y-4">
-                  <div>
-                    <label className="text-[10px] font-bold tracking-wider text-zinc-500 uppercase font-mono">Registered Email</label>
-                    <input
-                      type="email"
-                      required
-                      value={forgotEmail}
-                      onChange={(e) => setForgotEmail(e.target.value)}
-                      placeholder="e.g. student@college.edu"
-                      className={`w-full h-11 px-3 mt-1 rounded-lg text-xs outline-none border transition-all ${themeInputBg}`}
-                    />
+                  <div className="bg-[#121214] border border-zinc-800/80 rounded-2xl p-5 space-y-4 shadow-xl">
+                    <div className="space-y-1">
+                      <label className="text-[10px] font-bold tracking-wider text-zinc-400 uppercase font-mono block">Registered Email</label>
+                      <input
+                        type="email"
+                        required
+                        value={forgotEmail}
+                        onChange={(e) => setForgotEmail(e.target.value)}
+                        placeholder="e.g. student@college.edu"
+                        className="w-full h-12 px-3.5 bg-zinc-900 border border-zinc-800 rounded-xl text-sm text-zinc-100 placeholder-zinc-550 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/20 transition-all duration-150 font-semibold"
+                      />
+                    </div>
                   </div>
 
                   {forgotError && (
-                    <div className="p-2 rounded bg-red-500/10 border border-red-500/20 text-red-500 text-[10px] flex items-start space-x-1">
-                      <AlertTriangle size={12} className="mt-0.5 flex-shrink-0" />
-                      <span>{forgotError}</span>
+                    <div className="p-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-xs flex items-start space-x-2">
+                      <AlertTriangle size={14} className="mt-0.5 flex-shrink-0 text-red-400" />
+                      <span className="font-semibold">{forgotError}</span>
                     </div>
                   )}
 
                   <button
                     type="submit"
                     disabled={forgotLoading}
-                    className="w-full h-11 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold transition-all flex items-center justify-center cursor-pointer disabled:opacity-50"
+                    className="w-full h-12 rounded-xl bg-blue-600 hover:bg-blue-555 active:scale-98 text-white text-sm font-bold transition-all duration-150 flex items-center justify-center cursor-pointer disabled:opacity-50 shadow-md shadow-blue-600/10 mt-2"
                   >
                     {forgotLoading ? "Locating Credentials..." : "Send Recovery Link"}
                   </button>
@@ -1222,59 +1235,16 @@ export default function MobileEmulator({
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="absolute inset-0 flex flex-col h-full"
+              className="absolute inset-0 flex flex-col h-full bg-[#09090B]"
             >
-              {currentScreen === "dashboard" && (
-                <div className={`absolute top-0 left-0 right-0 h-[52px] border-b px-5 flex items-center justify-between z-30 transition-all duration-300 ease-in-out ${
-                  headerVisible 
-                    ? "translate-y-0 opacity-100" 
-                    : "-translate-y-full opacity-0 pointer-events-none"
-                } ${
-                  isDark ? "bg-[#09090B] border-white/5" : "bg-[#FAFAFA] border-zinc-950/5"
-                }`}>
-                  <motion.div 
-                    initial={{ opacity: 0, y: -4 }} 
-                    animate={{ opacity: 1, y: 0 }} 
-                    transition={{ duration: 0.35, delay: 0.1 }}
-                    className="flex items-center gap-2.5"
-                  >
-                    <div className={`w-8 h-8 rounded-lg flex items-center justify-center border shadow-sm ${
-                      isDark ? "bg-[#18181B] border-white/[0.08]" : "bg-white border-zinc-200"
-                    }`}>
-                      <VeyloPrepLogo className="w-5 h-5" />
-                    </div>
-                    <h3 className={`text-[14px] font-semibold tracking-tight leading-none ${
-                      isDark ? "text-white" : "text-zinc-950"
-                    }`}>
-                      VeyloPrep
-                    </h3>
-                  </motion.div>
-
-                  <button 
-                    onClick={() => {
-                      setCurrentScreen("settings");
-                      showToast("Navigation routed to Settings", "info");
-                    }} 
-                    className={`w-8 h-8 rounded-lg border flex items-center justify-center transition-all duration-200 ${
-                      isDark 
-                        ? "bg-[#18181B]/40 border-white/[0.08] text-zinc-400 hover:text-white hover:bg-white/[0.04]" 
-                        : "bg-white border-zinc-200 text-zinc-500 hover:text-zinc-950 hover:bg-zinc-50"
-                    }`}
-                  >
-                    <Sliders size={14} strokeWidth={1.5} />
-                  </button>
-                </div>
-              )}
-
               <div 
                 onScroll={handleScroll}
-                className={`flex-1 overflow-y-auto px-4 pb-4 space-y-4 transition-all duration-300 ${
-                  currentScreen === "dashboard" ? "pt-[68px]" : "pt-4"
-                }`}
+                className={`flex-1 overflow-y-auto overflow-x-hidden ${currentScreen === "dashboard" ? "pt-5" : "pt-12"} pb-[84px] scrollbar-none`}
               >
                 {currentScreen === "dashboard" && (
-                  <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
+                  <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-4 px-4">
                     <DashboardScreen
+                      userName={userName}
                       applications={applications}
                       setApplications={setApplications}
                       deadlines={deadlines}
@@ -1298,7 +1268,7 @@ export default function MobileEmulator({
                 )}
 
                 {(currentScreen === "tracker" || currentScreen === "tracker_detail") && (
-                  <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
+                  <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-4 px-4">
                     <TrackerScreen
                       applications={applications}
                       setApplications={setApplications}
@@ -1341,7 +1311,7 @@ export default function MobileEmulator({
                 )}
 
                 {currentScreen === "vault" && (
-                  <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-4 pb-4">
+                  <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-4 pb-4 px-4">
                     <VaultScreen
                       vaultSubTab={vaultSubTab}
                       setVaultSubTab={setVaultSubTab}
@@ -1409,127 +1379,132 @@ export default function MobileEmulator({
                 )}
 
                 {currentScreen === "deadlines" && (
-                  <DeadlinesScreen
-                    deadlines={deadlines}
-                    setDeadlines={setDeadlines}
-                    applications={applications}
-                    setSelectedApp={setSelectedApp}
-                    setCurrentScreen={setCurrentScreen}
-                    simulateDatabaseFailure={simulateDatabaseFailure}
-                    isDark={isDark}
-                    themeCardClass={themeCardClass}
-                    themeInputBg={themeInputBg}
-                    themeBorderClass={themeBorderClass}
-                    showToast={showToast}
-                  />
+                  <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="px-4">
+                    <DeadlinesScreen
+                      deadlines={deadlines}
+                      setDeadlines={setDeadlines}
+                      applications={applications}
+                      setSelectedApp={setSelectedApp}
+                      setCurrentScreen={setCurrentScreen}
+                      simulateDatabaseFailure={simulateDatabaseFailure}
+                      isDark={isDark}
+                      themeCardClass={themeCardClass}
+                      themeInputBg={themeInputBg}
+                      themeBorderClass={themeBorderClass}
+                      showToast={showToast}
+                    />
+                  </motion.div>
                 )}
 
                 {currentScreen === "jobs" && (
-                  <JobsScreen
-                    applications={applications}
-                    setApplications={setApplications}
-                    deadlines={deadlines}
-                    setDeadlines={setDeadlines}
-                    savedOpportunities={savedOpportunities}
-                    setSavedOpportunities={setSavedOpportunities}
-                    recentlyVisitedPortals={recentlyVisitedPortals}
-                    setRecentlyVisitedPortals={setRecentlyVisitedPortals}
-                    jobSearchQuery={jobSearchQuery}
-                    setJobSearchQuery={setJobSearchQuery}
-                    jobPortalFilter={jobPortalFilter}
-                    setJobPortalFilter={setJobPortalFilter}
-                    jobCategoryFilter={jobCategoryFilter}
-                    setJobCategoryFilter={setJobCategoryFilter}
-                    jobBookmarkFilter={jobBookmarkFilter}
-                    setJobBookmarkFilter={setJobBookmarkFilter}
-                    jobAppliedFilter={jobAppliedFilter}
-                    setJobAppliedFilter={setJobAppliedFilter}
-                    jobSortOption={jobSortOption}
-                    setJobSortOption={setJobSortOption}
-                    selectedOpportunityId={selectedOpportunityId}
-                    setSelectedOpportunityId={setSelectedOpportunityId}
-                    activeJobCategoryTab={activeJobCategoryTab}
-                    setActiveJobCategoryTab={setActiveJobCategoryTab}
-                    formJobCompany={formJobCompany}
-                    setFormJobCompany={setFormJobCompany}
-                    formJobRole={formJobRole}
-                    setFormJobRole={setFormJobRole}
-                    formJobPortal={formJobPortal}
-                    setFormJobPortal={setFormJobPortal}
-                    formJobUrl={formJobUrl}
-                    setFormJobUrl={setFormJobUrl}
-                    formJobLocation={formJobLocation}
-                    setFormJobLocation={setFormJobLocation}
-                    formJobDeadline={formJobDeadline}
-                    setFormJobDeadline={setFormJobDeadline}
-                    formJobNotes={formJobNotes}
-                    setFormJobNotes={setFormJobNotes}
-                    formJobCategory={formJobCategory}
-                    setFormJobCategory={setFormJobCategory}
-                    formJobBookmarked={formJobBookmarked}
-                    setFormJobBookmarked={setFormJobBookmarked}
-                    isLoadingJobs={isLoadingJobs}
-                    setIsLoadingJobs={setIsLoadingJobs}
-                    jobPortalSubTab={jobPortalSubTab}
-                    setJobPortalSubTab={setJobPortalSubTab}
-                    aiCaptureUrl={aiCaptureUrl}
-                    setAiCaptureUrl={setAiCaptureUrl}
-                    aiCaptureOutcome={aiCaptureOutcome}
-                    setAiCaptureOutcome={setAiCaptureOutcome}
-                    isAiCapturing={isAiCapturing}
-                    setIsAiCapturing={setIsAiCapturing}
-                    aiCaptureStep={aiCaptureStep}
-                    setAiCaptureStep={setAiCaptureStep}
-                    aiCaptureError={aiCaptureError}
-                    setAiCaptureError={setAiCaptureError}
-                    reviewCompany={reviewCompany}
-                    setReviewCompany={setReviewCompany}
-                    reviewRole={reviewRole}
-                    setReviewRole={setReviewRole}
-                    reviewEmploymentType={reviewEmploymentType}
-                    setReviewEmploymentType={setReviewEmploymentType}
-                    reviewLocation={reviewLocation}
-                    setReviewLocation={setReviewLocation}
-                    reviewSalary={reviewSalary}
-                    setReviewSalary={setReviewSalary}
-                    reviewDeadline={reviewDeadline}
-                    setReviewDeadline={setReviewDeadline}
-                    reviewExperience={reviewExperience}
-                    setReviewExperience={setReviewExperience}
-                    reviewEligibility={reviewEligibility}
-                    setReviewEligibility={setReviewEligibility}
-                    reviewRequiredSkills={reviewRequiredSkills}
-                    setReviewRequiredSkills={setReviewRequiredSkills}
-                    reviewPreferredSkills={reviewPreferredSkills}
-                    setReviewPreferredSkills={setReviewPreferredSkills}
-                    reviewSummary={reviewSummary}
-                    setReviewSummary={setReviewSummary}
-                    reviewPortal={reviewPortal}
-                    setReviewPortal={setReviewPortal}
-                    reviewUrl={reviewUrl}
-                    setReviewUrl={setReviewUrl}
-                    reviewCreateDeadline={reviewCreateDeadline}
-                    setReviewCreateDeadline={setReviewCreateDeadline}
-                    newRequiredSkillInput={newRequiredSkillInput}
-                    setNewRequiredSkillInput={setNewRequiredSkillInput}
-                    newPreferredSkillInput={newPreferredSkillInput}
-                    setNewPreferredSkillInput={setNewPreferredSkillInput}
-                    reviewConfidence={reviewConfidence}
-                    setReviewConfidence={setReviewConfidence}
-                    aiCaptureHistory={aiCaptureHistory}
-                    setAiCaptureHistory={setAiCaptureHistory}
-                    simulateNetworkFailure={simulateNetworkFailure}
-                    setSimulateNetworkFailure={setSimulateNetworkFailure}
-                    isDark={isDark}
-                    themeCardClass={themeCardClass}
-                    themeInputBg={themeInputBg}
-                    themeBorderClass={themeBorderClass}
-                    showToast={showToast}
-                  />
+                  <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="px-4">
+                    <JobsScreen
+                      applications={applications}
+                      setApplications={setApplications}
+                      deadlines={deadlines}
+                      setDeadlines={setDeadlines}
+                      savedOpportunities={savedOpportunities}
+                      setSavedOpportunities={setSavedOpportunities}
+                      recentlyVisitedPortals={recentlyVisitedPortals}
+                      setRecentlyVisitedPortals={setRecentlyVisitedPortals}
+                      jobSearchQuery={jobSearchQuery}
+                      setJobSearchQuery={setJobSearchQuery}
+                      jobPortalFilter={jobPortalFilter}
+                      setJobPortalFilter={setJobPortalFilter}
+                      jobCategoryFilter={jobCategoryFilter}
+                      setJobCategoryFilter={setJobCategoryFilter}
+                      jobBookmarkFilter={jobBookmarkFilter}
+                      setJobBookmarkFilter={setJobBookmarkFilter}
+                      jobAppliedFilter={jobAppliedFilter}
+                      setJobAppliedFilter={setJobAppliedFilter}
+                      jobSortOption={jobSortOption}
+                      setJobSortOption={setJobSortOption}
+                      selectedOpportunityId={selectedOpportunityId}
+                      setSelectedOpportunityId={setSelectedOpportunityId}
+                      activeJobCategoryTab={activeJobCategoryTab}
+                      setActiveJobCategoryTab={setActiveJobCategoryTab}
+                      formJobCompany={formJobCompany}
+                      setFormJobCompany={setFormJobCompany}
+                      formJobRole={formJobRole}
+                      setFormJobRole={setFormJobRole}
+                      formJobPortal={formJobPortal}
+                      setFormJobPortal={setFormJobPortal}
+                      formJobUrl={formJobUrl}
+                      setFormJobUrl={setFormJobUrl}
+                      formJobLocation={formJobLocation}
+                      setFormJobLocation={setFormJobLocation}
+                      formJobDeadline={formJobDeadline}
+                      setFormJobDeadline={setFormJobDeadline}
+                      formJobNotes={formJobNotes}
+                      setFormJobNotes={setFormJobNotes}
+                      formJobCategory={formJobCategory}
+                      setFormJobCategory={setFormJobCategory}
+                      formJobBookmarked={formJobBookmarked}
+                      setFormJobBookmarked={setFormJobBookmarked}
+                      isLoadingJobs={isLoadingJobs}
+                      setIsLoadingJobs={setIsLoadingJobs}
+                      jobPortalSubTab={jobPortalSubTab}
+                      setJobPortalSubTab={setJobPortalSubTab}
+                      aiCaptureUrl={aiCaptureUrl}
+                      setAiCaptureUrl={setAiCaptureUrl}
+                      aiCaptureOutcome={aiCaptureOutcome}
+                      setAiCaptureOutcome={setAiCaptureOutcome}
+                      isAiCapturing={isAiCapturing}
+                      setIsAiCapturing={setIsAiCapturing}
+                      aiCaptureStep={aiCaptureStep}
+                      setAiCaptureStep={setAiCaptureStep}
+                      aiCaptureError={aiCaptureError}
+                      setAiCaptureError={setAiCaptureError}
+                      reviewCompany={reviewCompany}
+                      setReviewCompany={setReviewCompany}
+                      reviewRole={reviewRole}
+                      setReviewRole={setReviewRole}
+                      reviewEmploymentType={reviewEmploymentType}
+                      setReviewEmploymentType={setReviewEmploymentType}
+                      reviewLocation={reviewLocation}
+                      setReviewLocation={setReviewLocation}
+                      reviewSalary={reviewSalary}
+                      setReviewSalary={setReviewSalary}
+                      reviewDeadline={reviewDeadline}
+                      setReviewDeadline={setReviewDeadline}
+                      reviewExperience={reviewExperience}
+                      setReviewExperience={setReviewExperience}
+                      reviewEligibility={reviewEligibility}
+                      setReviewEligibility={setReviewEligibility}
+                      reviewRequiredSkills={reviewRequiredSkills}
+                      setReviewRequiredSkills={setReviewRequiredSkills}
+                      reviewPreferredSkills={reviewPreferredSkills}
+                      setReviewPreferredSkills={setReviewPreferredSkills}
+                      reviewSummary={reviewSummary}
+                      setReviewSummary={setReviewSummary}
+                      reviewPortal={reviewPortal}
+                      setReviewPortal={setReviewPortal}
+                      reviewUrl={reviewUrl}
+                      setReviewUrl={setReviewUrl}
+                      reviewCreateDeadline={reviewCreateDeadline}
+                      setReviewCreateDeadline={setReviewCreateDeadline}
+                      newRequiredSkillInput={newRequiredSkillInput}
+                      setNewRequiredSkillInput={setNewRequiredSkillInput}
+                      newPreferredSkillInput={newPreferredSkillInput}
+                      setNewPreferredSkillInput={setNewPreferredSkillInput}
+                      reviewConfidence={reviewConfidence}
+                      setReviewConfidence={setReviewConfidence}
+                      aiCaptureHistory={aiCaptureHistory}
+                      setAiCaptureHistory={setAiCaptureHistory}
+                      simulateNetworkFailure={simulateNetworkFailure}
+                      setSimulateNetworkFailure={setSimulateNetworkFailure}
+                      isDark={isDark}
+                      themeCardClass={themeCardClass}
+                      themeInputBg={themeInputBg}
+                      themeBorderClass={themeBorderClass}
+                      showToast={showToast}
+                    />
+                  </motion.div>
                 )}
 
+
                 {currentScreen === "settings" && (
-                  <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
+                  <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-4 px-4">
                     <SettingsScreen
                       currentScreen={currentScreen}
                       setCurrentScreen={setCurrentScreen}
@@ -1818,55 +1793,49 @@ export default function MobileEmulator({
               </div>
 
               <motion.div 
-                initial={{ opacity: 0, y: 12 }}
+                initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.45, ease: [0.16, 1, 0.3, 1] }}
-                className={`h-[58px] border px-4 flex items-center justify-between z-20 mx-5 mb-4 mt-0.5 rounded-[28px] transition-all duration-200 ${
+                transition={{ duration: 0.4, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+                className={`absolute bottom-5 left-4 right-4 h-[56px] rounded-full border px-4 flex items-center justify-around z-40 backdrop-blur-2xl transition-all duration-200 shadow-lg ${
                   isDark 
-                    ? "bg-[#18181C] border-white/[0.08] shadow-[0_12px_30px_rgba(0,0,0,0.5)]" 
-                    : "bg-white border-zinc-200/80 shadow-[0_12px_30px_rgba(0,0,0,0.06)]"
+                    ? "bg-[#09090B]/90 border-white/[0.08] shadow-[0_12px_32px_rgba(0,0,0,0.4)]" 
+                    : "bg-white/90 border-zinc-200/80 shadow-[0_12px_32px_rgba(0,0,0,0.06)]"
                 }`}
               >
                 {[
-                  { id: "dashboard", icon: <Home size={16} strokeWidth={1.5} />, label: "Home" },
-                  { id: "tracker", icon: <Briefcase size={16} strokeWidth={1.5} />, label: "Tracker" },
-                  { id: "vault", icon: <User size={16} strokeWidth={1.5} />, label: "Profile" },
-                  { id: "deadlines", icon: <Calendar size={16} strokeWidth={1.5} />, label: "Today" },
-                  { id: "jobs", icon: <Search size={16} strokeWidth={1.5} />, label: "Opportunities" }
+                  { id: "dashboard", icon: <Home size={19} strokeWidth={2} />, label: "Home" },
+                  { id: "tracker", icon: <Briefcase size={19} strokeWidth={2} />, label: "Tracker" },
+                  { id: "deadlines", icon: <Calendar size={19} strokeWidth={2} />, label: "Today" },
+                  { id: "jobs", icon: <Search size={19} strokeWidth={2} />, label: "Jobs" },
+                  { id: "vault", icon: <User size={19} strokeWidth={2} />, label: "Profile" },
                 ].map(tab => {
                   const isActive = currentScreen === tab.id;
                   return (
                     <motion.button
                       key={tab.id}
-                      onClick={() => {
-                        setCurrentScreen(tab.id);
-                      }}
-                      whileTap={{ scale: 0.95 }}
+                      onClick={() => setCurrentScreen(tab.id)}
+                      whileTap={{ scale: 0.92 }}
                       transition={{ duration: 0.12, ease: "easeOut" }}
-                      className="flex flex-col items-center justify-center flex-1 h-full cursor-pointer py-1"
+                      className="flex items-center justify-center w-11 h-11 cursor-pointer relative"
                     >
-                      <motion.div 
-                        animate={{ y: isActive ? -1 : 0 }}
-                        transition={{ duration: 0.2, ease: "easeOut" }}
-                        className={`flex items-center justify-center transition-colors duration-200 ${
+                      <div className="w-9.5 h-9.5 rounded-full flex items-center justify-center relative select-none">
+                        {isActive && (
+                          <motion.div
+                            layoutId="activeTabCircle"
+                            className={`absolute inset-0 rounded-full -z-10 ${
+                              isDark ? "bg-blue-500/15 border border-blue-500/20" : "bg-blue-600 shadow-sm"
+                            }`}
+                            transition={{ type: "spring", stiffness: 450, damping: 30 }}
+                          />
+                        )}
+                        <div className={`transition-colors duration-200 ${
                           isActive 
-                            ? "text-blue-500" 
-                            : isDark ? "text-zinc-500 hover:text-zinc-400" : "text-zinc-400 hover:text-zinc-600"
-                        }`}
-                      >
-                        {tab.icon}
-                      </motion.div>
-                      <motion.span 
-                        animate={{ opacity: isActive ? 1 : 0.7 }}
-                        transition={{ duration: 0.2 }}
-                        className={`text-[10px] font-medium tracking-tight mt-[3px] transition-colors duration-200 ${
-                          isActive 
-                            ? isDark ? "text-white font-semibold" : "text-zinc-950 font-semibold"
-                            : isDark ? "text-zinc-500" : "text-zinc-400"
-                        }`}
-                      >
-                        {tab.label}
-                      </motion.span>
+                            ? isDark ? "text-blue-400" : "text-white" 
+                            : isDark ? "text-zinc-550 hover:text-zinc-350" : "text-zinc-400 hover:text-zinc-700"
+                        }`}>
+                          {tab.icon}
+                        </div>
+                      </div>
                     </motion.button>
                   );
                 })}
@@ -1907,80 +1876,80 @@ export default function MobileEmulator({
                 animate={{ y: 0 }}
                 exit={{ y: 300 }}
                 transition={{ type: "spring", damping: 25, stiffness: 220 }}
-                className={`p-5 rounded-t-2xl border-t ${themeCardClass} z-[98] space-y-4`}
+                className={`p-5 pb-[calc(20px+env(safe-area-inset-bottom,0px))] rounded-t-2xl border-t ${themeCardClass} z-[98] space-y-4`}
               >
                 <div className="w-10 h-1 bg-zinc-700/50 rounded-full mx-auto" />
 
                 {activeBottomSheet.type === "add_app" && (
-                  <form onSubmit={handleAddApplication} className="space-y-2.5 max-h-[480px] overflow-y-auto pr-1">
-                    <h4 className="text-xs font-bold font-mono text-blue-400 uppercase tracking-wider">Catalog Application</h4>
+                  <form onSubmit={handleAddApplication} className="space-y-4.5 max-h-[480px] overflow-y-auto pr-1">
+                    <h4 className="text-sm font-bold text-blue-400 uppercase tracking-wider">Catalog Application</h4>
                     
-                    <div className="grid grid-cols-2 gap-2">
+                    <div className="grid grid-cols-1 min-[360px]:grid-cols-2 gap-3.5">
                       <div>
-                        <label className="text-[8px] font-bold text-zinc-500 uppercase tracking-wider font-mono">Company *</label>
+                        <label className="text-xs font-bold text-zinc-500 uppercase tracking-wider">Company *</label>
                         <input
                           type="text"
                           required
                           placeholder="e.g. Stripe"
                           value={newCompany}
                           onChange={(e) => setNewCompany(e.target.value)}
-                          className={`w-full h-8 px-2 mt-0.5 rounded border text-[11px] outline-none ${themeInputBg}`}
+                          className={`w-full h-12 px-3.5 mt-1.5 rounded-xl text-sm outline-none border transition-all duration-150 ${themeInputBg}`}
                         />
                       </div>
                       <div>
-                        <label className="text-[8px] font-bold text-zinc-500 uppercase tracking-wider font-mono">Role Title *</label>
+                        <label className="text-xs font-bold text-zinc-500 uppercase tracking-wider">Role Title *</label>
                         <input
                           type="text"
                           required
                           placeholder="e.g. Architect"
                           value={newRole}
                           onChange={(e) => setNewRole(e.target.value)}
-                          className={`w-full h-8 px-2 mt-0.5 rounded border text-[11px] outline-none ${themeInputBg}`}
+                          className={`w-full h-12 px-3.5 mt-1.5 rounded-xl text-sm outline-none border transition-all duration-150 ${themeInputBg}`}
                         />
                       </div>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-2">
+                    <div className="grid grid-cols-1 min-[360px]:grid-cols-2 gap-3.5">
                       <div>
-                        <label className="text-[8px] font-bold text-zinc-500 uppercase tracking-wider font-mono">Employment Type</label>
+                        <label className="text-xs font-bold text-zinc-500 uppercase tracking-wider">Employment Type</label>
                         <select
                           value={newIsInternship ? "Internship" : "Full-Time"}
                           onChange={(e) => setNewIsInternship(e.target.value === "Internship")}
-                          className={`w-full h-8 px-1.5 mt-0.5 rounded border text-[11px] outline-none ${themeInputBg}`}
+                          className={`w-full h-12 px-3.5 mt-1.5 rounded-xl text-sm outline-none border transition-all duration-150 ${themeInputBg}`}
                         >
                           <option value="Internship">Internship</option>
                           <option value="Full-Time">Full-Time</option>
                         </select>
                       </div>
                       <div>
-                        <label className="text-[8px] font-bold text-zinc-500 uppercase tracking-wider font-mono">Stipend / CTC</label>
+                        <label className="text-xs font-bold text-zinc-500 uppercase tracking-wider">Stipend / CTC</label>
                         <input
                           type="text"
                           placeholder="e.g. 9500 or 150000"
                           value={newCompensation}
                           onChange={(e) => setNewCompensation(e.target.value)}
-                          className={`w-full h-8 px-2 mt-0.5 rounded border text-[11px] outline-none ${themeInputBg}`}
+                          className={`w-full h-12 px-3.5 mt-1.5 rounded-xl text-sm outline-none border transition-all duration-150 ${themeInputBg}`}
                         />
                       </div>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-2">
+                    <div className="grid grid-cols-1 min-[360px]:grid-cols-2 gap-3.5">
                       <div>
-                        <label className="text-[8px] font-bold text-zinc-500 uppercase tracking-wider font-mono">Physical Location</label>
+                        <label className="text-xs font-bold text-zinc-500 uppercase tracking-wider">Physical Location</label>
                         <input
                           type="text"
                           placeholder="e.g. Remote"
                           value={newLocation}
                           onChange={(e) => setNewLocation(e.target.value)}
-                          className={`w-full h-8 px-2 mt-0.5 rounded border text-[11px] outline-none ${themeInputBg}`}
+                          className={`w-full h-12 px-3.5 mt-1.5 rounded-xl text-sm outline-none border transition-all duration-150 ${themeInputBg}`}
                         />
                       </div>
                       <div>
-                        <label className="text-[8px] font-bold text-zinc-500 uppercase tracking-wider font-mono">Acquisition Source</label>
+                        <label className="text-xs font-bold text-zinc-500 uppercase tracking-wider">Acquisition Source</label>
                         <select
                           value={newSource}
                           onChange={(e) => setNewSource(e.target.value)}
-                          className={`w-full h-8 px-1.5 mt-0.5 rounded border text-[11px] outline-none ${themeInputBg}`}
+                          className={`w-full h-12 px-3.5 mt-1.5 rounded-xl text-sm outline-none border transition-all duration-150 ${themeInputBg}`}
                         >
                           {["LinkedIn", "Referral", "University Portal", "Career Fair", "Other"].map(src => (
                             <option key={src} value={src}>{src}</option>
@@ -1989,45 +1958,45 @@ export default function MobileEmulator({
                       </div>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-2">
+                    <div className="grid grid-cols-1 min-[360px]:grid-cols-2 gap-3.5">
                       <div>
-                        <label className="text-[8px] font-bold text-zinc-500 uppercase tracking-wider font-mono">Applied Date</label>
+                        <label className="text-xs font-bold text-zinc-500 uppercase tracking-wider">Applied Date</label>
                         <input
                           type="date"
                           value={newAppliedDate}
                           onChange={(e) => setNewAppliedDate(e.target.value)}
-                          className={`w-full h-8 px-2 mt-0.5 rounded border text-[11px] outline-none ${themeInputBg}`}
+                          className={`w-full h-12 px-3.5 mt-1.5 rounded-xl text-sm outline-none border transition-all duration-150 ${themeInputBg}`}
                         />
                       </div>
                       <div>
-                        <label className="text-[8px] font-bold text-zinc-500 uppercase tracking-wider font-mono">OA Cutoff (Optional)</label>
+                        <label className="text-xs font-bold text-zinc-500 uppercase tracking-wider">OA Cutoff (Optional)</label>
                         <input
                           type="date"
                           value={newDeadline}
                           onChange={(e) => setNewDeadline(e.target.value)}
-                          className={`w-full h-8 px-2 mt-0.5 rounded border text-[11px] outline-none ${themeInputBg}`}
+                          className={`w-full h-12 px-3.5 mt-1.5 rounded-xl text-sm outline-none border transition-all duration-150 ${themeInputBg}`}
                         />
                       </div>
                     </div>
 
                     <div>
-                      <label className="text-[8px] font-bold text-zinc-500 uppercase tracking-wider font-mono">Listing Link (Job URL)</label>
+                      <label className="text-xs font-bold text-zinc-500 uppercase tracking-wider">Listing Link (Job URL)</label>
                       <input
                         type="url"
                         placeholder="https://..."
                         value={newJobUrl}
                         onChange={(e) => setNewJobUrl(e.target.value)}
-                        className={`w-full h-8 px-2 mt-0.5 rounded border text-[11px] outline-none ${themeInputBg}`}
+                        className={`w-full h-12 px-3.5 mt-1.5 rounded-xl text-sm outline-none border transition-all duration-150 ${themeInputBg}`}
                       />
                     </div>
 
-                    <div className="grid grid-cols-2 gap-2">
+                    <div className="grid grid-cols-2 gap-3.5">
                       <div className="col-span-2">
-                        <label className="text-[8px] font-bold text-zinc-500 uppercase tracking-wider font-mono">Pipeline Stage</label>
+                        <label className="text-xs font-bold text-zinc-500 uppercase tracking-wider">Pipeline Stage</label>
                         <select
                           value={newStatus}
                           onChange={(e) => setNewStatus(e.target.value)}
-                          className={`w-full h-8 px-1.5 mt-0.5 rounded border text-[11px] outline-none ${themeInputBg}`}
+                          className={`w-full h-12 px-3.5 mt-1.5 rounded-xl text-sm outline-none border transition-all duration-150 ${themeInputBg}`}
                         >
                           {["Wishlist", "Planning", "Applied", "OA Scheduled", "OA Completed", "Interview", "Offer", "Rejected", "Not Eligible"].map(s => (
                             <option key={s} value={s}>{s}</option>
@@ -2037,26 +2006,26 @@ export default function MobileEmulator({
                     </div>
 
                     <div>
-                      <label className="text-[8px] font-bold text-zinc-500 uppercase tracking-wider font-mono">Preparation Notes</label>
+                      <label className="text-xs font-bold text-zinc-500 uppercase tracking-wider">Preparation Notes</label>
                       <textarea
                         placeholder="Key milestones, recruiter contact details..."
                         value={newNotes}
                         onChange={(e) => setNewNotes(e.target.value)}
-                        className={`w-full h-12 p-2 mt-0.5 rounded border text-[11px] outline-none resize-none ${themeInputBg}`}
+                        className={`w-full h-24 p-3.5 mt-1.5 rounded-xl text-sm outline-none resize-none border transition-all duration-150 ${themeInputBg}`}
                       />
                     </div>
 
-                    <div className="flex space-x-2 pt-2">
+                    <div className="flex space-x-3 pt-2.5">
                       <button 
                         type="button" 
                         onClick={() => setActiveBottomSheet(null)}
-                        className={`flex-1 h-9 rounded border text-xs font-semibold hover:bg-zinc-800/10 dark:hover:bg-zinc-800/40 ${themeBorderClass}`}
+                        className={`flex-1 h-12 rounded-xl border text-sm font-bold hover:bg-zinc-800/10 dark:hover:bg-zinc-800/40 transition-all duration-150 ${themeBorderClass}`}
                       >
                         Cancel
                       </button>
                       <button 
                         type="submit"
-                        className="flex-1 h-9 rounded bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold"
+                        className="flex-1 h-12 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-sm font-bold transition-all duration-150"
                       >
                         Catalog
                       </button>
@@ -2065,71 +2034,71 @@ export default function MobileEmulator({
                 )}
 
                 {activeBottomSheet.type === "edit_app" && (
-                  <form onSubmit={handleEditApplication} className="space-y-2.5 max-h-[480px] overflow-y-auto pr-1">
-                    <h4 className="text-xs font-bold font-mono text-purple-400 uppercase tracking-wider">Modify Application</h4>
+                  <form onSubmit={handleEditApplication} className="space-y-4.5 max-h-[480px] overflow-y-auto pr-1">
+                    <h4 className="text-sm font-bold text-purple-400 uppercase tracking-wider">Modify Application</h4>
                     
-                    <div className="grid grid-cols-2 gap-2">
+                    <div className="grid grid-cols-1 min-[360px]:grid-cols-2 gap-3.5">
                       <div>
-                        <label className="text-[8px] font-bold text-zinc-500 uppercase tracking-wider font-mono">Company *</label>
+                        <label className="text-xs font-bold text-zinc-500 uppercase tracking-wider">Company *</label>
                         <input
                           type="text"
                           required
                           value={editCompany}
                           onChange={(e) => setEditCompany(e.target.value)}
-                          className={`w-full h-8 px-2 mt-0.5 rounded border text-[11px] outline-none ${themeInputBg}`}
+                          className={`w-full h-12 px-3.5 mt-1.5 rounded-xl text-sm outline-none border transition-all duration-150 ${themeInputBg}`}
                         />
                       </div>
                       <div>
-                        <label className="text-[8px] font-bold text-zinc-500 uppercase tracking-wider font-mono">Role Title *</label>
+                        <label className="text-xs font-bold text-zinc-500 uppercase tracking-wider">Role Title *</label>
                         <input
                           type="text"
                           required
                           value={editRole}
                           onChange={(e) => setEditRole(e.target.value)}
-                          className={`w-full h-8 px-2 mt-0.5 rounded border text-[11px] outline-none ${themeInputBg}`}
+                          className={`w-full h-12 px-3.5 mt-1.5 rounded-xl text-sm outline-none border transition-all duration-150 ${themeInputBg}`}
                         />
                       </div>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-2">
+                    <div className="grid grid-cols-1 min-[360px]:grid-cols-2 gap-3.5">
                       <div>
-                        <label className="text-[8px] font-bold text-zinc-500 uppercase tracking-wider font-mono">Employment Type</label>
+                        <label className="text-xs font-bold text-zinc-500 uppercase tracking-wider">Employment Type</label>
                         <select
                           value={editIsInternship ? "Internship" : "Full-Time"}
                           onChange={(e) => setEditIsInternship(e.target.value === "Internship")}
-                          className={`w-full h-8 px-1.5 mt-0.5 rounded border text-[11px] outline-none ${themeInputBg}`}
+                          className={`w-full h-12 px-3.5 mt-1.5 rounded-xl text-sm outline-none border transition-all duration-150 ${themeInputBg}`}
                         >
                           <option value="Internship">Internship</option>
                           <option value="Full-Time">Full-Time</option>
                         </select>
                       </div>
                       <div>
-                        <label className="text-[8px] font-bold text-zinc-500 uppercase tracking-wider font-mono">Stipend / CTC</label>
+                        <label className="text-xs font-bold text-zinc-500 uppercase tracking-wider">Stipend / CTC</label>
                         <input
                           type="text"
                           value={editCompensation}
                           onChange={(e) => setEditCompensation(e.target.value)}
-                          className={`w-full h-8 px-2 mt-0.5 rounded border text-[11px] outline-none ${themeInputBg}`}
+                          className={`w-full h-12 px-3.5 mt-1.5 rounded-xl text-sm outline-none border transition-all duration-150 ${themeInputBg}`}
                         />
                       </div>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-2">
+                    <div className="grid grid-cols-1 min-[360px]:grid-cols-2 gap-3.5">
                       <div>
-                        <label className="text-[8px] font-bold text-zinc-500 uppercase tracking-wider font-mono">Physical Location</label>
+                        <label className="text-xs font-bold text-zinc-500 uppercase tracking-wider">Physical Location</label>
                         <input
                           type="text"
                           value={editLocation}
                           onChange={(e) => setEditLocation(e.target.value)}
-                          className={`w-full h-8 px-2 mt-0.5 rounded border text-[11px] outline-none ${themeInputBg}`}
+                          className={`w-full h-12 px-3.5 mt-1.5 rounded-xl text-sm outline-none border transition-all duration-150 ${themeInputBg}`}
                         />
                       </div>
                       <div>
-                        <label className="text-[8px] font-bold text-zinc-500 uppercase tracking-wider font-mono">Acquisition Source</label>
+                        <label className="text-xs font-bold text-zinc-500 uppercase tracking-wider">Acquisition Source</label>
                         <select
                           value={editSource}
                           onChange={(e) => setEditSource(e.target.value)}
-                          className={`w-full h-8 px-1.5 mt-0.5 rounded border text-[11px] outline-none ${themeInputBg}`}
+                          className={`w-full h-12 px-3.5 mt-1.5 rounded-xl text-sm outline-none border transition-all duration-150 ${themeInputBg}`}
                         >
                           {["LinkedIn", "Referral", "University Portal", "Career Fair", "Other"].map(src => (
                             <option key={src} value={src}>{src}</option>
@@ -2138,44 +2107,44 @@ export default function MobileEmulator({
                       </div>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-2">
+                    <div className="grid grid-cols-1 min-[360px]:grid-cols-2 gap-3.5">
                       <div>
-                        <label className="text-[8px] font-bold text-zinc-500 uppercase tracking-wider font-mono">Applied Date</label>
+                        <label className="text-xs font-bold text-zinc-500 uppercase tracking-wider">Applied Date</label>
                         <input
                           type="date"
                           value={editAppliedDate}
                           onChange={(e) => setEditAppliedDate(e.target.value)}
-                          className={`w-full h-8 px-2 mt-0.5 rounded border text-[11px] outline-none ${themeInputBg}`}
+                          className={`w-full h-12 px-3.5 mt-1.5 rounded-xl text-sm outline-none border transition-all duration-150 ${themeInputBg}`}
                         />
                       </div>
                       <div>
-                        <label className="text-[8px] font-bold text-zinc-500 uppercase tracking-wider font-mono">OA Cutoff (Optional)</label>
+                        <label className="text-xs font-bold text-zinc-500 uppercase tracking-wider">OA Cutoff (Optional)</label>
                         <input
                           type="date"
                           value={editDeadline}
                           onChange={(e) => setEditDeadline(e.target.value)}
-                          className={`w-full h-8 px-2 mt-0.5 rounded border text-[11px] outline-none ${themeInputBg}`}
+                          className={`w-full h-12 px-3.5 mt-1.5 rounded-xl text-sm outline-none border transition-all duration-150 ${themeInputBg}`}
                         />
                       </div>
                     </div>
 
                     <div>
-                      <label className="text-[8px] font-bold text-zinc-500 uppercase tracking-wider font-mono">Listing Link (Job URL)</label>
+                      <label className="text-xs font-bold text-zinc-500 uppercase tracking-wider">Listing Link (Job URL)</label>
                       <input
                         type="url"
                         value={editJobUrl}
                         onChange={(e) => setEditJobUrl(e.target.value)}
-                        className={`w-full h-8 px-2 mt-0.5 rounded border text-[11px] outline-none ${themeInputBg}`}
+                        className={`w-full h-12 px-3.5 mt-1.5 rounded-xl text-sm outline-none border transition-all duration-150 ${themeInputBg}`}
                       />
                     </div>
 
-                    <div className="grid grid-cols-2 gap-2">
+                    <div className="grid grid-cols-1 min-[360px]:grid-cols-2 gap-3.5">
                       <div className="col-span-2">
-                        <label className="text-[8px] font-bold text-zinc-500 uppercase tracking-wider font-mono">Pipeline Stage</label>
+                        <label className="text-xs font-bold text-zinc-500 uppercase tracking-wider">Pipeline Stage</label>
                         <select
                           value={editStatus}
                           onChange={(e) => setEditStatus(e.target.value)}
-                          className={`w-full h-8 px-1.5 mt-0.5 rounded border text-[11px] outline-none ${themeInputBg}`}
+                          className={`w-full h-12 px-3.5 mt-1.5 rounded-xl text-sm outline-none border transition-all duration-150 ${themeInputBg}`}
                         >
                           {["Wishlist", "Planning", "Applied", "OA Scheduled", "OA Completed", "Interview", "Offer", "Rejected", "Not Eligible"].map(s => (
                             <option key={s} value={s}>{s}</option>
@@ -2185,25 +2154,25 @@ export default function MobileEmulator({
                     </div>
 
                     <div>
-                      <label className="text-[8px] font-bold text-zinc-500 uppercase tracking-wider font-mono">Preparation Notes</label>
+                      <label className="text-xs font-bold text-zinc-500 uppercase tracking-wider">Preparation Notes</label>
                       <textarea
                         value={editNotes}
                         onChange={(e) => setEditNotes(e.target.value)}
-                        className={`w-full h-12 p-2 mt-0.5 rounded border text-[11px] outline-none resize-none ${themeInputBg}`}
+                        className={`w-full h-24 p-3.5 mt-1.5 rounded-xl text-sm outline-none resize-none border transition-all duration-150 ${themeInputBg}`}
                       />
                     </div>
 
-                    <div className="flex space-x-2 pt-2">
+                    <div className="flex space-x-3 pt-2.5">
                       <button 
                         type="button" 
                         onClick={() => setActiveBottomSheet(null)}
-                        className={`flex-1 h-9 rounded border text-xs font-semibold hover:bg-zinc-800/10 dark:hover:bg-zinc-800/40 ${themeBorderClass}`}
+                        className={`flex-1 h-12 rounded-xl border text-sm font-bold hover:bg-zinc-800/10 dark:hover:bg-zinc-800/40 transition-all duration-150 ${themeBorderClass}`}
                       >
                         Cancel
                       </button>
                       <button 
                         type="submit"
-                        className="flex-1 h-9 rounded bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold"
+                        className="flex-1 h-12 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-sm font-bold transition-all duration-150"
                       >
                         Commit Changes
                       </button>
@@ -2222,18 +2191,18 @@ export default function MobileEmulator({
                 initial={{ scale: 0.92, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 exit={{ scale: 0.92, opacity: 0 }}
-                className={`p-5 rounded-xl border ${themeCardClass} max-w-[280px] w-full space-y-3 text-center`}
+                className={`p-5 rounded-2xl border ${themeCardClass} max-w-[290px] w-full space-y-3.5 text-center`}
               >
-                <div className="w-9 h-9 rounded-full bg-red-500/10 text-red-500 flex items-center justify-center mx-auto">
-                  <Trash2 size={16} />
+                <div className="w-10 h-10 rounded-full bg-red-500/10 text-red-500 flex items-center justify-center mx-auto">
+                  <Trash2 size={18} />
                 </div>
-                <h4 className="text-xs font-bold">Purge System Record?</h4>
-                <p className="text-[11px] text-zinc-500 leading-tight">This operation is destructive and cannot be undone. Active listings will be permanently deleted.</p>
+                <h4 className="text-sm font-bold">Purge System Record?</h4>
+                <p className="text-xs text-zinc-500 leading-relaxed">This operation is destructive and cannot be undone. Active listings will be permanently deleted.</p>
                 
-                <div className="flex space-x-2 pt-2">
+                <div className="flex space-x-2 pt-2.5">
                   <button 
                     onClick={() => setActiveDialog(null)}
-                    className={`flex-1 h-8 rounded-lg border ${themeBorderClass} text-[10px] font-semibold hover:bg-zinc-800/10 dark:hover:bg-zinc-800/40`}
+                    className={`flex-1 h-10 rounded-xl border ${themeBorderClass} text-xs font-bold hover:bg-zinc-800/10 dark:hover:bg-zinc-800/40`}
                   >
                     Cancel
                   </button>
@@ -2242,7 +2211,7 @@ export default function MobileEmulator({
                       setActiveDialog(null);
                       showToast("Active placement session purged.", "info");
                     }}
-                    className="flex-1 h-8 rounded-lg bg-red-600 hover:bg-red-700 text-white text-[10px] font-bold"
+                    className="flex-1 h-10 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-bold"
                   >
                     Purge
                   </button>

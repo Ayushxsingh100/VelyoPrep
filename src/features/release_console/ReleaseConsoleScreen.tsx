@@ -151,16 +151,16 @@ export const ReleaseConsoleScreen: React.FC<ReleaseConsoleScreenProps> = ({
   }, []);
 
   return (
-    <div className={`space-y-4 pb-12 ${isLargeText ? 'text-lg' : 'text-xs'}`}>
+    <div className={`space-y-7 pb-14 ${isLargeText ? 'text-lg' : 'text-xs'}`}>
       <div className="flex items-center justify-between">
         <button 
           onClick={() => {
             setCurrentScreen("settings");
             showToast("Returned to Preferences", "info");
           }}
-          className="flex items-center text-[10px] font-bold text-zinc-500 uppercase tracking-wider hover:text-zinc-300"
+          className="flex items-center text-xs font-bold text-zinc-555 uppercase tracking-wider hover:text-zinc-300"
         >
-          <ArrowLeft size={12} className="mr-1" /> Preferences
+          <ArrowLeft size={14} className="mr-1" /> Preferences
         </button>
         <span className="px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 text-[8.5px] font-mono font-bold animate-pulse">
           V1.0.0-GOLD
@@ -168,20 +168,20 @@ export const ReleaseConsoleScreen: React.FC<ReleaseConsoleScreenProps> = ({
       </div>
 
       <div>
-        <h2 className="text-base font-black flex items-center tracking-tight">
-          <Shield size={16} className="text-emerald-500 mr-1.5" />
+        <h2 className="text-xl font-extrabold flex items-center tracking-tight">
+          <Shield size={20} className="text-emerald-500 mr-1.5" />
           Release Hardening Console
         </h2>
-        <p className="text-[10px] text-zinc-500 mt-0.5 font-mono">STAGE_QA_PRODUCTION_GATEWAY</p>
+        <p className="text-xs text-zinc-550 mt-1.5 font-mono">STAGE_QA_PRODUCTION_GATEWAY</p>
       </div>
 
-      <div className="flex space-x-1 border-b border-zinc-800/40 pb-2 overflow-x-auto whitespace-nowrap">
+      <div className="flex gap-2 border-b border-zinc-800/40 pb-3.5 overflow-x-auto whitespace-nowrap">
         {[
-          { id: "tests", label: "QA Test Runner", icon: <Play size={10} /> },
-          { id: "security", label: "Security Audit", icon: <Lock size={10} /> },
-          { id: "access", label: "Accessibility", icon: <Accessibility size={10} /> },
-          { id: "release", label: "Build Release", icon: <Cpu size={10} /> },
-          { id: "docs", label: "Docs Hub", icon: <BookOpen size={10} /> }
+          { id: "tests", label: "QA Test Runner", icon: <Play size={12} /> },
+          { id: "security", label: "Security Audit", icon: <Lock size={12} /> },
+          { id: "access", label: "Accessibility", icon: <Accessibility size={12} /> },
+          { id: "release", label: "Build Release", icon: <Cpu size={12} /> },
+          { id: "docs", label: "Docs Hub", icon: <BookOpen size={12} /> }
         ].map(t => (
           <button
             key={t.id}
@@ -189,10 +189,10 @@ export const ReleaseConsoleScreen: React.FC<ReleaseConsoleScreenProps> = ({
               setActiveTab(t.id as any);
               showToast(`QA console shifted to ${t.label}`, "info");
             }}
-            className={`px-2.5 py-1 rounded-lg text-[9.5px] font-bold flex items-center space-x-1 cursor-pointer transition-all ${
+            className={`px-3.5 py-2 rounded-xl text-xs font-bold flex items-center space-x-1.5 cursor-pointer transition-all ${
               activeTab === t.id 
                 ? "bg-emerald-600 text-white" 
-                : isDark ? "text-zinc-400 hover:text-zinc-200 bg-zinc-900/60" : "text-zinc-600 hover:text-zinc-900 bg-zinc-100"
+                : isDark ? "text-zinc-400 hover:text-zinc-200 bg-zinc-900/60" : "text-zinc-605 hover:text-zinc-900 bg-zinc-100"
             }`}
           >
             {t.icon}
@@ -208,22 +208,22 @@ export const ReleaseConsoleScreen: React.FC<ReleaseConsoleScreenProps> = ({
         </div>
       )}
 
-      <div className="space-y-4">
+      <div className="space-y-7">
         {activeTab === "tests" && (
-          <div className="space-y-3">
-            <div className={`p-3.5 rounded-xl border ${themeCardClass} space-y-2.5`}>
+          <div className="space-y-5.5">
+            <div className={`p-6 rounded-[20px] border ${themeCardClass} space-y-4`}>
               <div className="flex items-center justify-between">
                 <div>
                   <h4 className="text-xs font-bold">Automated QA Verification</h4>
-                  <p className="text-[9px] text-zinc-500">Run candidate models against V1.0 specifications</p>
+                  <p className="text-[9px] text-zinc-550">Run candidate models against V1.0 specifications</p>
                 </div>
                 <button 
                   onClick={runAutomatedTests}
                   disabled={isRunningTests}
-                  className={`px-3 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white text-[10px] font-bold flex items-center space-x-1.5 transition-all`}
+                  className={`h-9 px-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white text-xs font-semibold flex items-center space-x-1.5 transition-all`}
                 >
                   <RefreshCw size={10} className={isRunningTests ? "animate-spin" : ""} />
-                  <span>{isRunningTests ? "Simulating Headless VM..." : "Execute Test Suite"}</span>
+                  <span>{isRunningTests ? "Simulating Headless..." : "Execute Test Suite"}</span>
                 </button>
               </div>
 
@@ -241,15 +241,15 @@ export const ReleaseConsoleScreen: React.FC<ReleaseConsoleScreenProps> = ({
 
               <div className="grid grid-cols-1 gap-1.5">
                 {testSuite.map(test => (
-                  <div key={test.id} className="flex items-center justify-between p-2 rounded-lg bg-zinc-900/40 border border-zinc-800/60 text-[10.5px]">
-                    <div className="flex items-center space-x-2">
-                      <Code size={11} className="text-zinc-500" />
-                      <div className="flex flex-col">
+                  <div key={test.id} className="flex items-center justify-between p-2.5 rounded-xl bg-zinc-900/40 border border-zinc-805 text-xs">
+                    <div className="flex items-center space-x-2 text-left">
+                      <Code size={11} className="text-zinc-550" />
+                      <div className="flex flex-col text-left">
                         <span className="font-semibold text-zinc-200">{test.name}</span>
                         <span className="text-[8px] text-zinc-500 font-mono">{test.category}</span>
                       </div>
                     </div>
-
+ 
                     <div className="flex items-center space-x-2">
                       {test.status === "passed" && (
                         <>
@@ -268,24 +268,23 @@ export const ReleaseConsoleScreen: React.FC<ReleaseConsoleScreenProps> = ({
                 ))}
               </div>
             </div>
-
-            <div className="rounded-xl border border-zinc-800 bg-[#0A0A0C] p-3 space-y-1.5">
-              <div className="flex items-center justify-between border-b border-zinc-800/60 pb-1.5">
-                <div className="flex items-center space-x-1.5">
-                  <Terminal size={11} className="text-emerald-500" />
-                  <span className="text-[8.5px] font-bold text-zinc-400 font-mono">Headless Terminal Logs</span>
+            <div className="rounded-[20px] border border-zinc-800 bg-[#0A0A0C] p-6 space-y-3.5">
+              <div className="flex items-center justify-between border-b border-zinc-800/60 pb-3">
+                <div className="flex items-center space-x-2">
+                  <Terminal size={13} className="text-emerald-500" />
+                  <span className="text-xs font-bold text-zinc-400 font-mono">Headless Terminal Logs</span>
                 </div>
                 <button 
                   onClick={() => setTestLogs([])}
-                  className="text-[8px] text-zinc-500 hover:text-zinc-300 font-mono"
+                  className="text-[10px] text-zinc-550 hover:text-zinc-300 font-mono"
                 >
                   Clear Logs
                 </button>
               </div>
 
-              <div className="h-28 overflow-y-auto font-mono text-[9px] text-zinc-300 space-y-1 scrollbar-thin">
+              <div className="h-32 overflow-y-auto font-mono text-[10.5px] text-zinc-300 space-y-1 scrollbar-thin">
                 {testLogs.length === 0 ? (
-                  <p className="text-zinc-600 italic">Terminal idle. Click "Execute Test Suite" to route logging hooks.</p>
+                  <p className="text-zinc-650 italic">Terminal idle. Click "Execute Test Suite" to route logging hooks.</p>
                 ) : (
                   testLogs.map((log, idx) => (
                     <p key={idx} className={log.includes("[PASSED]") ? "text-emerald-400" : log.includes("[RUNNING]") ? "text-blue-400" : "text-zinc-400"}>
@@ -299,24 +298,24 @@ export const ReleaseConsoleScreen: React.FC<ReleaseConsoleScreenProps> = ({
         )}
 
         {activeTab === "security" && (
-          <div className="space-y-3">
-            <div className={`p-3.5 rounded-xl border ${themeCardClass} space-y-3`}>
+          <div className="space-y-5.5">
+            <div className={`p-6 rounded-[20px] border ${themeCardClass} space-y-5`}>
               <div className="flex items-start justify-between">
                 <div>
-                  <h4 className="text-xs font-bold flex items-center">
-                    <Shield size={13} className="text-blue-400 mr-1" />
+                  <h4 className="text-sm font-bold flex items-center">
+                    <Shield size={15} className="text-blue-400 mr-1.5" />
                     Security Hardening Checklist
                   </h4>
-                  <p className="text-[9px] text-zinc-500">Ensure PlacementOS holds maximum secure integrity</p>
+                  <p className="text-xs text-zinc-550 mt-0.5">Ensure PlacementOS holds maximum secure integrity</p>
                 </div>
-                <span className="px-1.5 py-0.5 rounded bg-blue-500/10 text-blue-400 text-[8px] font-mono font-bold">100% SECURE</span>
+                <span className="px-1.5 py-0.5 rounded bg-blue-500/10 text-blue-400 text-[8.5px] font-mono font-bold">100% SECURE</span>
               </div>
 
-              <div className="space-y-2">
+              <div className="space-y-2.5">
                 {securityChecks.map(check => (
                   <div 
                     key={check.id}
-                    className={`p-2.5 rounded-lg border ${themeBorderClass} flex items-start space-x-3 hover:border-zinc-700/50 transition-all`}
+                    className={`py-3.5 px-4 rounded-xl border ${themeBorderClass} flex items-start space-x-3.5 hover:border-zinc-700/50 transition-all`}
                   >
                     <input 
                       type="checkbox" 
@@ -324,25 +323,25 @@ export const ReleaseConsoleScreen: React.FC<ReleaseConsoleScreenProps> = ({
                       onChange={() => toggleSecurityCheck(check.id)}
                       className="mt-0.5 rounded border-zinc-700 text-blue-500 focus:ring-0 cursor-pointer"
                     />
-                    <div className="space-y-0.5">
-                      <span className="text-[10.5px] font-semibold text-zinc-200 block">{check.label}</span>
-                      <p className="text-[8.5px] text-zinc-500 leading-tight">{check.desc}</p>
+                    <div className="space-y-0.5 text-left">
+                      <span className="text-xs font-semibold text-zinc-200 block">{check.label}</span>
+                      <p className="text-[10.5px] text-zinc-550 leading-tight">{check.desc}</p>
                     </div>
                   </div>
                 ))}
               </div>
             </div>
 
-            <div className={`p-3 rounded-xl border ${themeCardClass} space-y-2`}>
-              <h5 className="text-[9px] font-bold text-zinc-400 uppercase tracking-wider font-mono">Sandbox Verification Diagnostic</h5>
-              <div className="grid grid-cols-2 gap-2 text-[10px] font-mono text-zinc-400">
-                <div className="p-2 rounded bg-zinc-900/40 border border-zinc-800/40">
-                  <span className="block text-zinc-500 text-[8px]">GEMINI CORE API</span>
-                  <span className="text-emerald-500 font-bold">SHIELDED (Server-only)</span>
+            <div className={`p-6 rounded-[20px] border ${themeCardClass} space-y-4`}>
+              <h5 className="text-xs font-bold text-zinc-400 uppercase tracking-wider font-mono">Sandbox Verification Diagnostic</h5>
+              <div className="grid grid-cols-1 min-[375px]:grid-cols-2 gap-3 text-[10.5px] font-mono text-zinc-400">
+                <div className="p-3.5 rounded-xl bg-zinc-900/40 border border-zinc-800/40">
+                  <span className="block text-zinc-500 text-[9.5px] font-bold">GEMINI CORE API</span>
+                  <span className="text-emerald-500 font-extrabold">SHIELDED (Server-only)</span>
                 </div>
-                <div className="p-2 rounded bg-zinc-900/40 border border-zinc-800/40">
-                  <span className="block text-zinc-500 text-[8px]">SUPABASE RLS STATE</span>
-                  <span className="text-emerald-500 font-bold">ACTIVE (Candidate Bound)</span>
+                <div className="p-3.5 rounded-xl bg-zinc-900/40 border border-zinc-800/40">
+                  <span className="block text-zinc-500 text-[9.5px] font-bold">SUPABASE RLS STATE</span>
+                  <span className="text-emerald-500 font-extrabold">ACTIVE (Candidate Bound)</span>
                 </div>
               </div>
             </div>
@@ -350,25 +349,25 @@ export const ReleaseConsoleScreen: React.FC<ReleaseConsoleScreenProps> = ({
         )}
 
         {activeTab === "access" && (
-          <div className="space-y-3">
-            <div className={`p-3.5 rounded-xl border ${themeCardClass} space-y-3.5`}>
+          <div className="space-y-5.5">
+            <div className={`p-6 rounded-[20px] border ${themeCardClass} space-y-5`}>
               <div>
-                <h4 className="text-xs font-bold">Candidate Accessibility Panel</h4>
-                <p className="text-[9px] text-zinc-500">Audit UI features for compliance with global standards</p>
+                <h4 className="text-sm font-bold">Candidate Accessibility Panel</h4>
+                <p className="text-xs text-zinc-550 mt-0.5">Audit UI features for compliance with global standards</p>
               </div>
 
-              <div className="space-y-2.5">
+              <div className="space-y-3">
                 <div className="flex items-center justify-between">
                   <div className="space-y-0.5">
-                    <span className="text-[10.5px] font-semibold">Simulate Text Size Scaling</span>
-                    <span className="text-[8.5px] text-zinc-500 block">Enlarges overall viewport text sizes</span>
+                    <span className="text-xs font-semibold">Simulate Text Size Scaling</span>
+                    <span className="text-[10.5px] text-zinc-500 block">Enlarges overall viewport text sizes</span>
                   </div>
                   <button 
                     onClick={() => {
                       setIsLargeText(!isLargeText);
                       showToast(isLargeText ? "Shifted back to Default text size" : "Enlarged display text scaled", "success");
                     }}
-                    className={`px-2.5 py-1 rounded text-[9.5px] font-bold ${isLargeText ? 'bg-blue-600 text-white' : 'bg-zinc-800 text-zinc-400'}`}
+                    className={`h-8 px-3 rounded-xl text-xs font-semibold ${isLargeText ? 'bg-blue-600 text-white' : 'bg-zinc-800 text-zinc-400'}`}
                   >
                     {isLargeText ? "Active (+20%)" : "Default (100%)"}
                   </button>
@@ -384,7 +383,7 @@ export const ReleaseConsoleScreen: React.FC<ReleaseConsoleScreenProps> = ({
                       setReduceMotion(!reduceMotion);
                       showToast(reduceMotion ? "Haptic motion enabled" : "Motion animations bypassed", "info");
                     }}
-                    className={`px-2.5 py-1 rounded text-[9.5px] font-bold ${reduceMotion ? 'bg-blue-600 text-white' : 'bg-zinc-800 text-zinc-400'}`}
+                    className={`h-8 px-3 rounded-xl text-xs font-semibold ${reduceMotion ? 'bg-blue-600 text-white' : 'bg-zinc-800 text-zinc-400'}`}
                   >
                     {reduceMotion ? "Active (No Motion)" : "Standard Motion"}
                   </button>
@@ -392,8 +391,8 @@ export const ReleaseConsoleScreen: React.FC<ReleaseConsoleScreenProps> = ({
               </div>
             </div>
 
-            <div className={`p-3 rounded-xl border ${themeCardClass} space-y-2`}>
-              <h5 className="text-[9px] font-bold text-zinc-400 uppercase tracking-wider font-mono">Simulate Screen Reader Speech</h5>
+            <div className={`p-6 rounded-[20px] border ${themeCardClass} space-y-3.5`}>
+              <h5 className="text-[9.5px] font-bold text-zinc-400 uppercase tracking-wider font-mono">Simulate Screen Reader Speech</h5>
               <p className="text-[9.5px] text-zinc-500">Tap elements below to listen to the simulated auditory narration for visually impaired users.</p>
               
               <div className="flex flex-wrap gap-1.5 pt-1">
@@ -421,24 +420,24 @@ export const ReleaseConsoleScreen: React.FC<ReleaseConsoleScreenProps> = ({
         )}
 
         {activeTab === "release" && (
-          <div className="space-y-3">
-            <div className={`p-3.5 rounded-xl border ${themeCardClass} space-y-3`}>
+          <div className="space-y-5.5">
+            <div className={`p-6 rounded-[20px] border ${themeCardClass} space-y-4`}>
               <div className="flex items-center justify-between">
                 <div>
                   <h4 className="text-xs font-bold">Release Parameter Configuration</h4>
-                  <p className="text-[9px] text-zinc-500">Set version credentials and deployment environments</p>
+                  <p className="text-[9px] text-zinc-550">Set version credentials and deployment environments</p>
                 </div>
-                <span className="text-[8.5px] font-mono text-zinc-500">V1.0 Build</span>
+                <span className="text-[8.5px] font-mono text-zinc-550">V1.0 Build</span>
               </div>
 
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-1 min-[360px]:grid-cols-2 gap-2">
                 <div>
                   <label className="text-[8px] text-zinc-500 font-mono block uppercase">Version Header</label>
                   <input 
                     type="text" 
                     value={appVersion}
                     onChange={(e) => setAppVersion(e.target.value)}
-                    className={`w-full h-8 px-2 rounded text-[11px] outline-none mt-1 ${themeInputBg}`}
+                    className={`w-full h-11 px-3 rounded-xl text-xs font-semibold outline-none border transition-all duration-150 mt-1.5 ${themeInputBg}`}
                   />
                 </div>
                 <div>
@@ -446,7 +445,7 @@ export const ReleaseConsoleScreen: React.FC<ReleaseConsoleScreenProps> = ({
                   <select
                     value={releaseChannel}
                     onChange={(e) => setReleaseChannel(e.target.value as any)}
-                    className={`w-full h-8 px-2 rounded text-[10.5px] outline-none mt-1 ${themeInputBg}`}
+                    className={`w-full h-11 px-3 rounded-xl text-xs font-semibold outline-none border transition-all duration-150 mt-1.5 ${themeInputBg}`}
                   >
                     <option value="stable">Stable (Production)</option>
                     <option value="beta">Beta Release</option>
@@ -456,8 +455,8 @@ export const ReleaseConsoleScreen: React.FC<ReleaseConsoleScreenProps> = ({
               </div>
             </div>
 
-            <div className={`p-3 rounded-xl border ${themeCardClass} space-y-2.5`}>
-              <h5 className="text-[9px] font-bold text-zinc-400 uppercase tracking-wider font-mono">v{appVersion} Production Release Notes</h5>
+            <div className={`p-6 rounded-[20px] border ${themeCardClass} space-y-4`}>
+              <h5 className="text-[9.5px] font-bold text-zinc-400 uppercase tracking-wider font-mono">v{appVersion} Production Release Notes</h5>
               
               <form onSubmit={handleAddReleaseNote} className="flex space-x-1.5">
                 <input 
@@ -465,9 +464,9 @@ export const ReleaseConsoleScreen: React.FC<ReleaseConsoleScreenProps> = ({
                   placeholder="E.g., Added full mobile compatibility grids."
                   value={customReleaseNote}
                   onChange={(e) => setCustomReleaseNote(e.target.value)}
-                  className={`flex-1 h-7 px-2 rounded text-[10.5px] outline-none ${themeInputBg}`}
+                  className={`flex-1 h-11 px-3 rounded-xl text-xs font-semibold outline-none border transition-all duration-150 ${themeInputBg}`}
                 />
-                <button type="submit" className="px-2.5 h-7 rounded bg-emerald-600 text-white font-bold text-[10px]">
+                <button type="submit" className="px-3.5 h-11 rounded-xl bg-emerald-600 text-white font-semibold text-xs transition-colors cursor-pointer">
                   Add Note
                 </button>
               </form>
@@ -485,7 +484,7 @@ export const ReleaseConsoleScreen: React.FC<ReleaseConsoleScreenProps> = ({
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-1.5">
+            <div className="grid grid-cols-1 min-[340px]:grid-cols-2 gap-1.5">
               <button 
                 onClick={() => showToast("PlacementOS Platform Licenses: Licensed under Apache 2.0 open-source parameters.", "info")}
                 className="py-1.5 px-2 rounded border border-zinc-800 hover:border-zinc-700 bg-zinc-900/20 text-center text-[9px] text-zinc-400"
@@ -503,8 +502,8 @@ export const ReleaseConsoleScreen: React.FC<ReleaseConsoleScreenProps> = ({
         )}
 
         {activeTab === "docs" && (
-          <div className="space-y-3">
-            <div className="grid grid-cols-3 gap-1">
+          <div className="space-y-5.5">
+            <div className="grid grid-cols-3 gap-2">
               {[
                 { id: "architecture", label: "Clean Arch" },
                 { id: "deployment", label: "Deployment" },
@@ -525,17 +524,17 @@ export const ReleaseConsoleScreen: React.FC<ReleaseConsoleScreenProps> = ({
             </div>
 
             {selectedDocTopic && (
-              <div className={`p-3 rounded-xl border ${themeCardClass} space-y-2`}>
-                <h4 className="text-xs font-bold text-zinc-200">
+              <div className={`p-6 rounded-[20px] border ${themeCardClass} space-y-3.5`}>
+                <h4 className="text-xs font-bold text-zinc-205">
                   {docData[selectedDocTopic as keyof typeof docData].title}
                 </h4>
-                <div className="text-[10px] text-zinc-400 leading-relaxed whitespace-pre-wrap font-mono">
+                <div className="text-[10px] text-zinc-400 leading-relaxed whitespace-pre-wrap font-mono text-left">
                   {docData[selectedDocTopic as keyof typeof docData].content}
                 </div>
               </div>
             )}
 
-            <div className="p-3.5 rounded-xl border border-zinc-800 bg-gradient-to-r from-zinc-900/50 to-transparent flex items-center justify-between text-xs">
+            <div className="p-6 rounded-[20px] border border-zinc-808 bg-gradient-to-r from-zinc-900/50 to-transparent flex items-center justify-between text-xs">
               <div className="flex items-center space-x-2">
                 <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping" />
                 <span className="font-semibold">GitHub CI/CD Build Monitor</span>

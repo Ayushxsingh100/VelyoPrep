@@ -3,10 +3,10 @@ import { motion, AnimatePresence } from "motion/react";
 import { 
   Plus, Check, ChevronRight, FileText, Briefcase, Calendar, 
   AlertTriangle, Code, MessageSquare, Award, Compass,
-  Clock
+  Clock, Sliders
 } from "lucide-react";
 
-const getCompanyLogo = (companyName: string, isDark: boolean) => {
+const getCompanyLogo = (companyName: string, isDark: boolean, customClass?: string) => {
   const firstLetter = companyName.charAt(0).toUpperCase();
   const lower = companyName.toLowerCase();
 
@@ -18,7 +18,7 @@ const getCompanyLogo = (companyName: string, isDark: boolean) => {
   } else if (lower.includes("google")) {
     bgClass = isDark ? "bg-zinc-950 border-white/5" : "bg-zinc-100 border-zinc-200";
     logoContent = (
-      <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none">
+      <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none">
         <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
         <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" />
         <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" fill="#FBBC05" />
@@ -28,7 +28,7 @@ const getCompanyLogo = (companyName: string, isDark: boolean) => {
   } else if (lower.includes("apple")) {
     bgClass = isDark ? "bg-zinc-100/10 border-white/10 text-white" : "bg-zinc-100 border-zinc-200 text-zinc-900";
     logoContent = (
-      <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
+      <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24">
         <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 4.17c.66-.81 1.11-1.93.99-3.06-1 .04-2.21.67-2.93 1.49-.62.69-1.16 1.84-1.01 2.96 1.12.09 2.27-.57 2.95-1.39z" />
       </svg>
     );
@@ -39,7 +39,7 @@ const getCompanyLogo = (companyName: string, isDark: boolean) => {
   }
 
   return (
-    <div className={`w-10 h-10 rounded-full border ${bgClass} flex items-center justify-center shadow-inner shrink-0 group-hover:scale-105 transition-transform duration-180`}>
+    <div className={`${customClass || "w-10 h-10"} rounded-full border ${bgClass} flex items-center justify-center shadow-inner shrink-0 group-hover:scale-105 transition-transform duration-180`}>
       {logoContent}
     </div>
   );
@@ -99,6 +99,7 @@ const getTaskStyle = (task: any, isChecked: boolean, isDark: boolean) => {
 };
 
 interface DashboardScreenProps {
+  userName: string;
   applications: any[];
   setApplications: React.Dispatch<React.SetStateAction<any[]>>;
   deadlines: any[];
@@ -143,6 +144,7 @@ const itemVariants = {
 };
 
 export const DashboardScreen: React.FC<DashboardScreenProps> = ({
+  userName,
   applications,
   deadlines,
   setDeadlines,
@@ -154,6 +156,14 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({
 }) => {
   const [simulateFailure, setSimulateFailure] = React.useState(false);
   const [selectedFunnelStage, setSelectedFunnelStage] = React.useState<"Applied" | "OA" | "Interview" | "Offer" | null>(null);
+
+  const firstName = useMemo(() => {
+    const rawName = (userName || "").trim();
+    if (!rawName || rawName.toLowerCase().includes("placement candidate") || rawName.toLowerCase().includes("candidate")) {
+      return "Ayush";
+    }
+    return rawName.split(/\s+/)[0];
+  }, [userName]);
 
   const systemStatus = useMemo(() => {
     if (simulateFailure) {
@@ -303,15 +313,15 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({
 
   const getGreeting = () => {
     const hour = new Date().getHours();
-    if (hour < 12) return "Good morning, Ayush";
-    if (hour < 17) return "Good afternoon, Ayush";
-    return "Good evening, Ayush";
+    if (hour < 12) return "Good morning";
+    if (hour < 17) return "Good afternoon";
+    return "Good evening";
   };
 
   const getDayLabel = () => {
     return new Date().toLocaleDateString("en-US", {
       weekday: "long",
-      month: "long",
+      month: "short",
       day: "numeric"
     });
   };
@@ -328,7 +338,7 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({
         label: "Applied",
         subtitle: "Active submittals",
         count: countApplied,
-        icon: <Briefcase size={12} className="text-blue-400/70" />,
+        icon: <Briefcase size={13} className="text-blue-400/70" />,
         iconBg: "bg-blue-500/[0.03]",
         iconBorder: "border-blue-500/[0.10]",
         textClass: "text-blue-400/70",
@@ -339,7 +349,7 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({
         label: "Assessment",
         subtitle: "Technical tests",
         count: countOA,
-        icon: <Code size={12} className="text-amber-400/70" />,
+        icon: <Code size={13} className="text-amber-400/70" />,
         iconBg: "bg-amber-500/[0.03]",
         iconBorder: "border-amber-500/[0.10]",
         textClass: "text-amber-400/70",
@@ -350,7 +360,7 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({
         label: "Interview",
         subtitle: "Live discussions",
         count: countInterview,
-        icon: <MessageSquare size={12} className="text-purple-400/70" />,
+        icon: <MessageSquare size={13} className="text-purple-400/70" />,
         iconBg: "bg-purple-500/[0.03]",
         iconBorder: "border-purple-500/[0.10]",
         textClass: "text-purple-400/70",
@@ -361,7 +371,7 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({
         label: "Offers",
         subtitle: "Final wins",
         count: countOffer,
-        icon: <Award size={12} className="text-emerald-400/70" />,
+        icon: <Award size={13} className="text-emerald-400/70" />,
         iconBg: "bg-emerald-500/[0.03]",
         iconBorder: "border-emerald-500/[0.10]",
         textClass: "text-emerald-400/70",
@@ -392,39 +402,55 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({
       variants={containerVariants}
       initial="hidden"
       animate="show"
-      className={`space-y-4 pb-6 selection:bg-blue-500/10 font-sans max-w-lg mx-auto px-2.5 relative ${isDark ? 'text-[#FFFFFF]' : 'text-zinc-950'}`}
+      className={`space-y-6 selection:bg-blue-500/10 font-sans relative ${isDark ? 'text-[#FFFFFF]' : 'text-zinc-950'}`}
     >
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(59,130,246,0.01)_0%,transparent_65%)] pointer-events-none -z-10" />
 
       {/* GREETING HEADER */}
-      <motion.div variants={itemVariants} className="pt-2 flex flex-col space-y-1">
-        <h1 className={`text-[18px] font-semibold tracking-wide leading-snug ${isDark ? 'text-zinc-100' : 'text-zinc-900'}`}>
-          {getGreeting()}
-        </h1>
-        <p 
+      <motion.div variants={itemVariants} className="pt-5 pb-3 flex items-center justify-between relative text-left">
+        <div className="flex flex-col space-y-1 pr-12">
+          <h1 className={`text-[30px] font-extrabold tracking-tight leading-tight ${isDark ? 'text-white' : 'text-zinc-900'}`}>
+            {getGreeting()},<br />
+            {firstName} 👋
+          </h1>
+          <span 
+            onClick={() => {
+              setSimulateFailure(!simulateFailure);
+              showToast(simulateFailure ? "System is back online" : "System simulation: Sandbox Mode", "info");
+            }}
+            className={`text-xs mt-1 transition-colors cursor-pointer select-none font-semibold tracking-wide leading-none ${isDark ? 'text-zinc-400 hover:text-zinc-200' : 'text-zinc-500 hover:text-zinc-800'}`}
+          >
+            {getDayLabel()}
+          </span>
+        </div>
+        <button 
           onClick={() => {
-            setSimulateFailure(!simulateFailure);
-            showToast(simulateFailure ? "System is back online" : "System simulation: Sandbox Mode", "info");
-          }}
-          className={`text-[10px] transition-colors cursor-pointer select-none font-normal tracking-widest uppercase leading-none mt-1 ${isDark ? 'text-zinc-500 hover:text-zinc-400' : 'text-zinc-400 hover:text-zinc-600'}`}
+            setCurrentScreen("settings");
+            showToast("Navigation routed to Settings", "info");
+          }} 
+          className={`w-9.5 h-9.5 rounded-full border flex items-center justify-center transition-all duration-200 cursor-pointer shrink-0 ${
+            isDark 
+              ? "bg-[#121214] border-zinc-850 text-zinc-400 hover:text-white hover:border-zinc-700" 
+              : "bg-white border-zinc-200 text-zinc-655 hover:text-zinc-950 shadow-sm"
+          }`}
         >
-          {getDayLabel()}
-        </p>
+          <Sliders size={16} strokeWidth={1.75} />
+        </button>
       </motion.div>
 
       {systemStatus.error ? (
         <motion.div 
           variants={itemVariants}
-          className={`p-4 rounded-[18px] border text-center space-y-2.5 shadow-[0_8px_30px_rgba(0,0,0,0.3)] ${
-            isDark ? 'bg-[#111113] border-red-500/15' : 'bg-red-50/60 border-red-200'
+          className={`p-6 rounded-[24px] border text-center space-y-4 shadow-lg ${
+            isDark ? 'bg-[#121214] border-red-500/20' : 'bg-red-50/60 border-red-200'
           }`}
         >
-          <div className="w-[28px] h-[28px] rounded-full bg-red-500/10 flex items-center justify-center text-red-500 mx-auto animate-pulse">
-            <AlertTriangle size={13} />
+          <div className="w-[34px] h-[34px] rounded-full bg-red-500/10 flex items-center justify-center text-red-500 mx-auto animate-pulse">
+            <AlertTriangle size={16} />
           </div>
           <div>
-            <h4 className="text-[11px] font-semibold text-red-500 tracking-widest uppercase">Sandbox Active</h4>
-            <p className={`text-[11px] mt-0.5 leading-relaxed max-w-xs mx-auto font-sans ${isDark ? 'text-zinc-400' : 'text-zinc-600'}`}>
+            <h4 className="text-[11px] font-bold text-red-550 tracking-widest uppercase font-mono">Sandbox Active</h4>
+            <p className={`text-xs mt-1.5 leading-relaxed max-w-xs mx-auto font-sans font-semibold ${isDark ? 'text-zinc-400' : 'text-zinc-655'}`}>
               {systemStatus.error} Running offline mode securely.
             </p>
           </div>
@@ -433,8 +459,8 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({
               setSimulateFailure(false);
               showToast("System connected successfully", "success");
             }}
-            className={`px-3 h-[28px] rounded-full text-[10px] font-semibold tracking-widest uppercase transition-all duration-[120ms] cursor-pointer ${
-              isDark ? 'bg-white text-black hover:bg-zinc-200' : 'bg-zinc-900 text-white hover:bg-zinc-800'
+            className={`px-4.5 h-[34px] rounded-xl text-[10px] font-bold tracking-wider uppercase transition-all duration-[120ms] cursor-pointer active:scale-95 ${
+              isDark ? 'bg-white text-black hover:bg-zinc-200 shadow-sm' : 'bg-zinc-900 text-white hover:bg-zinc-800'
             }`}
           >
             Connect Layer
@@ -443,53 +469,53 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({
       ) : (
         <>
           {/* TODAY'S PRIORITY CARD */}
-          <motion.div variants={itemVariants} className="space-y-2 relative">
-            <h2 className={`text-[10px] font-medium uppercase tracking-widest select-none pl-1 ${isDark ? 'text-zinc-500' : 'text-zinc-500'}`}>
-              Today's priority
+          <motion.div variants={itemVariants} className="space-y-3 relative text-left">
+            <h2 className="text-[11px] font-semibold text-zinc-550 dark:text-zinc-400 uppercase tracking-wider px-1 leading-none select-none">
+              Today's Priority
             </h2>
             <div className="relative group">
-              <div className="absolute -inset-[1px] bg-gradient-to-r from-blue-500/[0.03] to-indigo-500/[0.03] rounded-[18px] blur-sm opacity-60 group-hover:opacity-100 transition duration-300 pointer-events-none" />
+              <div className="absolute -inset-[1px] bg-gradient-to-r from-blue-500/[0.03] to-indigo-500/[0.03] rounded-[20px] blur-sm opacity-60 group-hover:opacity-100 transition duration-300 pointer-events-none" />
               
               <motion.div 
-                whileHover={{ y: -2, scale: 1.005 }}
-                whileTap={{ scale: 0.99 }}
-                transition={{ duration: 0.18, ease: "easeOut" }}
+                whileHover={{ y: -2, scale: 1.003 }}
+                whileTap={{ scale: 0.98 }}
+                transition={{ duration: 0.15, ease: "easeOut" }}
                 onClick={todayPriority.action}
-                className={`relative overflow-hidden p-4 rounded-[18px] border cursor-pointer flex items-center justify-between w-full ${
+                className={`relative overflow-hidden p-6 rounded-[20px] border cursor-pointer flex items-center justify-between w-full ${
                   isDark 
-                    ? "bg-[#111113] border-white/[0.015] shadow-[0_8px_30px_rgba(0,0,0,0.55),inset_0_1px_0_rgba(255,255,255,0.015)]" 
-                    : "bg-white border-zinc-200/80 shadow-[0_8px_30px_rgba(0,0,0,0.04)]"
+                    ? "bg-[#121214] border-zinc-800 shadow-[0_4px_12px_rgba(0,0,0,0.25)]" 
+                    : "bg-white border-zinc-200/80 shadow-[0_4px_12px_rgba(0,0,0,0.03)]"
                 }`}
               >
-                {isDark && <div className="absolute top-0 left-[15%] right-[15%] h-[1px] bg-gradient-to-r from-transparent via-blue-500/[0.05] to-transparent pointer-events-none" />}
+                {isDark && <div className="absolute top-0 left-[15%] right-[15%] h-[1px] bg-gradient-to-r from-transparent via-blue-500/[0.08] to-transparent pointer-events-none" />}
                 
                 <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(59,130,246,0.005)_0%,transparent_75%)] pointer-events-none -z-10" />
 
                 <div className="flex items-center gap-3.5 min-w-0 flex-1">
-                  {getCompanyLogo(todayPriority.company, isDark)}
+                  {getCompanyLogo(todayPriority.company, isDark, "w-12 h-12 text-[15px] font-bold")}
                   <div className="min-w-0 flex-1 flex flex-col justify-center">
-                    <h3 className={`text-[14px] font-semibold tracking-normal leading-snug truncate ${isDark ? 'text-white' : 'text-zinc-900'}`}>
+                    <h3 className={`text-[15px] font-extrabold tracking-tight leading-snug truncate ${isDark ? 'text-white' : 'text-zinc-900'}`}>
                       {todayPriority.company}
                     </h3>
-                    <span className={`text-[11.5px] font-normal mt-0.5 block leading-none truncate tracking-wide ${isDark ? 'text-zinc-400' : 'text-zinc-500'}`}>
+                    <span className={`text-xs font-medium mt-1 block leading-none truncate tracking-wide ${isDark ? 'text-zinc-400' : 'text-zinc-500'}`}>
                       {todayPriority.role}
                     </span>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-2.5 shrink-0 ml-4">
-                  <span className={`text-[9.5px] tracking-widest font-mono font-bold uppercase select-none ${
-                    todayPriority.statusType === "Interview" ? (isDark ? "text-blue-400 drop-shadow-[0_0_4px_rgba(96,165,250,0.55)]" : "text-blue-600") :
-                    todayPriority.statusType === "Assessment" ? (isDark ? "text-amber-400 drop-shadow-[0_0_4px_rgba(251,191,36,0.55)]" : "text-amber-600") :
-                    todayPriority.statusType === "Offer" ? (isDark ? "text-emerald-400 drop-shadow-[0_0_4px_rgba(52,211,153,0.55)]" : "text-emerald-600") :
-                    (isDark ? "text-zinc-400" : "text-zinc-500")
+                <div className="flex items-center gap-3.5 shrink-0 ml-4">
+                  <span className={`text-xs tracking-widest font-mono font-bold uppercase select-none ${
+                    todayPriority.statusType === "Interview" ? (isDark ? "text-blue-400 drop-shadow-[0_0_4px_rgba(96,165,250,0.45)]" : "text-blue-600") :
+                    todayPriority.statusType === "Assessment" ? (isDark ? "text-amber-400 drop-shadow-[0_0_4px_rgba(251,191,36,0.45)]" : "text-amber-600") :
+                    todayPriority.statusType === "Offer" ? (isDark ? "text-emerald-400 drop-shadow-[0_0_4px_rgba(52,211,153,0.45)]" : "text-emerald-600") :
+                    (isDark ? "text-zinc-400" : "text-zinc-550")
                   }`}>
                     {todayPriority.statusType === "Default" ? "Companion" : todayPriority.statusType}
                   </span>
-                  <div className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 group-hover:translate-x-0.5 transition-all duration-180 border ${
-                    isDark ? "bg-white/[0.015] border-white/[0.015]" : "bg-zinc-50 border-zinc-200"
+                  <div className={`w-7.5 h-7.5 rounded-full flex items-center justify-center shrink-0 border ${
+                    isDark ? "bg-zinc-900 border-zinc-800" : "bg-zinc-50 border-zinc-200"
                   }`}>
-                    <ChevronRight size={11} className={`${isDark ? 'text-zinc-500 group-hover:text-zinc-300' : 'text-zinc-400 group-hover:text-zinc-600'} transition-colors`} />
+                    <ChevronRight size={13} className={`${isDark ? 'text-zinc-500' : 'text-zinc-500'}`} />
                   </div>
                 </div>
               </motion.div>
@@ -497,57 +523,53 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({
           </motion.div>
 
           {/* PLACEMENT JOURNEY PIPELINE */}
-          <motion.div variants={itemVariants} className="space-y-2">
-            <div className="flex justify-between items-baseline px-1">
-              <h2 className="text-[10px] font-medium text-zinc-500 uppercase tracking-widest select-none">
+          <motion.div variants={itemVariants} className="space-y-3 text-left">
+            <div className="flex justify-between items-baseline">
+              <h2 className="text-[11px] font-semibold text-zinc-555 dark:text-zinc-400 uppercase tracking-wider px-1 leading-none select-none">
                 Placement Journey Pipeline
               </h2>
             </div>
-
-            <div className="grid grid-cols-2 gap-2">
+ 
+            <div className="grid grid-cols-2 gap-3.5">
               {funnelStages.map((stage) => {
                 const isSelected = selectedFunnelStage === stage.id;
                 return (
                   <motion.div
                      key={stage.id}
-                     whileHover={{ y: -1.5, scale: 1.005 }}
+                     whileHover={{ y: -1.5, scale: 1.003 }}
                      whileTap={{ scale: 0.98 }}
-                     transition={{ duration: 0.18, ease: "easeOut" }}
+                     transition={{ duration: 0.15, ease: "easeOut" }}
                      onClick={() => {
                        setSelectedFunnelStage(selectedFunnelStage === stage.id ? null : stage.id);
                        showToast(`Filtering funnel by ${stage.label} stage`, "info");
                      }}
-                     className={`relative p-3.5 rounded-[16px] border cursor-pointer select-none ${
+                     className={`relative p-6.5 rounded-[22px] border cursor-pointer select-none ${
                        isSelected
-                         ? (isDark ? "bg-[#18181b] border-blue-500/20 shadow-[0_8px_30px_rgba(0,0,0,0.6)]" : "bg-blue-50/50 border-blue-200 shadow-[0_4px_16px_rgba(59,130,246,0.06)]")
-                         : (isDark ? "bg-[#111113] border-white/[0.015] hover:border-white/[0.03] shadow-[0_4px_24px_rgba(0,0,0,0.5)]" : "bg-white border-zinc-200/80 hover:border-zinc-350 shadow-[0_4px_20px_rgba(0,0,0,0.02)]")
-                      }`}
+                         ? (isDark ? "bg-[#1E1E22] border-blue-500/40 shadow-[0_4px_16px_rgba(0,0,0,0.4)]" : "bg-blue-50/60 border-blue-200 shadow-sm")
+                         : (isDark ? "bg-[#121214] border-zinc-800 shadow-[0_4px_12px_rgba(0,0,0,0.2)]" : "bg-white border-zinc-200/80 shadow-[0_4px_12px_rgba(0,0,0,0.02)]")
+                       }`}
                   >
                     <div className="flex items-center justify-between">
-                      <div className={`p-1.5 rounded-[10px] ${stage.iconBg} border ${stage.iconBorder} flex items-center justify-center shrink-0`}>
+                      <div className={`p-2.5 rounded-[14px] ${stage.iconBg} border ${stage.iconBorder} flex items-center justify-center shrink-0`}>
                         {stage.icon}
                       </div>
-                      <span className={`text-[16px] font-semibold tracking-normal ${stage.textClass}`}>
-                        {stage.count}
+                      <span className={`text-base font-extrabold tracking-normal ${stage.textClass} font-mono`}>
+                        {stage.count.toString().padStart(2, '0')}
                       </span>
                     </div>
-                    <div className="mt-2.5 flex items-center justify-between">
+                    <div className="mt-4 flex items-center justify-between">
                       <div>
-                        <h4 className={`text-[11px] font-semibold leading-none tracking-wide ${isDark ? 'text-zinc-200' : 'text-zinc-800'}`}>
+                        <h4 className={`text-[13px] font-bold leading-none tracking-wide ${isDark ? 'text-zinc-200' : 'text-zinc-800'}`}>
                           {stage.label}
                         </h4>
                       </div>
                       <ChevronRight 
-                        size={11} 
-                        className={`text-zinc-600 transition-transform duration-180 ${
-                          isSelected ? "rotate-90 text-blue-400/80" : ""
+                        size={12} 
+                        className={`text-zinc-550 transition-transform duration-180 ${
+                          isSelected ? "rotate-90 text-blue-500" : ""
                         }`} 
                       />
                     </div>
-                    
-                    {isSelected && (
-                      <div className={`absolute inset-0 bg-[radial-gradient(circle_at_center,${stage.glowColor}_0%,transparent_100%)] opacity-[0.02] pointer-events-none rounded-[16px]`} />
-                    )}
                   </motion.div>
                 );
               })}
@@ -562,28 +584,28 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({
                   transition={{ duration: 0.25, ease: "easeInOut" }}
                   className="overflow-hidden"
                 >
-                  <div className={`rounded-[16px] border p-3.5 space-y-2 mt-1 shadow-inner ${
-                    isDark ? "bg-[#141416] border-white/[0.015]" : "bg-zinc-50 border-zinc-200/80"
+                  <div className={`rounded-2xl border p-5 space-y-3.5 mt-3 shadow-inner ${
+                    isDark ? "bg-[#121214] border-zinc-800" : "bg-zinc-50 border-zinc-200/80"
                   }`}>
-                    <div className={`flex items-center justify-between pb-2 border-b ${isDark ? 'border-white/[0.03]' : 'border-zinc-200'}`}>
-                      <h3 className={`text-[9.5px] font-semibold uppercase tracking-wider flex items-center gap-1.5 ${isDark ? 'text-zinc-400' : 'text-zinc-600'}`}>
-                        <span className="w-1.5 h-1.5 rounded-full bg-blue-400/60 animate-pulse shrink-0" />
+                    <div className={`flex items-center justify-between pb-2 border-b ${isDark ? 'border-zinc-800' : 'border-zinc-200'}`}>
+                      <h3 className={`text-[10px] font-bold uppercase tracking-wider flex items-center gap-1.5 ${isDark ? 'text-zinc-400' : 'text-zinc-650'}`}>
+                        <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse shrink-0" />
                         Active in {funnelStages.find(s => s.id === selectedFunnelStage)?.label} ({selectedStageApplications.length})
                       </h3>
                       <button 
                         onClick={() => setSelectedFunnelStage(null)}
-                        className={`text-[9px] font-medium transition-colors cursor-pointer ${isDark ? 'text-zinc-500 hover:text-zinc-300' : 'text-zinc-450 hover:text-zinc-700'}`}
+                        className={`text-xs font-bold transition-colors cursor-pointer ${isDark ? 'text-zinc-550 hover:text-zinc-350' : 'text-zinc-500 hover:text-zinc-700'}`}
                       >
                         Clear filter
                       </button>
                     </div>
 
                     {selectedStageApplications.length === 0 ? (
-                      <p className="text-[10px] text-zinc-500 py-2.5 text-center select-none font-normal">
+                      <p className="text-xs text-zinc-500 py-2 text-center select-none font-semibold">
                         No applications in this stage currently
                       </p>
                     ) : (
-                      <div className="space-y-1.5 max-h-[140px] overflow-y-auto pr-1">
+                      <div className="space-y-2 max-h-[160px] overflow-y-auto pr-1">
                         {selectedStageApplications.map((app) => (
                           <div 
                             key={app.id}
@@ -591,37 +613,37 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({
                               setCurrentScreen("tracker");
                               showToast(`Viewing details for ${app.company}`, "info");
                             }}
-                            className={`flex items-center justify-between p-2 rounded-[10px] border transition-all duration-180 cursor-pointer group ${
+                            className={`flex items-center justify-between p-3.5 rounded-xl border transition-all duration-180 cursor-pointer group ${
                               isDark 
-                                ? "bg-white/[0.005] hover:bg-white/[0.02] border-white/[0.005] hover:border-white/[0.02]" 
-                                : "bg-zinc-100/45 hover:bg-zinc-100/80 border-transparent hover:border-zinc-200"
+                                ? "bg-zinc-900 hover:bg-zinc-850 border-zinc-800" 
+                                : "bg-white hover:bg-zinc-50 border-zinc-200"
                             }`}
                           >
-                            <div className="flex items-center gap-2.5 min-w-0">
-                              <div className={`w-6 h-6 rounded-full border flex items-center justify-center overflow-hidden text-[9px] font-semibold shrink-0 ${
-                                isDark ? "border-white/5 bg-zinc-900 text-zinc-300" : "border-zinc-200 bg-zinc-200/80 text-zinc-700"
+                            <div className="flex items-center gap-3.5 min-w-0">
+                              <div className={`w-8 h-8 rounded-full border flex items-center justify-center overflow-hidden text-xs font-bold shrink-0 ${
+                                isDark ? "border-zinc-800 bg-zinc-950 text-zinc-300" : "border-zinc-200 bg-zinc-100 text-zinc-700"
                               }`}>
                                 {app.company.charAt(0).toUpperCase()}
                               </div>
                               <div className="min-w-0">
-                                <h4 className={`text-[11.5px] font-semibold leading-none truncate transition-colors ${
+                                <h4 className={`text-sm font-bold leading-none truncate ${
                                   isDark ? "text-zinc-200 group-hover:text-white" : "text-zinc-800 group-hover:text-zinc-950"
                                 }`}>
                                   {app.company}
                                 </h4>
-                                <p className="text-[9px] text-zinc-500 truncate mt-1 leading-none font-normal">
+                                <p className="text-xs text-zinc-500 truncate mt-1.5 leading-none font-semibold">
                                   {app.role || "Software Engineer"}
                                 </p>
                               </div>
                             </div>
 
-                            <div className="flex items-center gap-2 shrink-0">
-                              <span className={`text-[8.5px] font-medium px-2 py-0.5 rounded-md border ${
-                                isDark ? "text-zinc-400 bg-zinc-800/40 border-white/[0.03]" : "text-zinc-600 bg-zinc-100 border-zinc-200"
+                            <div className="flex items-center gap-2.5 shrink-0">
+                              <span className={`text-[10px] font-bold uppercase px-2 py-0.5 rounded-md border ${
+                                isDark ? "text-zinc-400 bg-zinc-800/40 border-zinc-800" : "text-zinc-650 bg-zinc-100 border-zinc-200"
                               }`}>
                                 {app.status}
                               </span>
-                              <ChevronRight size={10} className="text-zinc-400 group-hover:translate-x-0.5 group-hover:text-zinc-600 transition-all duration-180" />
+                              <ChevronRight size={12} className="text-zinc-550 group-hover:translate-x-0.5 group-hover:text-zinc-300 transition-all duration-180" />
                             </div>
                           </div>
                         ))}
@@ -634,20 +656,20 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({
           </motion.div>
 
           {/* TODAY'S CHECKLIST */}
-          <motion.div variants={itemVariants} className="space-y-2">
-            <h2 className="text-[10px] font-medium text-zinc-500 uppercase tracking-widest select-none pl-1">
-              Today's checklist
+          <motion.div variants={itemVariants} className="space-y-3 text-left">
+            <h2 className="text-[11px] font-semibold text-zinc-550 dark:text-zinc-400 uppercase tracking-wider px-1 leading-none select-none">
+              Today's Checklist
             </h2>
 
-            <div className={`p-4 rounded-[18px] border divide-y shadow-[0_8px_30px_rgba(0,0,0,0.04)] ${
+            <div className={`p-6 rounded-[20px] border divide-y shadow-xs ${
               isDark 
-                ? "bg-[#111113] border-white/[0.015] divide-zinc-800/[0.25] shadow-[0_8px_30px_rgba(0,0,0,0.5)]" 
-                : "bg-white border-zinc-200/80 divide-zinc-100"
+                ? "bg-[#121214] border-zinc-800 divide-zinc-800/[0.4] shadow-[0_4px_12px_rgba(0,0,0,0.25)]" 
+                : "bg-white border-zinc-200/80 divide-zinc-100 shadow-[0_4px_12px_rgba(0,0,0,0.03)]"
             }`}>
               {todayChecklist.length === 0 ? (
-                <div className="text-[12px] font-normal text-zinc-500 py-5 text-center select-none flex flex-col items-center justify-center space-y-0.5 font-sans">
-                  <span className="text-zinc-400 font-medium text-[12px] tracking-wide">All checklists completed</span>
-                  <span className="text-[10px] text-zinc-600 font-mono uppercase tracking-widest">Your schedule is clear</span>
+                <div className="text-[13px] font-normal text-zinc-555 py-6 text-center select-none flex flex-col items-center justify-center space-y-1 font-sans">
+                  <span className="text-zinc-400 font-bold text-[13px] tracking-wide">All checklists completed</span>
+                  <span className="text-xs text-zinc-550 font-mono uppercase tracking-widest font-bold">Your schedule is clear</span>
                 </div>
               ) : (
                 todayChecklist.map((task) => {
@@ -661,33 +683,33 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({
                       animate={{ opacity: isChecked ? 0.4 : 1, y: 0 }}
                       transition={{ duration: 0.18, ease: "easeOut" }}
                       key={task.id} 
-                      className="flex items-center justify-between py-3 first:pt-1 last:pb-1 transition-all duration-180 group"
+                      className="flex items-center justify-between py-3.5 first:pt-1 last:pb-1 transition-all duration-180 group text-left"
                     >
-                      <div className="flex items-center gap-3.5 min-w-0 flex-1">
+                      <div className="flex items-center gap-3 min-w-0 flex-1">
                         <button 
                           onClick={() => handleToggleTaskWithDelay(task.id)}
                           disabled={completingId !== null}
-                          className={`w-[18px] h-[18px] rounded-[5px] border flex items-center justify-center transition-all duration-[150ms] shrink-0 cursor-pointer ${
+                          className={`w-[22px] h-[22px] rounded-[6px] border flex items-center justify-center transition-all duration-[150ms] shrink-0 cursor-pointer ${
                             isChecked 
                               ? "border-emerald-500/30 bg-emerald-500/[0.08]" 
                               : isDark 
-                                ? "border-zinc-800 hover:border-zinc-600 bg-zinc-950 hover:bg-zinc-900/30"
-                                : "border-zinc-300 hover:border-zinc-400 bg-zinc-50 hover:bg-zinc-100/50"
+                                ? "border-zinc-800 hover:border-zinc-600 bg-zinc-900 hover:bg-zinc-800/30"
+                                : "border-zinc-300 hover:border-zinc-450 bg-zinc-50 hover:bg-zinc-100/50"
                           }`}
                         >
                           <Check 
-                            size={10} 
+                            size={12} 
                             className={`text-emerald-500 transition-all duration-[150ms] ${
                               isChecked ? "scale-100 opacity-100" : "scale-50 opacity-0"
                             }`} 
                           />
                         </button>
 
-                        <div className="flex flex-col min-w-0">
-                          <span className={`text-[12.5px] relative transition-all duration-180 truncate max-w-[240px] tracking-wide font-sans leading-snug ${
+                        <div className="flex flex-col min-w-0 flex-1">
+                          <span className={`text-[13.5px] relative transition-all duration-180 truncate block w-full tracking-wide font-bold leading-snug ${
                             isChecked 
-                              ? "text-zinc-500 font-normal line-through" 
-                              : isDark ? "text-zinc-100 font-medium" : "text-zinc-800 font-medium"
+                              ? "text-zinc-555 font-semibold line-through" 
+                              : isDark ? "text-zinc-100 font-bold" : "text-zinc-900 font-bold"
                           }`}>
                             {task.title}
                             {isChecked && (
@@ -700,7 +722,7 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({
                             )}
                           </span>
                           {!isChecked && (
-                            <span className={`text-[9.5px] flex items-center gap-1.5 mt-1 font-mono tracking-widest uppercase select-none font-medium ${taskStyle.glowClass}`}>
+                            <span className={`text-[10px] flex items-center gap-1.5 mt-1 font-mono tracking-wider uppercase select-none font-bold ${taskStyle.glowClass}`}>
                               {taskStyle.icon}
                               <span>{taskStyle.label}</span>
                             </span>
@@ -709,9 +731,9 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({
                       </div>
 
                       {!isChecked && task.dueDate && (
-                        <div className="flex items-center gap-1.5 pl-3 select-none text-right shrink-0">
-                          <Clock size={7.5} className="text-zinc-600 group-hover:text-zinc-400 transition-colors duration-150" />
-                          <span className="text-[7px] font-medium text-zinc-500 group-hover:text-zinc-300 transition-colors duration-150 tracking-wide font-sans">
+                        <div className="flex items-center gap-2 pl-3 select-none text-right shrink-0">
+                          <Clock size={10.5} className="text-zinc-550 group-hover:text-zinc-400 transition-colors duration-150" />
+                          <span className="text-[9px] font-bold text-zinc-500 group-hover:text-zinc-350 transition-colors duration-150 tracking-wider font-mono">
                             {task.dueDate}
                           </span>
                         </div>
@@ -724,59 +746,61 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({
           </motion.div>
 
           {/* CONTINUE WHERE YOU LEFT OFF */}
-          <motion.div variants={itemVariants} className="space-y-2">
-            <h2 className="text-[10px] font-medium text-zinc-500 uppercase tracking-widest select-none pl-1">
-              Continue where you left off
+          <motion.div variants={itemVariants} className="space-y-3 text-left">
+            <h2 className="text-[11px] font-semibold text-zinc-555 dark:text-zinc-400 uppercase tracking-wider px-1 leading-none select-none">
+              Continue Where You Left Off
             </h2>
 
             <motion.div 
-              whileHover={{ y: -1.5, scale: 1.005 }}
-              whileTap={{ scale: 0.99 }}
-              transition={{ duration: 0.18, ease: "easeOut" }}
+              whileHover={{ y: -1.5, scale: 1.003 }}
+              whileTap={{ scale: 0.98 }}
+              transition={{ duration: 0.15, ease: "easeOut" }}
               onClick={lastInteractedItem.action}
-              className={`relative overflow-hidden p-3 rounded-[18px] border cursor-pointer flex items-center justify-between group ${
+              className={`relative overflow-hidden p-6 rounded-[20px] border cursor-pointer flex items-center justify-between group ${
                 isDark 
-                  ? "bg-[#111113] border-white/[0.015] shadow-[0_8px_30px_rgba(0,0,0,0.55),inset_0_1px_0_rgba(255,255,255,0.015)]" 
-                  : "bg-white border-zinc-200/80 shadow-[0_8px_30px_rgba(0,0,0,0.04)]"
+                  ? "bg-[#121214] border-zinc-800 shadow-[0_4px_12px_rgba(0,0,0,0.25)]" 
+                  : "bg-white border-zinc-200/80 shadow-[0_4px_12px_rgba(0,0,0,0.03)]"
               }`}
             >
-              <div className="flex items-center gap-3 min-w-0 flex-1">
-                <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 border ${
-                  isDark ? "bg-zinc-900 border-white/[0.015]" : "bg-zinc-50 border-zinc-200"
+              <div className="flex items-center gap-4 min-w-0 flex-1">
+                <div className={`w-10.5 h-10.5 rounded-xl flex items-center justify-center shrink-0 border ${
+                  isDark ? "bg-zinc-900 border-zinc-800" : "bg-zinc-50 border-zinc-200"
                 }`}>
                   {lastInteractedItem.icon}
                 </div>
                 <div className="min-w-0 flex-1">
-                  <h4 className={`text-[12.5px] font-semibold tracking-wide truncate font-sans ${isDark ? 'text-zinc-100' : 'text-zinc-800'}`}>
+                  <span className="text-[10px] font-bold text-zinc-550 dark:text-zinc-400 font-mono uppercase block leading-none mb-1.5">{lastInteractedItem.type}</span>
+                  <h4 className={`text-[14.5px] font-extrabold tracking-tight truncate ${isDark ? 'text-white' : 'text-zinc-900'}`}>
                     {lastInteractedItem.title}
                   </h4>
+                  <p className="text-xs text-zinc-500 font-semibold truncate mt-1 leading-none">{lastInteractedItem.subtitle}</p>
                 </div>
               </div>
 
-              <div className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 group-hover:translate-x-0.5 transition-all duration-180 border ${
-                isDark ? "bg-white/[0.015] border-white/[0.015]" : "bg-zinc-50 border-zinc-200"
+              <div className={`w-7.5 h-7.5 rounded-full flex items-center justify-center shrink-0 border ${
+                isDark ? "bg-zinc-900 border-zinc-800" : "bg-zinc-50 border-zinc-200"
               }`}>
-                <ChevronRight size={11} className={`${isDark ? 'text-zinc-500 group-hover:text-zinc-300' : 'text-zinc-400 group-hover:text-zinc-600'} transition-colors`} />
+                <ChevronRight size={13} className={`${isDark ? 'text-zinc-500' : 'text-zinc-500'}`} />
               </div>
             </motion.div>
           </motion.div>
 
           {/* PRIMARY CTA */}
-          <motion.div variants={itemVariants} className="pt-1">
+          <motion.div variants={itemVariants} className="pt-2">
             <motion.button
               whileHover={{ scale: 1.005 }}
-              whileTap={{ scale: 0.99 }}
+              whileTap={{ scale: 0.98 }}
               onClick={() => {
                 setActiveBottomSheet({ type: "add_app" });
                 showToast("Logging new placement item", "info");
               }}
-              className={`w-full h-11 rounded-[18px] flex items-center justify-center gap-1.5 text-[11.5px] font-semibold tracking-wider transition-all cursor-pointer shadow-lg ${
+              className={`w-full h-13 rounded-[16px] flex items-center justify-center gap-2 text-sm font-bold tracking-wider transition-all cursor-pointer shadow-lg active:scale-98 ${
                 isDark 
-                  ? "bg-white hover:bg-zinc-100 text-black shadow-white/[0.02]" 
-                  : "bg-zinc-900 hover:bg-zinc-800 text-white shadow-zinc-950/10"
+                  ? "bg-white hover:bg-zinc-100 text-black shadow-md shadow-white/5" 
+                  : "bg-zinc-900 hover:bg-zinc-800 text-white shadow-md shadow-zinc-950/10"
               }`}
             >
-              <Plus size={14} className="stroke-[3.5]" />
+              <Plus size={16} className="stroke-[3.5]" />
               <span>Add Application</span>
             </motion.button>
           </motion.div>

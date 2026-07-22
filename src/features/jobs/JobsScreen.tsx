@@ -340,41 +340,32 @@ export const JobsScreen: React.FC<JobsScreenProps> = (props) => {
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="space-y-6 pb-24 font-sans text-left max-w-lg mx-auto px-1"
+      className="space-y-7 pb-10 font-sans text-left"
     >
       <div className="pt-4 flex items-center justify-between">
-        <div className="space-y-1">
-          <div className="flex items-center gap-2">
-            <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" />
-            <span className="text-[10px] font-extrabold uppercase tracking-widest text-blue-500 block leading-none">
-              Explore Directory
-            </span>
-          </div>
-          <h1 className={`text-3xl font-black tracking-tight font-sans ${isDark ? "text-white" : "text-zinc-950"}`}>
+        <div>
+          <span className="text-[10px] font-bold tracking-widest text-zinc-500 dark:text-zinc-450 uppercase font-mono leading-none block mb-1">
+            Explore Directory
+          </span>
+          <h1 className={`text-[28px] font-extrabold tracking-tight leading-none ${isDark ? "text-white" : "text-zinc-950"}`}>
             Job Hub
           </h1>
-          <p className={`text-xs font-semibold leading-relaxed ${isDark ? "text-zinc-400" : "text-zinc-600"}`}>
-            Access your curated selection of recruitment channels.
-          </p>
         </div>
 
         <motion.button
           whileHover={{ 
-            scale: 1.05,
-            boxShadow: isDark 
-              ? "0 4px 20px rgba(59, 130, 246, 0.35)" 
-              : "0 4px 16px rgba(59, 130, 246, 0.25)"
+            scale: 1.05
           }}
           whileTap={{ scale: 0.95 }}
           onClick={() => setIsAdding(!isAdding)}
           title={isAdding ? "Close Panel" : "Add Custom Portal"}
           aria-label={isAdding ? "Close Panel" : "Add Custom Portal"}
-          className={`relative overflow-hidden w-10 h-10 rounded-full flex items-center justify-center shrink-0 transition-all duration-300 shadow-sm ${
+          className={`relative overflow-hidden w-11 h-11 rounded-xl flex items-center justify-center shrink-0 transition-all duration-300 border shadow-sm active:scale-95 ${
             isAdding
               ? isDark
-                ? "bg-zinc-800 border border-zinc-700 text-red-400 hover:text-red-300 hover:bg-zinc-800/80"
-                : "bg-zinc-100 border border-zinc-200 text-red-600 hover:text-red-700 hover:bg-zinc-200/50"
-              : "bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white border border-transparent"
+                ? "bg-[#121214] border-zinc-800 text-red-400 hover:text-red-350"
+                : "bg-white border-zinc-200 text-red-600 hover:text-red-700 hover:bg-zinc-50"
+              : "bg-blue-600 border-blue-500 hover:bg-blue-550 text-white shadow-sm"
           }`}
         >
           {!isAdding && (
@@ -390,7 +381,7 @@ export const JobsScreen: React.FC<JobsScreenProps> = (props) => {
             transition={{ type: "spring", stiffness: 300, damping: 20 }}
             className="relative z-10 flex items-center justify-center"
           >
-            <Plus className="w-5 h-5" />
+            <Plus className="w-5.5 h-5.5" />
           </motion.div>
         </motion.button>
       </div>
@@ -402,65 +393,65 @@ export const JobsScreen: React.FC<JobsScreenProps> = (props) => {
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ type: "spring", stiffness: 350, damping: 26 }}
-            className={`overflow-hidden border rounded-2xl p-4 space-y-4 ${
+            className={`overflow-hidden border rounded-2xl p-6 space-y-5.5 ${
               isDark ? "bg-[#121214] border-zinc-800" : "bg-white border-zinc-200 shadow-sm"
             }`}
           >
-            <h2 className={`text-sm font-extrabold tracking-tight ${isDark ? "text-zinc-100" : "text-zinc-850"}`}>
+            <h2 className={`text-base font-extrabold tracking-tight text-left ${isDark ? "text-zinc-100" : "text-zinc-850"}`}>
               Add Custom Website Link
             </h2>
 
-            <form onSubmit={handleAddWebsite} className="space-y-3">
+            <form onSubmit={handleAddWebsite} className="space-y-4 text-left">
               <div className="space-y-1">
-                <label className="text-[10px] font-extrabold uppercase tracking-wider text-zinc-400">Portal Name</label>
+                <label className="text-[10px] font-bold tracking-wider text-zinc-400 uppercase font-mono block">Portal Name</label>
                 <input
                   type="text"
                   placeholder="e.g. RemoteOK, My Job Board"
                   value={newName}
                   onChange={(e) => setNewName(e.target.value)}
-                  className={`w-full px-3.5 py-2 rounded-xl text-xs font-bold outline-none border transition-all ${
+                  className={`w-full h-12 px-3.5 rounded-xl text-sm font-semibold outline-none border transition-all duration-150 ${
                     isDark
-                      ? "bg-[#1E1E22] border-zinc-800 text-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-                      : "bg-zinc-50 border-zinc-200 text-zinc-900 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                      ? "bg-zinc-900 border-zinc-800 text-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500/20 font-semibold"
+                      : "bg-[#FAFAFA] border-zinc-200 text-zinc-900 focus:border-blue-500 font-semibold"
                   }`}
                   required
                 />
               </div>
 
               <div className="space-y-1">
-                <label className="text-[10px] font-extrabold uppercase tracking-wider text-zinc-400">Website URL</label>
+                <label className="text-[10px] font-bold tracking-wider text-zinc-400 uppercase font-mono block">Website URL</label>
                 <input
                   type="text"
                   placeholder="e.g. remoteok.com"
                   value={newUrl}
                   onChange={(e) => setNewUrl(e.target.value)}
-                  className={`w-full px-3.5 py-2 rounded-xl text-xs font-bold outline-none border transition-all ${
+                  className={`w-full h-12 px-3.5 rounded-xl text-sm font-semibold outline-none border transition-all duration-150 ${
                     isDark
-                      ? "bg-[#1E1E22] border-zinc-800 text-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-                      : "bg-zinc-50 border-zinc-200 text-zinc-900 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                      ? "bg-zinc-900 border-zinc-800 text-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500/20 font-semibold"
+                      : "bg-[#FAFAFA] border-[#E4E4E7] text-zinc-900 focus:border-blue-500 font-semibold"
                   }`}
                   required
                 />
               </div>
 
               <div className="space-y-1">
-                <label className="text-[10px] font-extrabold uppercase tracking-wider text-zinc-400">Short Description (Optional)</label>
+                <label className="text-[10px] font-bold tracking-wider text-zinc-400 uppercase font-mono block">Short Description (Optional)</label>
                 <input
                   type="text"
-                  placeholder="e.g. Curated tech & developer remote channels."
+                  placeholder="e.g. Curated tech & remote channels."
                   value={newDesc}
                   onChange={(e) => setNewDesc(e.target.value)}
-                  className={`w-full px-3.5 py-2 rounded-xl text-xs font-bold outline-none border transition-all ${
+                  className={`w-full h-12 px-3.5 rounded-xl text-sm font-semibold outline-none border transition-all duration-150 ${
                     isDark
-                      ? "bg-[#1E1E22] border-zinc-800 text-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-                      : "bg-zinc-50 border-zinc-200 text-zinc-900 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                      ? "bg-zinc-900 border-zinc-800 text-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500/20 font-semibold"
+                      : "bg-[#FAFAFA] border-[#E4E4E7] text-zinc-900 focus:border-blue-500 font-semibold"
                   }`}
                 />
               </div>
 
               <button
                 type="submit"
-                className="w-full py-2.5 rounded-xl bg-blue-500 text-white font-extrabold text-xs tracking-wide transition-colors hover:bg-blue-600 focus:ring-2 focus:ring-blue-500/20 active:scale-98"
+                className="w-full h-12 rounded-xl bg-blue-600 hover:bg-blue-550 active:scale-98 text-white font-bold text-sm tracking-wider transition-colors shadow-md shadow-blue-600/10 cursor-pointer animate-none"
               >
                 Add Portal to Hub
               </button>
@@ -470,19 +461,19 @@ export const JobsScreen: React.FC<JobsScreenProps> = (props) => {
       </AnimatePresence>
 
       <motion.div
-        animate={{ scale: isSearchFocused ? 1.01 : 1 }}
+        animate={{ scale: isSearchFocused ? 1.002 : 1 }}
         transition={{ type: "spring", stiffness: 350, damping: 25 }}
-        className={`relative flex items-center h-12 px-4 rounded-2xl border transition-all duration-200 ${
+        className={`relative flex items-center h-14 px-5 rounded-2xl border transition-all duration-200 ${
           isSearchFocused
             ? isDark
-              ? "border-blue-500 ring-2 ring-blue-500/20 bg-[#1c1c1e]"
-              : "border-blue-500 ring-2 ring-blue-500/10 bg-white"
+              ? "border-blue-500 ring-1 ring-blue-500/25 bg-[#121214]"
+              : "border-blue-500 ring-1 ring-blue-500/10 bg-white"
             : isDark
             ? "bg-[#121214] border-zinc-800 text-white"
             : "bg-white border-zinc-200 text-zinc-900 shadow-sm"
         }`}
       >
-        <Search className={`w-4.5 h-4.5 shrink-0 transition-colors ${isSearchFocused ? "text-blue-500" : isDark ? "text-zinc-400" : "text-zinc-500"}`} />
+        <Search className={`w-5 h-5 shrink-0 transition-colors ${isSearchFocused ? "text-blue-500" : isDark ? "text-zinc-400" : "text-zinc-550"}`} />
         <input
           type="text"
           placeholder="Search corporate & startup portals..."
@@ -490,37 +481,37 @@ export const JobsScreen: React.FC<JobsScreenProps> = (props) => {
           onChange={(e) => setSearchVal(e.target.value)}
           onFocus={() => setIsSearchFocused(true)}
           onBlur={() => setIsSearchFocused(false)}
-          className={`flex-1 min-w-0 h-full bg-transparent outline-none text-[13px] px-3 font-bold placeholder-zinc-500 ${
+          className={`flex-1 min-w-0 h-full bg-transparent outline-none text-sm px-3.5 font-semibold placeholder-zinc-550 ${
             isDark ? "text-white" : "text-zinc-900"
           }`}
         />
         {searchVal && (
           <button
             onClick={() => setSearchVal("")}
-            className={`w-5 h-5 rounded-full flex items-center justify-center transition-colors ${
-              isDark ? "bg-zinc-800 text-zinc-200 hover:bg-zinc-700" : "bg-zinc-100 text-zinc-500 hover:bg-zinc-200"
+            className={`w-6 h-6 rounded-full flex items-center justify-center transition-colors ${
+              isDark ? "bg-zinc-800 text-zinc-200 hover:bg-zinc-700" : "bg-zinc-100 text-zinc-550 hover:bg-zinc-200"
             }`}
           >
-            <X className="w-3.5 h-3.5" />
+            <X className="w-4 h-4" />
           </button>
         )}
       </motion.div>
 
       <div className="space-y-3.5">
         <div className="flex items-center justify-between px-1">
-          <span className={`text-[10px] font-extrabold uppercase tracking-widest block leading-none ${
-            isDark ? "text-zinc-400" : "text-zinc-500"
+          <span className={`text-xs font-bold uppercase tracking-widest block leading-none ${
+            isDark ? "text-zinc-400" : "text-zinc-550"
           }`}>
             {searchVal ? `Matches (${filteredWebsites.length})` : "Portals Available"}
           </span>
-          <span className={`text-[10.5px] font-bold px-2 py-0.5 rounded-full ${
+          <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${
             isDark ? "bg-zinc-800/80 text-zinc-300" : "bg-zinc-100 text-zinc-600"
           }`}>
             {filteredWebsites.length} Active Channels
           </span>
         </div>
 
-        <motion.div layout className="grid grid-cols-1 gap-3">
+        <motion.div layout className="grid grid-cols-1 gap-3.5">
           {filteredWebsites.length === 0 ? (
             <motion.div
               initial={{ opacity: 0 }}
@@ -558,71 +549,72 @@ export const JobsScreen: React.FC<JobsScreenProps> = (props) => {
                     initial={{ opacity: 0, scale: 0.97 }}
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.97 }}
-                    whileHover={{ y: -3, scale: 1.015 }}
+                    whileHover={{ y: -2, scale: 1.005 }}
+                    whileTap={{ scale: 0.98 }}
                     transition={{ type: "spring", stiffness: 450, damping: 28 }}
                     onClick={() => launchPortal(portal.url, portal.name)}
-                    className={`relative overflow-hidden p-4 rounded-2xl border transition-all duration-200 cursor-pointer group ${
+                    className={`relative overflow-hidden p-6 rounded-[20px] border transition-all duration-200 cursor-pointer group ${
                       isDark
                         ? "bg-[#121214] border-zinc-800/90 hover:bg-[#18181b] hover:border-zinc-700 text-white"
                         : "bg-white border-zinc-200/80 hover:bg-zinc-50/50 hover:border-zinc-300 shadow-[0_2px_8px_rgba(0,0,0,0.015)] text-zinc-950"
                     }`}
                   >
-                    <div className={`absolute top-0 left-0 w-[4px] h-full bg-gradient-to-b ${theme.gradient}`} />
+                    <div className={`absolute left-0 top-4.5 bottom-4.5 w-1 bg-gradient-to-b ${theme.gradient} rounded-r-full`} />
 
                     <div className="flex items-center justify-between min-w-0">
                       <div className="flex items-center space-x-4 min-w-0">
-                        <div className={`w-11 h-11 rounded-2xl flex items-center justify-center shrink-0 ${theme.bg} ${theme.text} transition-transform duration-300 group-hover:scale-105`}>
+                        <div className={`w-13 h-13 rounded-2xl flex items-center justify-center shrink-0 ${theme.bg} ${theme.text} transition-transform duration-300 group-hover:scale-105`}>
                           {isCustom ? (
-                            <span className="text-sm font-black uppercase">
+                            <span className="text-base font-extrabold uppercase">
                               {portal.name.charAt(0)}
                             </span>
                           ) : (
-                            <LogoIcon id={portal.id} className="w-5.5 h-5.5" />
+                            <LogoIcon id={portal.id} className="w-6.5 h-6.5" />
                           )}
                         </div>
 
-                        <div className="min-w-0 text-left space-y-0.5">
-                          <div className="flex items-center gap-1.5 flex-wrap">
-                            <h3 className={`text-[13px] font-black tracking-tight leading-tight ${
+                        <div className="min-w-0 text-left space-y-1">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <h3 className={`text-[15px] font-extrabold tracking-tight leading-tight ${
                               isDark ? "text-white" : "text-zinc-900"
                             }`}>
                               {portal.name}
                             </h3>
                             {isCustom && (
-                              <span className="text-[8px] font-black uppercase bg-blue-500/10 text-blue-500 px-1.5 py-0.2 rounded font-sans tracking-wide">
+                              <span className="text-[9.5px] font-bold uppercase bg-blue-500/10 text-blue-500 px-2 py-0.5 rounded font-sans tracking-wide">
                                 Custom
                               </span>
                             )}
                           </div>
-                          <p className={`text-[11.5px] font-semibold leading-relaxed truncate pr-2 ${
-                            isDark ? "text-zinc-300" : "text-zinc-600"
+                          <p className={`text-[13px] font-bold leading-relaxed truncate pr-2 ${
+                            isDark ? "text-zinc-350" : "text-zinc-650"
                           }`}>
                             {portal.desc}
                           </p>
                         </div>
                       </div>
 
-                      <div className="flex items-center gap-2 shrink-0">
+                      <div className="flex items-center gap-2.5 shrink-0">
                         {isCustom && (
                           <button
                             onClick={(e) => handleDeletePortal(portal.id, portal.name, e)}
-                            className={`w-8 h-8 rounded-full flex items-center justify-center border transition-all hover:bg-red-500/10 hover:text-red-500 ${
+                            className={`w-9.5 h-9.5 rounded-full flex items-center justify-center border transition-all hover:bg-red-500/10 hover:text-red-500 ${
                               isDark 
                                 ? "bg-zinc-800 border-zinc-700 text-zinc-400" 
                                 : "bg-zinc-50 border-zinc-200 text-zinc-500"
                             }`}
                             title="Delete custom website"
                           >
-                            <Trash2 className="w-3.5 h-3.5" />
+                            <Trash2 className="w-4 h-4" />
                           </button>
                         )}
                         
-                        <div className={`w-8 h-8 rounded-full flex items-center justify-center border transition-all duration-200 ${
+                        <div className={`w-9.5 h-9.5 rounded-full flex items-center justify-center border transition-all duration-200 ${
                           isDark 
                             ? "bg-zinc-800 border-zinc-700 text-zinc-300 group-hover:bg-blue-500 group-hover:text-white group-hover:border-blue-500" 
                             : "bg-zinc-50 border-zinc-200 text-zinc-600 group-hover:bg-blue-500 group-hover:text-white group-hover:border-blue-500"
                         }`}>
-                          <ArrowUpRight className="w-4 h-4" />
+                          <ArrowUpRight className="w-4.5 h-4.5" />
                         </div>
                       </div>
                     </div>

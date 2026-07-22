@@ -322,16 +322,16 @@ export const VaultScreen: React.FC<VaultScreenProps> = ({
   ].filter(item => !!item.url);
 
   const cardClass = isDark 
-    ? "bg-[#1C1C1E] border border-white/[0.04] rounded-2xl shadow-none" 
-    : "bg-white border border-zinc-150/50 rounded-2xl shadow-[0_1.5px_4px_rgba(0,0,0,0.015)]";
+    ? "bg-[#121214] border border-zinc-800 rounded-2xl shadow-[0_4px_12px_rgba(0,0,0,0.25)]" 
+    : "bg-white border border-zinc-205 rounded-2xl shadow-[0_4px_12px_rgba(0,0,0,0.03)]";
 
-  const sectionHeaderClass = `text-[9.5px] font-bold ${isDark ? "text-zinc-400" : "text-zinc-500"} uppercase tracking-widest px-1.5 mb-1.5 block font-sans`;
+  const sectionHeaderClass = `text-[10px] font-bold ${isDark ? "text-zinc-500" : "text-zinc-450"} uppercase tracking-widest px-1 leading-none mb-2.5 block font-mono`;
 
   const inputClass = isDark 
-    ? "w-full h-8 px-2.5 rounded-lg text-xs outline-none border border-zinc-800/80 bg-zinc-900/40 text-zinc-100 placeholder-zinc-600 focus:border-[#0A84FF]/80 focus:ring-1 focus:ring-[#0A84FF]/25 transition-all font-medium" 
-    : "w-full h-8 px-2.5 rounded-lg text-xs outline-none border border-zinc-200/80 bg-zinc-50/50 text-zinc-900 placeholder-zinc-400 focus:border-[#007AFF]/80 focus:bg-white focus:ring-1 focus:ring-[#007AFF]/15 transition-all font-medium";
+    ? "w-full h-12 px-3.5 rounded-xl text-sm outline-none border border-zinc-800 bg-zinc-900 text-zinc-100 placeholder-zinc-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500/20 transition-all font-semibold text-left" 
+    : "w-full h-12 px-3.5 rounded-xl text-sm outline-none border border-zinc-250 bg-[#FAFAFA] text-zinc-900 placeholder-zinc-400 focus:border-blue-500 transition-all font-semibold text-left";
 
-  const labelClass = `text-[8.5px] font-bold ${isDark ? "text-zinc-400" : "text-zinc-500"} uppercase block mb-1 tracking-wider`;
+  const labelClass = `text-xs font-bold ${isDark ? "text-zinc-400" : "text-zinc-500"} uppercase block mb-1.5 tracking-wider`;
 
   const handleOpenEdit = () => {
     setEditName(profileName);
@@ -423,7 +423,7 @@ export const VaultScreen: React.FC<VaultScreenProps> = ({
   };
 
   return (
-    <div className="font-sans select-none relative max-w-md mx-auto px-0.5 pb-5 pt-1">
+    <div className="font-sans select-none relative pb-6 pt-2">
       <AnimatePresence mode="wait">
         {isEditing ? (
           <motion.div
@@ -432,12 +432,12 @@ export const VaultScreen: React.FC<VaultScreenProps> = ({
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 10 }}
             transition={{ duration: 0.18, ease: "easeOut" }}
-            className="space-y-3.5"
+            className="space-y-5.5"
           >
             <div className={`flex items-center justify-between pb-2 border-b-[0.5px] ${isDark ? "border-zinc-800/40" : "border-zinc-200/50"}`}>
               <button 
                 onClick={() => setIsEditing(false)}
-                className={`text-[12.5px] font-semibold ${isDark ? "text-zinc-400 hover:text-zinc-200" : "text-zinc-500 hover:text-zinc-800"} transition-colors`}
+                className={`text-xs font-semibold ${isDark ? "text-zinc-450 hover:text-zinc-200" : "text-zinc-500 hover:text-zinc-800"} transition-colors`}
               >
                 Cancel
               </button>
@@ -446,13 +446,13 @@ export const VaultScreen: React.FC<VaultScreenProps> = ({
               </span>
               <button 
                 onClick={handleSaveEdit}
-                className={`text-[12.5px] font-bold ${isDark ? "text-[#0A84FF] hover:text-blue-400" : "text-[#007AFF] hover:text-blue-700"} transition-colors`}
+                className={`text-xs font-bold ${isDark ? "text-[#0A84FF] hover:text-blue-400" : "text-[#007AFF] hover:text-blue-700"} transition-colors`}
               >
                 Done
               </button>
             </div>
 
-            <div className="space-y-3.5 max-h-[460px] overflow-y-auto pr-1 pb-10 scrollbar-none">
+            <div className="space-y-4 pb-8 scrollbar-none">
               <div className="space-y-1">
                 <span className={sectionHeaderClass}>Profile Details</span>
                 <div className={`${cardClass} py-2.5 px-3.5 space-y-2.5`}>
@@ -478,7 +478,7 @@ export const VaultScreen: React.FC<VaultScreenProps> = ({
                     />
                   </div>
 
-                  <div className="grid grid-cols-2 gap-2.5">
+                  <div className="grid grid-cols-1 min-[360px]:grid-cols-2 gap-2.5">
                     <div>
                       <label className={labelClass}>Degree</label>
                       <input
@@ -501,7 +501,7 @@ export const VaultScreen: React.FC<VaultScreenProps> = ({
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-2.5">
+                  <div className="grid grid-cols-1 min-[360px]:grid-cols-2 gap-2.5">
                     <div>
                       <label className={labelClass}>Branch / Major</label>
                       <input
@@ -605,7 +605,7 @@ export const VaultScreen: React.FC<VaultScreenProps> = ({
               <div className="space-y-1">
                 <span className={sectionHeaderClass}>Coding Profiles</span>
                 <div className={`${cardClass} py-2.5 px-3.5 space-y-2.5`}>
-                  <div className="grid grid-cols-2 gap-2.5">
+                  <div className="grid grid-cols-1 min-[360px]:grid-cols-2 gap-2.5">
                     <div>
                       <label className={labelClass}>LeetCode URL</label>
                       <input
@@ -627,7 +627,7 @@ export const VaultScreen: React.FC<VaultScreenProps> = ({
                       />
                     </div>
                   </div>
-                  <div className="grid grid-cols-2 gap-2.5">
+                  <div className="grid grid-cols-1 min-[360px]:grid-cols-2 gap-2.5">
                     <div>
                       <label className={labelClass}>CodeChef URL</label>
                       <input
@@ -730,21 +730,22 @@ export const VaultScreen: React.FC<VaultScreenProps> = ({
           </motion.div>
         ) : (
           <motion.div
-            key="view-view"
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
+exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.18, ease: "easeOut" }}
-            className="space-y-2.5"
+            className="space-y-7"
           >
-            <div className="pl-0.5">
-              <h4 className={`text-[9px] font-bold ${isDark ? "text-zinc-400" : "text-zinc-500"} uppercase tracking-widest font-sans`}>Digital Wallet</h4>
-              <h2 className={`text-[14.5px] font-bold tracking-tight ${isDark ? "text-zinc-100" : "text-zinc-800"}`}>Career Vault</h2>
+            <div className="pt-4.5 flex flex-col items-start">
+              <span className="text-[10px] font-bold tracking-widest text-zinc-500 dark:text-zinc-455 block leading-none uppercase font-mono mb-1.5">
+                Digital Wallet
+              </span>
+              <h1 className={`text-[28px] font-extrabold tracking-tight leading-none ${isDark ? "text-white" : "text-zinc-950"}`}>
+                Career Vault
+              </h1>
             </div>
 
-            <div className={`${cardClass} py-3 px-3.5 space-y-3`}>
-              <div className="flex items-center justify-between gap-3">
-                <div className="flex items-center space-x-3 min-w-0">
+            <div className={`${cardClass} p-6 space-y-5.5`}>
+              <div className="flex items-center justify-between gap-3.5">
+                <div className="flex items-center space-x-4 min-w-0">
                   <div className="relative group">
                     <input
                       type="file"
@@ -755,7 +756,7 @@ export const VaultScreen: React.FC<VaultScreenProps> = ({
                     />
                     <div
                       onClick={() => fileInputRef.current?.click()}
-                      className={`w-10 h-10 rounded-full overflow-hidden flex items-center justify-center shrink-0 border cursor-pointer relative ${
+                      className={`w-14 h-14 min-w-[56px] min-h-[56px] rounded-full overflow-hidden flex items-center justify-center shrink-0 border cursor-pointer relative ${
                         isDark ? "bg-blue-500/10 border-blue-500/20 text-blue-400" : "bg-blue-50 border-blue-100 text-blue-600"
                       }`}
                       title="Click to upload avatar"
@@ -763,42 +764,42 @@ export const VaultScreen: React.FC<VaultScreenProps> = ({
                       {auth.avatarSignedUrl ? (
                         <img src={auth.avatarSignedUrl} alt={profileName} className="w-full h-full object-cover" />
                       ) : (
-                        <span className="text-xs font-bold">{getInitials(profileName)}</span>
+                        <span className="text-base font-bold">{getInitials(profileName || "User")}</span>
                       )}
                       <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
-                        <Camera size={12} className="text-white" />
+                        <Camera size={16} className="text-white" />
                       </div>
                     </div>
                   </div>
                   
                   <div className="min-w-0">
-                    <h3 className={`text-[13.5px] font-bold tracking-tight leading-tight truncate ${isDark ? "text-white" : "text-zinc-900"}`}>
-                      {profileName || "Anonymous Student"}
+                    <h3 className={`text-lg font-extrabold tracking-tight leading-tight truncate ${isDark ? "text-white" : "text-zinc-900"}`}>
+                      {profileName || "Placement Candidate"}
                     </h3>
-                    <p className={`text-[9.5px] ${isDark ? "text-zinc-400" : "text-zinc-500"} font-medium truncate mt-0.5 leading-none`}>
-                      {profileCollege || "NIT (Unspecified)"}
+                    <p className={`text-sm ${isDark ? "text-zinc-400" : "text-zinc-500"} font-semibold truncate mt-0.5`}>
+                      {profileCollege || "University / College"}
                     </p>
                   </div>
                 </div>
               </div>
 
               {(profileDegree || profileCgpa || profileBranch || profileGradYear) && (
-                <div className={`pt-2.5 border-t ${isDark ? "border-zinc-800/20" : "border-zinc-100"} grid grid-cols-3 gap-2 text-center`}>
-                  <div className={`p-1.5 rounded-xl border ${isDark ? "bg-zinc-900/30 border-zinc-800/20" : "bg-zinc-50/50 border-zinc-100/30"}`}>
-                    <span className={`text-[7.5px] font-bold ${isDark ? "text-zinc-500" : "text-zinc-400"} uppercase tracking-wider block leading-none mb-0.5`}>Degree</span>
-                    <span className={`text-[9.5px] font-semibold block leading-tight truncate ${isDark ? "text-zinc-300" : "text-zinc-700"}`}>
+                <div className={`pt-4.5 border-t ${isDark ? "border-zinc-800/20" : "border-zinc-100"} grid grid-cols-3 gap-4 text-center`}>
+                  <div className={`p-3 rounded-xl border ${isDark ? "bg-zinc-900/30 border-zinc-800/20" : "bg-zinc-50/50 border-zinc-100/30"}`}>
+                    <span className={`text-[9.5px] font-bold ${isDark ? "text-zinc-500" : "text-zinc-400"} uppercase tracking-wider block leading-none mb-1.5`}>Degree</span>
+                    <span className={`text-xs font-bold block leading-tight truncate ${isDark ? "text-zinc-300" : "text-zinc-700"}`}>
                       {profileDegree || "B.Tech"}
                     </span>
                   </div>
-                  <div className={`p-1.5 rounded-xl border ${isDark ? "bg-zinc-900/30 border-zinc-800/20" : "bg-zinc-50/50 border-zinc-100/30"}`}>
-                    <span className={`text-[7.5px] font-bold ${isDark ? "text-zinc-500" : "text-zinc-400"} uppercase tracking-wider block leading-none mb-0.5`}>CGPA</span>
-                    <span className={`text-[9.5px] font-bold block leading-tight text-blue-500 dark:text-blue-400`}>
+                  <div className={`p-3 rounded-xl border ${isDark ? "bg-zinc-900/30 border-zinc-800/20" : "bg-zinc-50/50 border-zinc-100/30"}`}>
+                    <span className={`text-[9.5px] font-bold ${isDark ? "text-zinc-500" : "text-zinc-400"} uppercase tracking-wider block leading-none mb-1.5`}>CGPA</span>
+                    <span className={`text-xs font-extrabold block leading-tight text-blue-500 dark:text-blue-400`}>
                       {profileCgpa || "N/A"}
                     </span>
                   </div>
-                  <div className={`p-1.5 rounded-xl border ${isDark ? "bg-zinc-900/30 border-zinc-800/20" : "bg-zinc-50/50 border-zinc-100/30"}`}>
-                    <span className={`text-[7.5px] font-bold ${isDark ? "text-zinc-500" : "text-zinc-400"} uppercase tracking-wider block leading-none mb-0.5`}>Grad Year</span>
-                    <span className={`text-[9.5px] font-semibold block leading-tight truncate ${isDark ? "text-zinc-300" : "text-zinc-700"}`}>
+                  <div className={`p-3 rounded-xl border ${isDark ? "bg-zinc-900/30 border-zinc-800/20" : "bg-zinc-50/50 border-zinc-100/30"}`}>
+                    <span className={`text-[9.5px] font-bold ${isDark ? "text-zinc-500" : "text-zinc-400"} uppercase tracking-wider block leading-none mb-1.5`}>Grad Year</span>
+                    <span className={`text-xs font-bold block leading-tight truncate ${isDark ? "text-zinc-300" : "text-zinc-700"}`}>
                       {profileGradYear || "2027"}
                     </span>
                   </div>
@@ -806,9 +807,9 @@ export const VaultScreen: React.FC<VaultScreenProps> = ({
               )}
             </div>
 
-            <div className="space-y-1">
+            <div className="space-y-3.5">
               <span className={sectionHeaderClass}>Quick Documents</span>
-              <div className={`${cardClass} py-1 px-1.5 space-y-0.5`}>
+              <div className={`${cardClass} p-6 space-y-2`}>
                 <div 
                   onClick={() => {
                     const res = resumes.find(r => r.isDefault) || resumes[0];
@@ -818,19 +819,19 @@ export const VaultScreen: React.FC<VaultScreenProps> = ({
                       showToast("Resume is not uploaded. Tap Edit Profile.", "warning");
                     }
                   }}
-                  className={`flex items-center justify-between py-1.5 px-2 rounded-xl cursor-pointer group ${isDark ? "hover:bg-white/[0.03] active:bg-white/[0.06]" : "hover:bg-zinc-100/40 active:bg-zinc-100/80"} transition-all duration-150`}
+                  className={`flex items-center justify-between py-4 px-4 rounded-xl cursor-pointer group ${isDark ? "hover:bg-white/[0.03] active:bg-white/[0.06]" : "hover:bg-zinc-100/40 active:bg-zinc-100/80"} transition-all duration-150 min-h-[56px]`}
                 >
-                  <div className="flex items-center space-x-2.5 min-w-0">
-                    <div className={`w-6 h-6 rounded-[6px] flex items-center justify-center shrink-0 transition-transform duration-200 group-hover:scale-105 ${isDark ? "bg-blue-500/15 text-blue-400" : "bg-blue-500/10 text-blue-500"}`}>
-                      <FileText size={12.5} />
+                  <div className="flex items-center space-x-3.5 min-w-0">
+                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-transform duration-200 group-hover:scale-105 ${isDark ? "bg-blue-500/15 text-blue-400" : "bg-blue-500/10 text-blue-500"}`}>
+                      <FileText size={17} />
                     </div>
-                    <span className={`text-[11.5px] font-medium ${isDark ? "text-zinc-200" : "text-zinc-800"}`}>Resume</span>
+                    <span className={`text-sm font-semibold ${isDark ? "text-zinc-200" : "text-zinc-800"}`}>Resume</span>
                   </div>
-                  <div className="flex items-center space-x-1.5 shrink-0 min-w-0">
-                    <span className={`text-[9.5px] ${isDark ? "text-zinc-450" : "text-zinc-500"} truncate max-w-[120px] font-normal`}>
+                  <div className="flex items-center space-x-2 shrink-0 min-w-0">
+                    <span className={`text-xs ${isDark ? "text-zinc-450" : "text-zinc-500"} truncate max-w-[120px] font-normal`}>
                       {resumes.find(r => r.isDefault)?.name || resumes[0]?.name || "Not uploaded"}
                     </span>
-                    <ChevronRight size={11} className={`transition-colors shrink-0 ${isDark ? "text-zinc-600 group-hover:text-blue-400" : "text-zinc-300 group-hover:text-blue-600"}`} />
+                    <ChevronRight size={14} className={`transition-colors shrink-0 ${isDark ? "text-zinc-650 group-hover:text-blue-400" : "text-zinc-300 group-hover:text-blue-600"}`} />
                   </div>
                 </div>
 
@@ -838,19 +839,19 @@ export const VaultScreen: React.FC<VaultScreenProps> = ({
                   onClick={() => {
                     showToast("Opening: Standard Cover Letter.pdf", "info");
                   }}
-                  className={`flex items-center justify-between py-1.5 px-2 rounded-xl cursor-pointer group ${isDark ? "hover:bg-white/[0.03] active:bg-white/[0.06]" : "hover:bg-zinc-100/40 active:bg-zinc-100/80"} transition-all duration-150`}
+                  className={`flex items-center justify-between py-4 px-4 rounded-xl cursor-pointer group ${isDark ? "hover:bg-white/[0.03] active:bg-white/[0.06]" : "hover:bg-zinc-100/40 active:bg-zinc-100/80"} transition-all duration-150 min-h-[56px]`}
                 >
-                  <div className="flex items-center space-x-2.5 min-w-0">
-                    <div className={`w-6 h-6 rounded-[6px] flex items-center justify-center shrink-0 transition-transform duration-200 group-hover:scale-105 ${isDark ? "bg-indigo-500/15 text-indigo-400" : "bg-indigo-500/10 text-indigo-500"}`}>
-                      <FileText size={12.5} />
+                  <div className="flex items-center space-x-3.5 min-w-0">
+                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-transform duration-200 group-hover:scale-105 ${isDark ? "bg-indigo-500/15 text-indigo-400" : "bg-indigo-500/10 text-indigo-500"}`}>
+                      <FileText size={17} />
                     </div>
-                    <span className={`text-[11.5px] font-medium ${isDark ? "text-zinc-200" : "text-zinc-800"}`}>Cover Letter</span>
+                    <span className={`text-sm font-semibold ${isDark ? "text-zinc-200" : "text-zinc-800"}`}>Cover Letter</span>
                   </div>
-                  <div className="flex items-center space-x-1.5 shrink-0 min-w-0">
-                    <span className={`text-[9.5px] ${isDark ? "text-zinc-450" : "text-zinc-500"} truncate max-w-[120px] font-normal`}>
+                  <div className="flex items-center space-x-2 shrink-0 min-w-0">
+                    <span className={`text-xs ${isDark ? "text-zinc-450" : "text-zinc-500"} truncate max-w-[120px] font-normal`}>
                       {vaultDocuments.find(d => d.category?.toLowerCase() === "cover letter")?.name || "Standard Cover Letter.pdf"}
                     </span>
-                    <ChevronRight size={11} className={`transition-colors shrink-0 ${isDark ? "text-zinc-600 group-hover:text-indigo-400" : "text-zinc-300 group-hover:text-indigo-600"}`} />
+                    <ChevronRight size={14} className={`transition-colors shrink-0 ${isDark ? "text-zinc-650 group-hover:text-indigo-400" : "text-zinc-300 group-hover:text-indigo-600"}`} />
                   </div>
                 </div>
 
@@ -862,19 +863,19 @@ export const VaultScreen: React.FC<VaultScreenProps> = ({
                       showToast("Creative Portfolio is linked as virtual pdf", "info");
                     }
                   }}
-                  className={`flex items-center justify-between py-1.5 px-2 rounded-xl cursor-pointer group ${isDark ? "hover:bg-white/[0.03] active:bg-white/[0.06]" : "hover:bg-zinc-100/40 active:bg-zinc-100/80"} transition-all duration-150`}
+                  className={`flex items-center justify-between py-4 px-4 rounded-xl cursor-pointer group ${isDark ? "hover:bg-white/[0.03] active:bg-white/[0.06]" : "hover:bg-zinc-100/40 active:bg-zinc-100/80"} transition-all duration-150 min-h-[56px]`}
                 >
-                  <div className="flex items-center space-x-2.5 min-w-0">
-                    <div className={`w-6 h-6 rounded-[6px] flex items-center justify-center shrink-0 transition-transform duration-200 group-hover:scale-105 ${isDark ? "bg-amber-500/15 text-amber-400" : "bg-amber-500/10 text-amber-500"}`}>
-                      <Briefcase size={12.5} />
+                  <div className="flex items-center space-x-3.5 min-w-0">
+                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-transform duration-200 group-hover:scale-105 ${isDark ? "bg-amber-500/15 text-amber-400" : "bg-amber-500/10 text-amber-500"}`}>
+                      <Briefcase size={17} />
                     </div>
-                    <span className={`text-[11.5px] font-medium ${isDark ? "text-zinc-200" : "text-zinc-800"}`}>Portfolio</span>
+                    <span className={`text-sm font-semibold ${isDark ? "text-zinc-200" : "text-zinc-800"}`}>Portfolio</span>
                   </div>
-                  <div className="flex items-center space-x-1.5 shrink-0 min-w-0">
-                    <span className={`text-[9.5px] ${isDark ? "text-zinc-450" : "text-zinc-500"} truncate max-w-[120px] font-normal`}>
+                  <div className="flex items-center space-x-2 shrink-0 min-w-0">
+                    <span className={`text-xs ${isDark ? "text-zinc-450" : "text-zinc-500"} truncate max-w-[120px] font-normal`}>
                       {linkPortfolio || "Creative Portfolio v2.pdf"}
                     </span>
-                    <ChevronRight size={11} className={`transition-colors shrink-0 ${isDark ? "text-zinc-600 group-hover:text-amber-400" : "text-zinc-300 group-hover:text-amber-600"}`} />
+                    <ChevronRight size={14} className={`transition-colors shrink-0 ${isDark ? "text-zinc-650 group-hover:text-amber-400" : "text-zinc-300 group-hover:text-amber-600"}`} />
                   </div>
                 </div>
 
@@ -882,106 +883,106 @@ export const VaultScreen: React.FC<VaultScreenProps> = ({
                   onClick={() => {
                     showToast("Opening Stored Credentials list", "info");
                   }}
-                  className={`flex items-center justify-between py-1.5 px-2 rounded-xl cursor-pointer group ${isDark ? "hover:bg-white/[0.03] active:bg-white/[0.06]" : "hover:bg-zinc-100/40 active:bg-zinc-100/80"} transition-all duration-150`}
+                  className={`flex items-center justify-between py-4 px-4 rounded-xl cursor-pointer group ${isDark ? "hover:bg-white/[0.03] active:bg-white/[0.06]" : "hover:bg-zinc-100/40 active:bg-zinc-100/80"} transition-all duration-150 min-h-[56px]`}
                 >
-                  <div className="flex items-center space-x-2.5 min-w-0">
-                    <div className={`w-6 h-6 rounded-[6px] flex items-center justify-center shrink-0 transition-transform duration-200 group-hover:scale-105 ${isDark ? "bg-emerald-500/15 text-emerald-400" : "bg-emerald-500/10 text-emerald-500"}`}>
-                      <Award size={12.5} />
+                  <div className="flex items-center space-x-3.5 min-w-0">
+                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-transform duration-200 group-hover:scale-105 ${isDark ? "bg-emerald-500/15 text-emerald-400" : "bg-emerald-500/10 text-emerald-500"}`}>
+                      <Award size={17} />
                     </div>
-                    <span className={`text-[11.5px] font-medium ${isDark ? "text-zinc-200" : "text-zinc-800"}`}>Certificates</span>
+                    <span className={`text-sm font-semibold ${isDark ? "text-zinc-200" : "text-zinc-800"}`}>Certificates</span>
                   </div>
-                  <div className="flex items-center space-x-1.5 shrink-0 min-w-0">
-                    <span className={`text-[9.5px] ${isDark ? "text-zinc-450" : "text-zinc-500"} truncate max-w-[120px] font-normal`}>
+                  <div className="flex items-center space-x-2 shrink-0 min-w-0">
+                    <span className={`text-xs ${isDark ? "text-zinc-450" : "text-zinc-500"} truncate max-w-[120px] font-normal`}>
                       {vaultDocuments.length} Verified
                     </span>
-                    <ChevronRight size={11} className={`transition-colors shrink-0 ${isDark ? "text-zinc-600 group-hover:text-emerald-400" : "text-zinc-300 group-hover:text-emerald-600"}`} />
+                    <ChevronRight size={14} className={`transition-colors shrink-0 ${isDark ? "text-zinc-650 group-hover:text-emerald-400" : "text-zinc-300 group-hover:text-emerald-600"}`} />
                   </div>
                 </div>
               </div>
             </div>
 
             {(linkLeetcode || linkCodeforces || linkCodechef || linkHackerRank) && (
-              <div className="space-y-1">
+              <div className="space-y-3.5">
                 <span className={sectionHeaderClass}>Coding Profiles</span>
-                <div className="grid grid-cols-2 gap-2">
+                <div className="grid grid-cols-1 min-[340px]:grid-cols-2 gap-4">
                   {linkLeetcode && (
                     <div 
                       onClick={() => window.open(linkLeetcode, "_blank", "noopener,noreferrer")}
-                      className={`flex items-center space-x-2 py-2 px-2.5 rounded-2xl cursor-pointer group ${isDark ? "hover:bg-white/[0.03] active:bg-white/[0.06] bg-[#1C1C1E] border-white/[0.04]" : "hover:bg-zinc-100/40 active:bg-zinc-100/80 bg-white border-zinc-150/50 shadow-[0_1px_2.5px_rgba(0,0,0,0.01)]"} border transition-all duration-150`}
+                      className={`flex items-center space-x-2.5 py-3 px-3.5 rounded-2xl cursor-pointer group ${isDark ? "hover:bg-white/[0.03] active:bg-white/[0.06] bg-[#1C1C1E] border-white/[0.04]" : "hover:bg-zinc-100/40 active:bg-zinc-100/80 bg-white border-zinc-150/50 shadow-[0_1px_2.5px_rgba(0,0,0,0.01)]"} border transition-all duration-150`}
                     >
-                      <div className={`w-5.5 h-5.5 rounded-[5px] flex items-center justify-center font-mono text-[8.5px] font-black shrink-0 transition-transform duration-200 group-hover:scale-105 ${isDark ? "bg-amber-500/15 text-amber-400" : "bg-amber-500/10 text-amber-500"}`}>
+                      <div className={`w-7 h-7 rounded-[5px] flex items-center justify-center font-mono text-[10px] font-bold shrink-0 transition-transform duration-200 group-hover:scale-105 ${isDark ? "bg-amber-500/15 text-amber-400" : "bg-amber-500/10 text-amber-500"}`}>
                         LC
                       </div>
                       <div className="min-w-0 flex-1">
-                        <span className={`text-[10.5px] font-bold block leading-none truncate ${isDark ? "text-zinc-200" : "text-zinc-800"}`}>LeetCode</span>
-                        <span className={`text-[8px] ${isDark ? "text-zinc-450" : "text-zinc-500"} font-mono truncate block mt-0.5`}>
+                        <span className={`text-xs font-bold block leading-none truncate ${isDark ? "text-zinc-200" : "text-zinc-800"}`}>LeetCode</span>
+                        <span className={`text-[10px] ${isDark ? "text-zinc-450" : "text-zinc-500"} font-mono truncate block mt-1`}>
                           {linkLeetcode.replace(/\/$/, "").split("/").pop() || "Profile"}
                         </span>
                       </div>
-                      <ChevronRight size={10} className={`transition-colors shrink-0 ${isDark ? "text-zinc-600 group-hover:text-blue-400" : "text-zinc-300 group-hover:text-blue-600"}`} />
+                      <ChevronRight size={12} className={`transition-colors shrink-0 ${isDark ? "text-zinc-650 group-hover:text-blue-400" : "text-zinc-300 group-hover:text-blue-600"}`} />
                     </div>
                   )}
 
                   {linkCodeforces && (
                     <div 
                       onClick={() => window.open(linkCodeforces, "_blank", "noopener,noreferrer")}
-                      className={`flex items-center space-x-2 py-2 px-2.5 rounded-2xl cursor-pointer group ${isDark ? "hover:bg-white/[0.03] active:bg-white/[0.06] bg-[#1C1C1E] border-white/[0.04]" : "hover:bg-zinc-100/40 active:bg-zinc-100/80 bg-white border-zinc-150/50 shadow-[0_1px_2.5px_rgba(0,0,0,0.01)]"} border transition-all duration-150`}
+                      className={`flex items-center space-x-2.5 py-3 px-3.5 rounded-2xl cursor-pointer group ${isDark ? "hover:bg-white/[0.03] active:bg-white/[0.06] bg-[#1C1C1E] border-white/[0.04]" : "hover:bg-zinc-100/40 active:bg-zinc-100/80 bg-white border-zinc-150/50 shadow-[0_1px_2.5px_rgba(0,0,0,0.01)]"} border transition-all duration-150`}
                     >
-                      <div className={`w-5.5 h-5.5 rounded-[5px] flex items-center justify-center font-mono text-[8.5px] font-black shrink-0 transition-transform duration-200 group-hover:scale-105 ${isDark ? "bg-blue-500/15 text-blue-400" : "bg-blue-500/10 text-blue-500"}`}>
+                      <div className={`w-7 h-7 rounded-[5px] flex items-center justify-center font-mono text-[10px] font-bold shrink-0 transition-transform duration-200 group-hover:scale-105 ${isDark ? "bg-blue-500/15 text-blue-400" : "bg-blue-500/10 text-blue-500"}`}>
                         CF
                       </div>
                       <div className="min-w-0 flex-1">
-                        <span className={`text-[10.5px] font-bold block leading-none truncate ${isDark ? "text-zinc-200" : "text-zinc-800"}`}>Codeforces</span>
-                        <span className={`text-[8px] ${isDark ? "text-zinc-450" : "text-zinc-500"} font-mono truncate block mt-0.5`}>
+                        <span className={`text-xs font-bold block leading-none truncate ${isDark ? "text-zinc-200" : "text-zinc-800"}`}>Codeforces</span>
+                        <span className={`text-[10px] ${isDark ? "text-zinc-450" : "text-zinc-500"} font-mono truncate block mt-1`}>
                           {linkCodeforces.replace(/\/$/, "").split("/").pop() || "Profile"}
                         </span>
                       </div>
-                      <ChevronRight size={10} className={`transition-colors shrink-0 ${isDark ? "text-zinc-600 group-hover:text-blue-400" : "text-zinc-300 group-hover:text-blue-600"}`} />
+                      <ChevronRight size={12} className={`transition-colors shrink-0 ${isDark ? "text-zinc-650 group-hover:text-blue-400" : "text-zinc-300 group-hover:text-blue-600"}`} />
                     </div>
                   )}
 
                   {linkCodechef && (
                     <div 
                       onClick={() => window.open(linkCodechef, "_blank", "noopener,noreferrer")}
-                      className={`flex items-center space-x-2 py-2 px-2.5 rounded-2xl cursor-pointer group ${isDark ? "hover:bg-white/[0.03] active:bg-white/[0.06] bg-[#1C1C1E] border-white/[0.04]" : "hover:bg-zinc-100/40 active:bg-zinc-100/80 bg-white border-zinc-150/50 shadow-[0_1px_2.5px_rgba(0,0,0,0.01)]"} border transition-all duration-150`}
+                      className={`flex items-center space-x-2.5 py-3 px-3.5 rounded-2xl cursor-pointer group ${isDark ? "hover:bg-white/[0.03] active:bg-white/[0.06] bg-[#1C1C1E] border-white/[0.04]" : "hover:bg-zinc-100/40 active:bg-zinc-100/80 bg-white border-zinc-150/50 shadow-[0_1px_2.5px_rgba(0,0,0,0.01)]"} border transition-all duration-150`}
                     >
-                      <div className={`w-5.5 h-5.5 rounded-[5px] flex items-center justify-center font-mono text-[8.5px] font-black shrink-0 transition-transform duration-200 group-hover:scale-105 ${isDark ? "bg-emerald-500/15 text-emerald-400" : "bg-emerald-500/10 text-emerald-500"}`}>
+                      <div className={`w-7 h-7 rounded-[5px] flex items-center justify-center font-mono text-[10px] font-bold shrink-0 transition-transform duration-200 group-hover:scale-105 ${isDark ? "bg-emerald-500/15 text-emerald-400" : "bg-emerald-500/10 text-emerald-500"}`}>
                         CC
                       </div>
                       <div className="min-w-0 flex-1">
-                        <span className={`text-[10.5px] font-bold block leading-none truncate ${isDark ? "text-zinc-200" : "text-zinc-800"}`}>CodeChef</span>
-                        <span className={`text-[8px] ${isDark ? "text-zinc-450" : "text-zinc-500"} font-mono truncate block mt-0.5`}>
+                        <span className={`text-xs font-bold block leading-none truncate ${isDark ? "text-zinc-200" : "text-zinc-800"}`}>CodeChef</span>
+                        <span className={`text-[10px] ${isDark ? "text-zinc-450" : "text-zinc-500"} font-mono truncate block mt-1`}>
                           {linkCodechef.replace(/\/$/, "").split("/").pop() || "Profile"}
                         </span>
                       </div>
-                      <ChevronRight size={10} className={`transition-colors shrink-0 ${isDark ? "text-zinc-600 group-hover:text-blue-400" : "text-zinc-300 group-hover:text-blue-600"}`} />
+                      <ChevronRight size={12} className={`transition-colors shrink-0 ${isDark ? "text-zinc-655 group-hover:text-blue-400" : "text-zinc-300 group-hover:text-blue-600"}`} />
                     </div>
                   )}
 
                   {linkHackerRank && (
                     <div 
                       onClick={() => window.open(linkHackerRank, "_blank", "noopener,noreferrer")}
-                      className={`flex items-center space-x-2 py-2 px-2.5 rounded-2xl cursor-pointer group ${isDark ? "hover:bg-white/[0.03] active:bg-white/[0.06] bg-[#1C1C1E] border-white/[0.04]" : "hover:bg-zinc-100/40 active:bg-zinc-100/80 bg-white border-zinc-150/50 shadow-[0_1px_2.5px_rgba(0,0,0,0.01)]"} border transition-all duration-150`}
+                      className={`flex items-center space-x-2.5 py-3 px-3.5 rounded-2xl cursor-pointer group ${isDark ? "hover:bg-white/[0.03] active:bg-white/[0.06] bg-[#1C1C1E] border-white/[0.04]" : "hover:bg-zinc-100/40 active:bg-zinc-100/80 bg-white border-zinc-150/50 shadow-[0_1px_2.5px_rgba(0,0,0,0.01)]"} border transition-all duration-150`}
                     >
-                      <div className={`w-5.5 h-5.5 rounded-[5px] flex items-center justify-center font-mono text-[8.5px] font-black shrink-0 transition-transform duration-200 group-hover:scale-105 ${isDark ? "bg-green-500/15 text-green-400" : "bg-green-500/10 text-green-500"}`}>
+                      <div className={`w-7 h-7 rounded-[5px] flex items-center justify-center font-mono text-[10px] font-bold shrink-0 transition-transform duration-200 group-hover:scale-105 ${isDark ? "bg-green-500/15 text-green-400" : "bg-green-500/10 text-green-500"}`}>
                         HR
                       </div>
                       <div className="min-w-0 flex-1">
-                        <span className={`text-[10.5px] font-bold block leading-none truncate ${isDark ? "text-zinc-200" : "text-zinc-800"}`}>HackerRank</span>
-                        <span className={`text-[8px] ${isDark ? "text-zinc-450" : "text-zinc-500"} font-mono truncate block mt-0.5`}>
+                        <span className={`text-xs font-bold block leading-none truncate ${isDark ? "text-zinc-200" : "text-zinc-800"}`}>HackerRank</span>
+                        <span className={`text-[10px] ${isDark ? "text-zinc-450" : "text-zinc-500"} font-mono truncate block mt-1`}>
                           {linkHackerRank.replace(/\/$/, "").split("/").pop() || "Profile"}
                         </span>
                       </div>
-                      <ChevronRight size={10} className={`transition-colors shrink-0 ${isDark ? "text-zinc-600 group-hover:text-blue-400" : "text-zinc-300 group-hover:text-blue-600"}`} />
+                      <ChevronRight size={12} className={`transition-colors shrink-0 ${isDark ? "text-zinc-650 group-hover:text-blue-400" : "text-zinc-300 group-hover:text-blue-600"}`} />
                     </div>
                   )}
                 </div>
               </div>
             )}
 
-            <div className="space-y-1">
+            <div className="space-y-1.5">
               <span className={sectionHeaderClass}>Professional Links</span>
-              <div className={`${cardClass} py-1 px-1.5 space-y-0.5`}>
+              <div className={`${cardClass} py-1 px-2 space-y-0.5`}>
                 <div 
                   onClick={() => {
                     if (linkLinkedin) {
@@ -990,19 +991,19 @@ export const VaultScreen: React.FC<VaultScreenProps> = ({
                       showToast("No LinkedIn profile linked yet.", "warning");
                     }
                   }}
-                  className={`flex items-center justify-between py-1.5 px-2 rounded-xl cursor-pointer group ${isDark ? "hover:bg-white/[0.03] active:bg-white/[0.06]" : "hover:bg-zinc-100/40 active:bg-zinc-100/80"} transition-all duration-150`}
+                  className={`flex items-center justify-between py-2.5 px-2 rounded-xl cursor-pointer group ${isDark ? "hover:bg-white/[0.03] active:bg-white/[0.06]" : "hover:bg-zinc-100/40 active:bg-zinc-100/80"} transition-all duration-150 min-h-[44px]`}
                 >
-                  <div className="flex items-center space-x-2.5 min-w-0">
-                    <div className={`w-6 h-6 rounded-[6px] flex items-center justify-center shrink-0 transition-transform duration-200 group-hover:scale-105 ${isDark ? "bg-[#0077B5]/15 text-[#33a0ff]" : "bg-[#0077B5]/10 text-[#0077B5]"}`}>
-                      <Linkedin size={12.5} />
+                  <div className="flex items-center space-x-3 min-w-0">
+                    <div className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 transition-transform duration-200 group-hover:scale-105 ${isDark ? "bg-[#0077B5]/15 text-[#33a0ff]" : "bg-[#0077B5]/10 text-[#0077B5]"}`}>
+                      <Linkedin size={15} />
                     </div>
-                    <span className={`text-[11.5px] font-medium truncate ${isDark ? "text-zinc-200" : "text-zinc-800"}`}>LinkedIn</span>
+                    <span className={`text-xs font-semibold truncate ${isDark ? "text-zinc-200" : "text-zinc-800"}`}>LinkedIn</span>
                   </div>
                   <div className="flex items-center space-x-1.5 shrink-0 min-w-0">
-                    <span className={`text-[9.5px] ${isDark ? "text-zinc-450" : "text-zinc-500"} truncate max-w-[120px] font-normal`}>
+                    <span className={`text-[10px] ${isDark ? "text-zinc-450" : "text-zinc-500"} truncate max-w-[120px] font-normal`}>
                       {linkLinkedin ? "Linked" : "Not linked"}
                     </span>
-                    <ChevronRight size={11} className={`transition-colors shrink-0 ${isDark ? "text-zinc-600 group-hover:text-blue-400" : "text-zinc-300 group-hover:text-blue-600"}`} />
+                    <ChevronRight size={12} className={`transition-colors shrink-0 ${isDark ? "text-zinc-600 group-hover:text-blue-400" : "text-zinc-300 group-hover:text-blue-600"}`} />
                   </div>
                 </div>
 
@@ -1014,19 +1015,19 @@ export const VaultScreen: React.FC<VaultScreenProps> = ({
                       showToast("No GitHub profile linked yet.", "warning");
                     }
                   }}
-                  className={`flex items-center justify-between py-1.5 px-2 rounded-xl cursor-pointer group ${isDark ? "hover:bg-white/[0.03] active:bg-white/[0.06]" : "hover:bg-zinc-100/40 active:bg-zinc-100/80"} transition-all duration-150`}
+                  className={`flex items-center justify-between py-2.5 px-2 rounded-xl cursor-pointer group ${isDark ? "hover:bg-white/[0.03] active:bg-white/[0.06]" : "hover:bg-zinc-100/40 active:bg-zinc-100/80"} transition-all duration-150 min-h-[44px]`}
                 >
-                  <div className="flex items-center space-x-2.5 min-w-0">
-                    <div className={`w-6 h-6 rounded-[6px] flex items-center justify-center shrink-0 transition-transform duration-200 group-hover:scale-105 ${isDark ? "bg-zinc-600/15 text-zinc-300" : "bg-zinc-600/10 text-zinc-700"}`}>
-                      <Github size={12.5} />
+                  <div className="flex items-center space-x-3 min-w-0">
+                    <div className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 transition-transform duration-200 group-hover:scale-105 ${isDark ? "bg-zinc-600/15 text-zinc-300" : "bg-zinc-600/10 text-zinc-700"}`}>
+                      <Github size={15} />
                     </div>
-                    <span className={`text-[11.5px] font-medium truncate ${isDark ? "text-zinc-200" : "text-zinc-800"}`}>GitHub</span>
+                    <span className={`text-xs font-semibold truncate ${isDark ? "text-zinc-200" : "text-zinc-800"}`}>GitHub</span>
                   </div>
                   <div className="flex items-center space-x-1.5 shrink-0 min-w-0">
-                    <span className={`text-[9.5px] ${isDark ? "text-zinc-450" : "text-zinc-500"} truncate max-w-[120px] font-normal`}>
+                    <span className={`text-[10px] ${isDark ? "text-zinc-450" : "text-zinc-500"} truncate max-w-[120px] font-normal`}>
                       {linkGithub ? "Linked" : "Not linked"}
                     </span>
-                    <ChevronRight size={11} className={`transition-colors shrink-0 ${isDark ? "text-zinc-600 group-hover:text-blue-400" : "text-zinc-300 group-hover:text-blue-600"}`} />
+                    <ChevronRight size={12} className={`transition-colors shrink-0 ${isDark ? "text-zinc-600 group-hover:text-blue-400" : "text-zinc-300 group-hover:text-blue-600"}`} />
                   </div>
                 </div>
 
@@ -1040,19 +1041,19 @@ export const VaultScreen: React.FC<VaultScreenProps> = ({
                       showToast("No portfolio website linked yet.", "warning");
                     }
                   }}
-                  className={`flex items-center justify-between py-1.5 px-2 rounded-xl cursor-pointer group ${isDark ? "hover:bg-white/[0.03] active:bg-white/[0.06]" : "hover:bg-zinc-100/40 active:bg-zinc-100/80"} transition-all duration-150`}
+                  className={`flex items-center justify-between py-2.5 px-2 rounded-xl cursor-pointer group ${isDark ? "hover:bg-white/[0.03] active:bg-white/[0.06]" : "hover:bg-zinc-100/40 active:bg-zinc-100/80"} transition-all duration-150 min-h-[44px]`}
                 >
-                  <div className="flex items-center space-x-2.5 min-w-0">
-                    <div className={`w-6 h-6 rounded-[6px] flex items-center justify-center shrink-0 transition-transform duration-200 group-hover:scale-105 ${isDark ? "bg-cyan-500/15 text-cyan-400" : "bg-cyan-500/10 text-cyan-500"}`}>
-                      <Globe size={12.5} />
+                  <div className="flex items-center space-x-3 min-w-0">
+                    <div className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 transition-transform duration-200 group-hover:scale-105 ${isDark ? "bg-cyan-500/15 text-cyan-400" : "bg-cyan-500/10 text-cyan-500"}`}>
+                      <Globe size={15} />
                     </div>
-                    <span className={`text-[11.5px] font-medium truncate ${isDark ? "text-zinc-200" : "text-zinc-800"}`}>Portfolio Website</span>
+                    <span className={`text-xs font-semibold truncate ${isDark ? "text-zinc-200" : "text-zinc-800"}`}>Portfolio Website</span>
                   </div>
                   <div className="flex items-center space-x-1.5 shrink-0 min-w-0">
-                    <span className={`text-[9.5px] ${isDark ? "text-zinc-450" : "text-zinc-500"} truncate max-w-[120px] font-normal`}>
+                    <span className={`text-[10px] ${isDark ? "text-zinc-450" : "text-zinc-500"} truncate max-w-[120px] font-normal`}>
                       {(linkPersonalWebsite || linkPortfolio) ? "Linked" : "Not linked"}
                     </span>
-                    <ChevronRight size={11} className={`transition-colors shrink-0 ${isDark ? "text-zinc-600 group-hover:text-blue-400" : "text-zinc-300 group-hover:text-blue-600"}`} />
+                    <ChevronRight size={12} className={`transition-colors shrink-0 ${isDark ? "text-zinc-600 group-hover:text-blue-400" : "text-zinc-300 group-hover:text-blue-600"}`} />
                   </div>
                 </div>
               </div>
@@ -1122,19 +1123,19 @@ export const VaultScreen: React.FC<VaultScreenProps> = ({
                           className={`flex items-center justify-between p-1.5 rounded-xl ${isDark ? "bg-zinc-900/30 border border-white/[0.01]" : "bg-zinc-50/60 border border-zinc-150/40"} transition-all duration-150`}
                         >
                           <div className="min-w-0 flex-1 pr-2">
-                            <span className={`text-[10.5px] font-bold block leading-none ${isDark ? "text-zinc-300" : "text-zinc-700"}`}>{item.label}</span>
-                            <span className={`text-[9px] ${isDark ? "text-zinc-500" : "text-zinc-400"} truncate block mt-1 font-mono`}>
+                            <span className="text-xs font-semibold block leading-none text-zinc-800 dark:text-zinc-200">{item.label}</span>
+                            <span className="text-[10px] text-zinc-550 dark:text-zinc-450 truncate block mt-1 font-mono">
                               {item.url}
                             </span>
                           </div>
                           <div className="flex items-center space-x-1 shrink-0">
                             <button
                               onClick={() => handleCopy(item.url, id, item.label)}
-                              className={`w-6.5 h-6.5 rounded-lg flex items-center justify-center transition-colors ${
+                              className={`w-7 h-7 rounded-xl flex items-center justify-center transition-colors ${
                                 isCopied
                                   ? "bg-emerald-500/10 text-emerald-500"
                                   : isDark
-                                  ? "bg-zinc-800 hover:bg-zinc-700 text-zinc-400 hover:text-zinc-200"
+                                  ? "bg-zinc-805 hover:bg-zinc-700 text-zinc-400 hover:text-zinc-200"
                                   : "bg-zinc-100 hover:bg-zinc-200 text-zinc-600 hover:text-zinc-800"
                               } cursor-pointer`}
                               title={`Copy ${item.label} URL`}
@@ -1143,9 +1144,9 @@ export const VaultScreen: React.FC<VaultScreenProps> = ({
                             </button>
                             <button
                               onClick={() => window.open(item.url, "_blank", "noopener,noreferrer")}
-                              className={`w-6.5 h-6.5 rounded-lg flex items-center justify-center transition-colors ${
+                              className={`w-7 h-7 rounded-xl flex items-center justify-center transition-colors ${
                                 isDark
-                                  ? "bg-zinc-800 hover:bg-zinc-700 text-zinc-400 hover:text-zinc-200"
+                                  ? "bg-zinc-805 hover:bg-zinc-700 text-zinc-400 hover:text-zinc-200"
                                   : "bg-zinc-100 hover:bg-zinc-200 text-zinc-600 hover:text-zinc-800"
                               } cursor-pointer`}
                               title="Visit URL"
@@ -1165,19 +1166,19 @@ export const VaultScreen: React.FC<VaultScreenProps> = ({
                           className={`flex items-center justify-between p-1.5 rounded-xl ${isDark ? "bg-zinc-900/30 border border-white/[0.01]" : "bg-zinc-50/60 border border-zinc-150/40"} transition-all duration-150`}
                         >
                           <div className="min-w-0 flex-1 pr-2">
-                            <span className={`text-[10.5px] font-bold block leading-none ${isDark ? "text-zinc-300" : "text-zinc-700"}`}>{item.label}</span>
-                            <span className={`text-[9px] ${isDark ? "text-zinc-500" : "text-zinc-400"} truncate block mt-1 font-mono`}>
+                            <span className="text-xs font-semibold block leading-none text-zinc-800 dark:text-zinc-200">{item.label}</span>
+                            <span className="text-[10px] text-zinc-550 dark:text-zinc-455 truncate block mt-1 font-mono">
                               {item.url}
                             </span>
                           </div>
                           <div className="flex items-center space-x-1 shrink-0">
                             <button
                               onClick={() => handleCopy(item.url, item.id, item.label)}
-                              className={`w-6.5 h-6.5 rounded-lg flex items-center justify-center transition-colors ${
+                              className={`w-7 h-7 rounded-xl flex items-center justify-center transition-colors ${
                                 isCopied
                                   ? "bg-emerald-500/10 text-emerald-500"
                                   : isDark
-                                  ? "bg-zinc-800 hover:bg-zinc-700 text-zinc-400 hover:text-zinc-200"
+                                  ? "bg-zinc-808 hover:bg-zinc-700 text-zinc-400 hover:text-zinc-200"
                                   : "bg-zinc-100 hover:bg-zinc-200 text-zinc-600 hover:text-zinc-800"
                               } cursor-pointer`}
                               title="Copy URL"
@@ -1186,10 +1187,10 @@ export const VaultScreen: React.FC<VaultScreenProps> = ({
                             </button>
                             <button
                               onClick={() => window.open(item.url, "_blank", "noopener,noreferrer")}
-                              className={`w-6.5 h-6.5 rounded-lg flex items-center justify-center transition-colors ${
+                              className={`w-7 h-7 rounded-xl flex items-center justify-center transition-colors ${
                                 isDark
-                                  ? "bg-zinc-800 hover:bg-zinc-700 text-zinc-400 hover:text-zinc-200"
-                                  : "bg-zinc-100 hover:bg-zinc-200 text-zinc-600 hover:text-zinc-800"
+                                  ? "bg-zinc-808 hover:bg-zinc-700 text-zinc-400 hover:text-zinc-200"
+                                  : "bg-zinc-100 hover:bg-zinc-200 text-zinc-600 hover:text-zinc-805"
                               } cursor-pointer`}
                               title="Visit URL"
                             >
@@ -1197,10 +1198,10 @@ export const VaultScreen: React.FC<VaultScreenProps> = ({
                             </button>
                             <button
                               onClick={() => handleDeleteCustomLink(item.id, item.label)}
-                              className={`w-6.5 h-6.5 rounded-lg flex items-center justify-center transition-colors ${
+                              className={`w-7 h-7 rounded-xl flex items-center justify-center transition-colors ${
                                 isDark
                                   ? "bg-red-950/20 hover:bg-red-900/30 text-red-400"
-                                  : "bg-red-50 hover:bg-red-100 text-red-500"
+                                  : "bg-red-50 hover:bg-red-105 text-red-500"
                               } cursor-pointer`}
                               title="Delete Link"
                             >
@@ -1220,36 +1221,36 @@ export const VaultScreen: React.FC<VaultScreenProps> = ({
               <div className={`${cardClass} py-1 px-1.5 space-y-0.5`}>
                 <div className="flex items-center justify-between py-1.5 px-2 rounded-xl">
                   <div className="flex items-center space-x-2.5 min-w-0">
-                    <div className={`w-6 h-6 rounded-[6px] flex items-center justify-center shrink-0 ${isDark ? "bg-rose-500/15 text-rose-400" : "bg-rose-500/10 text-rose-500"}`}>
+                    <div className={`w-6 h-6 rounded-lg flex items-center justify-center shrink-0 ${isDark ? "bg-rose-500/15 text-rose-400" : "bg-rose-500/10 text-rose-500"}`}>
                       <Mail size={12.5} />
                     </div>
-                    <span className={`text-[11.5px] font-medium ${isDark ? "text-zinc-200" : "text-zinc-800"}`}>Email</span>
+                    <span className={`text-xs font-medium ${isDark ? "text-zinc-205" : "text-zinc-800"}`}>Email</span>
                   </div>
-                  <span className={`text-[9.5px] font-normal truncate max-w-[170px] text-right ${isDark ? "text-zinc-350" : "text-zinc-600"}`}>
+                  <span className={`text-xs font-semibold truncate max-w-[170px] text-right ${isDark ? "text-zinc-350" : "text-zinc-600"}`}>
                     {profileEmail || "No email"}
                   </span>
                 </div>
 
                 <div className="flex items-center justify-between py-1.5 px-2 rounded-xl">
                   <div className="flex items-center space-x-2.5 min-w-0">
-                    <div className={`w-6 h-6 rounded-[6px] flex items-center justify-center shrink-0 ${isDark ? "bg-emerald-500/15 text-emerald-400" : "bg-emerald-500/10 text-emerald-500"}`}>
+                    <div className={`w-6 h-6 rounded-lg flex items-center justify-center shrink-0 ${isDark ? "bg-emerald-500/15 text-emerald-400" : "bg-emerald-500/10 text-emerald-500"}`}>
                       <Phone size={12.5} />
                     </div>
-                    <span className={`text-[11.5px] font-medium ${isDark ? "text-zinc-200" : "text-zinc-800"}`}>Phone</span>
+                    <span className={`text-xs font-medium ${isDark ? "text-zinc-205" : "text-zinc-800"}`}>Phone</span>
                   </div>
-                  <span className={`text-[9.5px] font-normal text-right ${isDark ? "text-zinc-350" : "text-zinc-600"}`}>
+                  <span className={`text-xs font-semibold text-right ${isDark ? "text-zinc-350" : "text-zinc-600"}`}>
                     {profilePhone || "No phone"}
                   </span>
                 </div>
 
                 <div className="flex items-center justify-between py-1.5 px-2 rounded-xl">
                   <div className="flex items-center space-x-2.5 min-w-0">
-                    <div className={`w-6 h-6 rounded-[6px] flex items-center justify-center shrink-0 ${isDark ? "bg-red-500/15 text-red-400" : "bg-red-500/10 text-red-500"}`}>
+                    <div className={`w-6 h-6 rounded-lg flex items-center justify-center shrink-0 ${isDark ? "bg-red-500/15 text-red-400" : "bg-red-500/10 text-red-500"}`}>
                       <MapPin size={12.5} />
                     </div>
-                    <span className={`text-[11.5px] font-medium ${isDark ? "text-zinc-200" : "text-zinc-800"}`}>Location</span>
+                    <span className={`text-xs font-medium ${isDark ? "text-zinc-205" : "text-zinc-800"}`}>Location</span>
                   </div>
-                  <span className={`text-[9.5px] font-normal text-right truncate max-w-[150px] ${isDark ? "text-zinc-350" : "text-zinc-600"}`}>
+                  <span className={`text-xs font-semibold text-right truncate max-w-[150px] ${isDark ? "text-zinc-350" : "text-zinc-600"}`}>
                     {profileAddress || "No location"}
                   </span>
                 </div>
@@ -1259,7 +1260,7 @@ export const VaultScreen: React.FC<VaultScreenProps> = ({
             <div className="pt-1">
               <button
                 onClick={handleOpenEdit}
-                className={`w-full h-9 rounded-[24px] ${isDark ? "bg-[#0A84FF] hover:bg-[#007AFF] text-white" : "bg-[#007AFF] hover:bg-[#0066D6] text-white"} font-semibold text-xs shadow-sm cursor-pointer transition-all active:scale-[0.98] flex items-center justify-center space-x-1.5`}
+                className={`w-full h-11 rounded-xl ${isDark ? "bg-[#0A84FF] hover:bg-[#007AFF] text-white" : "bg-[#007AFF] hover:bg-[#0066D6] text-white"} font-semibold text-xs shadow-sm cursor-pointer transition-all active:scale-[0.98] flex items-center justify-center space-x-1.5`}
               >
                 <span>Edit Profile</span>
               </button>

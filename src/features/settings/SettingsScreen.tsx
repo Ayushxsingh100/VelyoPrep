@@ -96,24 +96,24 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
 
   const SettingRow: React.FC<SettingRowProps> = ({ icon, title, subtitle, rightElement, onClick, iconBgClass }) => {
     const content = (
-      <div className={`flex items-center justify-between py-3 px-1 transition-all duration-150 rounded-xl ${isDark ? "hover:bg-zinc-800/30" : "hover:bg-zinc-100/50"}`}>
-        <div className="flex items-center space-x-3 min-w-0">
-          <div className={`w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 ${iconBgClass}`}>
+      <div className={`flex items-center justify-between py-4 px-4 min-h-[60px] transition-all duration-150 rounded-xl cursor-pointer ${isDark ? "hover:bg-zinc-800/40 active:bg-zinc-800/60" : "hover:bg-zinc-100/70 active:bg-zinc-200/50"}`}>
+        <div className="flex items-center space-x-3.5 min-w-0 text-left">
+          <div className={`w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 ${iconBgClass}`}>
             {icon}
           </div>
-          <div className="flex flex-col min-w-0">
-            <span className={`text-[12.5px] font-medium leading-tight ${isDark ? "text-zinc-100" : "text-zinc-800"}`}>
+          <div className="flex flex-col min-w-0 text-left">
+            <span className={`text-sm font-bold leading-tight ${isDark ? "text-zinc-100" : "text-zinc-900"}`}>
               {title}
             </span>
             {subtitle && (
-              <span className={`text-[10px] leading-tight truncate mt-0.5 ${isDark ? "text-zinc-400" : "text-zinc-500"}`}>
+              <span className={`text-xs leading-tight truncate mt-0.5 ${isDark ? "text-zinc-505" : "text-zinc-500"}`}>
                 {subtitle}
               </span>
             )}
           </div>
         </div>
-        <div className="flex-shrink-0">
-          {rightElement !== undefined ? rightElement : <ChevronRight size={13} className={isDark ? "text-zinc-500" : "text-zinc-400"} />}
+        <div className="flex-shrink-0 pl-3">
+          {rightElement !== undefined ? rightElement : <ChevronRight size={17} className={isDark ? "text-zinc-500" : "text-zinc-400"} />}
         </div>
       </div>
     );
@@ -129,15 +129,19 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
   };
 
   return (
-    <div className="space-y-5 font-sans">
-      <div className="text-left px-1">
-        <h2 className={`text-2xl font-bold tracking-tight ${isDark ? "text-zinc-50" : "text-zinc-900"}`}>Settings</h2>
-        <p className={`text-[10.5px] mt-0.5 ${isDark ? "text-zinc-400" : "text-zinc-500"}`}>Manage account details, security and configurations.</p>
+    <div className="space-y-7 pb-10 font-sans text-left">
+      <div className="pt-4 flex flex-col items-start text-left">
+        <span className="text-[10px] font-bold tracking-widest text-zinc-500 dark:text-zinc-450 block leading-none uppercase font-mono mb-1">
+          App Configurations
+        </span>
+        <h1 className={`text-[28px] font-extrabold tracking-tight leading-none ${isDark ? "text-white" : "text-zinc-950"}`}>
+          Settings
+        </h1>
       </div>
 
-      <div className="space-y-1 text-left">
-        <span className={`text-[9.5px] font-semibold uppercase tracking-widest px-1 block ${isDark ? "text-zinc-400" : "text-zinc-500"}`}>Account</span>
-        <div className={`p-3 rounded-[24px] border ${themeBorderClass} ${themeCardClass} shadow-xs`}>
+      <div className="space-y-3">
+        <span className={`text-[10px] font-bold uppercase tracking-widest px-0.5 block ${isDark ? "text-zinc-500" : "text-zinc-450"} font-mono`}>Account</span>
+        <div className={`p-6 rounded-2xl border ${themeBorderClass} ${themeCardClass} shadow-xs`}>
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3 min-w-0">
               <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm border ${isDark ? "bg-zinc-800 text-zinc-100 border-zinc-700/50" : "bg-zinc-100 text-zinc-700 border-zinc-200/40"}`}>
@@ -159,24 +163,24 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
         </div>
       </div>
 
-      <div className="space-y-1 text-left">
-        <span className={`text-[9.5px] font-semibold uppercase tracking-widest px-1 block ${isDark ? "text-zinc-400" : "text-zinc-500"}`}>Appearance</span>
-        <div className={`p-3 rounded-[24px] border ${themeBorderClass} ${themeCardClass} shadow-xs space-y-3`}>
+      <div className="space-y-3">
+        <span className={`text-[10px] font-bold uppercase tracking-widest px-0.5 block ${isDark ? "text-zinc-500" : "text-zinc-450"} font-mono`}>Appearance</span>
+        <div className={`p-6 rounded-2xl border ${themeBorderClass} ${themeCardClass} shadow-xs space-y-4`}>
           <div className="flex items-center space-x-3">
-            <div className={`w-7 h-7 rounded-lg flex items-center justify-center ${isDark ? "bg-blue-500/20 text-blue-300" : "bg-blue-50 text-blue-600"}`}>
+            <div className={`w-7 h-7 rounded-lg flex items-center justify-center ${isDark ? "bg-blue-500/15 text-blue-400" : "bg-blue-500/10 text-blue-600"}`}>
               {selectedTheme === "dark" ? <Moon size={14} /> : selectedTheme === "light" ? <Sun size={14} /> : <Smartphone size={14} />}
             </div>
             <div className="flex flex-col">
-              <span className={`text-[12.5px] font-medium leading-tight ${isDark ? "text-zinc-100" : "text-zinc-800"}`}>
+              <span className={`text-xs font-semibold leading-tight ${isDark ? "text-zinc-100" : "text-zinc-800"}`}>
                 Aesthetic Persona
               </span>
-              <span className={`text-[9.5px] leading-tight mt-0.5 ${isDark ? "text-zinc-450" : "text-zinc-500"}`}>
+              <span className={`text-[10px] leading-tight mt-1 font-semibold ${isDark ? "text-zinc-500" : "text-zinc-450"}`}>
                 Choose interface appearance
               </span>
             </div>
           </div>
 
-          <div className={`grid grid-cols-3 gap-1 p-0.5 rounded-xl ${isDark ? "bg-zinc-900/60" : "bg-zinc-100/60"}`}>
+          <div className={`grid grid-cols-3 gap-1 p-0.5 rounded-xl ${isDark ? "bg-zinc-900" : "bg-zinc-100"}`}>
             {[
               { id: "dark", label: "Obsidian", icon: <Moon size={11} /> },
               { id: "light", label: "Paper", icon: <Sun size={11} /> },
@@ -190,10 +194,10 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
                   else if (t.id === "light") setIsDark(false);
                   showToast(`Theme changed to ${t.label}`, "info");
                 }}
-                className={`h-7.5 rounded-lg text-[10px] font-medium flex items-center justify-center space-x-1 transition-all cursor-pointer ${
+                className={`h-7.5 rounded-lg text-[10px] font-bold flex items-center justify-center space-x-1 transition-all cursor-pointer ${
                   selectedTheme === t.id 
-                    ? (isDark ? "bg-zinc-850 text-zinc-100 shadow-sm border border-zinc-750" : "bg-white text-zinc-900 shadow-sm") 
-                    : (isDark ? "text-zinc-450 hover:text-zinc-200" : "text-zinc-600 hover:text-zinc-900")
+                    ? (isDark ? "bg-[#1C1C1E] text-zinc-100 shadow-sm border border-zinc-800" : "bg-white text-zinc-900 shadow-sm border border-zinc-200/50") 
+                    : (isDark ? "text-zinc-500 hover:text-zinc-300" : "text-zinc-650 hover:text-zinc-850")
                 }`}
               >
                 {t.icon}
@@ -204,9 +208,9 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
         </div>
       </div>
 
-      <div className="space-y-1 text-left">
-        <span className={`text-[9.5px] font-semibold uppercase tracking-widest px-1 block ${isDark ? "text-zinc-400" : "text-zinc-500"}`}>Security & Access</span>
-        <div className={`p-3 rounded-[24px] border ${themeBorderClass} ${themeCardClass} divide-y ${isDark ? "divide-zinc-800/60" : "divide-zinc-100/80"} shadow-xs space-y-1`}>
+      <div className="space-y-3">
+        <span className={`text-[10px] font-bold uppercase tracking-widest px-0.5 block ${isDark ? "text-zinc-500" : "text-zinc-450"} font-mono`}>Security & Access</span>
+        <div className={`p-6 rounded-2xl border ${themeBorderClass} ${themeCardClass} divide-y ${isDark ? "divide-zinc-805" : "divide-zinc-100/80"} shadow-xs`}>
           <SettingRow
             icon={<Bell size={14} />}
             title="Push Notifications"
@@ -292,16 +296,16 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
         </div>
       </div>
 
-      <div className="space-y-1 text-left">
-        <span className={`text-[9.5px] font-semibold uppercase tracking-widest px-1 block ${isDark ? "text-zinc-400" : "text-zinc-500"}`}>About</span>
-        <div className={`p-3 rounded-[24px] border ${themeBorderClass} ${themeCardClass} divide-y ${isDark ? "divide-zinc-800/60" : "divide-zinc-100/80"} shadow-xs space-y-1`}>
+      <div className="space-y-3">
+        <span className={`text-xs font-bold uppercase tracking-widest px-0.5 block ${isDark ? "text-zinc-550" : "text-zinc-500"}`}>About</span>
+        <div className={`p-6 rounded-2xl border ${themeBorderClass} ${themeCardClass} divide-y ${isDark ? "divide-zinc-855" : "divide-zinc-100/80"} shadow-xs`}>
           <SettingRow
             icon={<Info size={14} />}
             title="App Version"
             subtitle="Build 1.0.42 (Stable Release)"
             iconBgClass={isDark ? "bg-zinc-500/20 text-zinc-300" : "bg-zinc-50 text-zinc-600"}
             rightElement={
-              <span className={`text-[10.5px] font-mono font-semibold ${isDark ? "text-zinc-200" : "text-zinc-600"}`}>
+              <span className={`text-[10.5px] font-mono font-bold ${isDark ? "text-zinc-200" : "text-zinc-600"}`}>
                 v1.0
               </span>
             }
@@ -318,17 +322,17 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
         </div>
       </div>
 
-      <div className="pt-2 px-1">
+      <div className="pt-3">
         <button
           type="button"
           onClick={handleLogout}
-          className={`w-full h-10 rounded-[18px] border flex items-center justify-center space-x-2 transition-all duration-200 cursor-pointer text-xs font-semibold ${
+          className={`w-full h-14 rounded-2xl border flex items-center justify-center space-x-2.5 transition-all duration-200 cursor-pointer text-sm font-bold ${
             isDark 
               ? "bg-red-500/5 border-red-500/10 text-red-400 hover:bg-red-500/10 hover:border-red-500/20" 
               : "bg-red-50/20 border-red-100 text-red-650 hover:bg-red-100/30 hover:border-red-200"
           }`}
         >
-          <LogOut size={13} />
+          <LogOut size={15} />
           <span>Log Out</span>
         </button>
       </div>
@@ -339,17 +343,17 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 15 }}
-            className="space-y-2 pt-2 text-left"
+            className="space-y-2.5 pt-2 text-left"
           >
             <div className="flex items-center space-x-1.5 px-1">
-              <Code size={13} className={isDark ? "text-zinc-400" : "text-zinc-500"} />
-              <span className={`text-[9.5px] font-semibold uppercase tracking-widest block ${isDark ? "text-zinc-400" : "text-zinc-500"}`}>Developer Menu</span>
+              <Code size={15} className={isDark ? "text-zinc-550" : "text-zinc-500"} />
+              <span className={`text-xs font-bold uppercase tracking-widest block ${isDark ? "text-zinc-550" : "text-zinc-500"}`}>Developer Menu</span>
             </div>
             
-            <div className={`p-4 rounded-[24px] border border-amber-500/20 ${isDark ? "bg-amber-500/[0.015]" : "bg-amber-500/[0.02]"} space-y-4 shadow-sm`}>
+            <div className={`p-6 rounded-2xl border border-amber-500/20 ${isDark ? "bg-amber-500/[0.015]" : "bg-amber-500/[0.02]"} space-y-5.5 shadow-sm`}>
               <div className={`flex items-start space-x-2 ${isDark ? "text-amber-400/95" : "text-amber-600"}`}>
-                <Info size={14} className="mt-0.5 flex-shrink-0" />
-                <p className="text-[10px] leading-relaxed">
+                <Info size={16} className="mt-0.5 flex-shrink-0" />
+                <p className="text-xs leading-relaxed">
                   <strong>Sandbox Controls Enabled.</strong> Simulate backend database, gateway network states, and custom UI.
                 </p>
               </div>
@@ -400,13 +404,13 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
                     />
                   </div>
                   
-                  <div className="grid grid-cols-2 gap-2 pt-1">
+              <div className="grid grid-cols-1 min-[340px]:grid-cols-2 gap-2 pt-1">
                     <button
                       onClick={() => {
                         setSessionExpiryTime(300);
                         showToast("Session lease renewed successfully", "success");
                       }}
-                      className={`h-7 rounded-lg border ${themeBorderClass} text-[9px] font-bold hover:bg-zinc-800/10 dark:hover:bg-zinc-800/40 cursor-pointer`}
+                      className={`h-8 rounded-xl border ${themeBorderClass} text-[9px] font-bold hover:bg-zinc-800/10 dark:hover:bg-zinc-800/40 cursor-pointer`}
                     >
                       Renew Lease (300s)
                     </button>
@@ -415,21 +419,21 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
                         setSessionExpiryTime(0);
                         showToast("Session expired", "warning");
                       }}
-                      className={`h-7 rounded-lg border border-red-500/20 hover:bg-red-500/10 text-red-500 text-[9px] font-bold cursor-pointer`}
+                      className={`h-8 rounded-xl border border-red-500/20 hover:bg-red-500/10 text-red-500 text-[9px] font-bold cursor-pointer`}
                     >
                       Force Expire Session
                     </button>
                   </div>
                 </div>
               )}
-
-              <div className="grid grid-cols-2 gap-2 pt-1">
+ 
+              <div className="grid grid-cols-1 min-[340px]:grid-cols-2 gap-2 pt-1">
                 <button
                   onClick={() => {
                     setCurrentScreen("release_console");
                     showToast("Loaded Release Console", "success");
                   }}
-                  className={`h-8 rounded-lg border border-zinc-500/20 text-[9px] font-semibold flex items-center justify-center space-x-1 hover:bg-zinc-850 dark:hover:bg-zinc-800/40 cursor-pointer`}
+                  className={`h-8 rounded-xl border border-zinc-500/20 text-[9px] font-semibold flex items-center justify-center space-x-1 hover:bg-zinc-850 dark:hover:bg-zinc-800/40 cursor-pointer`}
                 >
                   <Database size={11} />
                   <span>Release Console</span>
@@ -439,7 +443,7 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
                     setCurrentScreen("design_system_showcase");
                     showToast("Loaded Design System Showcase", "success");
                   }}
-                  className={`h-8 rounded-lg border border-zinc-500/20 text-[9px] font-semibold flex items-center justify-center space-x-1 hover:bg-zinc-850 dark:hover:bg-zinc-800/40 cursor-pointer`}
+                  className={`h-8 rounded-xl border border-zinc-500/20 text-[9px] font-semibold flex items-center justify-center space-x-1 hover:bg-zinc-850 dark:hover:bg-zinc-800/40 cursor-pointer`}
                 >
                   <Sliders size={11} />
                   <span>Design Showcase</span>

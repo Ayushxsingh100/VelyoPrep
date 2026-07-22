@@ -8,21 +8,14 @@ export default function App() {
 
   return (
     <AppProviders>
-      {/* Full-screen background matching the app's dark theme */}
-      <div className="min-h-screen bg-[#09090B] flex items-start justify-center md:items-center md:py-0">
-        {/*
-          On mobile: fills the full viewport, no chrome.
-          On desktop (md+): centered card, max-width 390px, min-height 100vh so it
-          looks like the mobile UI floating in the dark field.
-        */}
-        <div className="w-full h-screen md:max-w-[390px] md:h-screen md:shadow-2xl flex flex-col overflow-hidden">
-          <MobileEmulator
-            isDark={isDark}
-            setIsDark={() => {}}
-            selectedTheme={selectedTheme}
-            setSelectedTheme={setSelectedTheme}
-          />
-        </div>
+      {/* Responsive mobile-first viewport wrapper */}
+      <div className="w-full h-dvh bg-[#09090B] flex flex-col overflow-hidden relative font-sans antialiased text-zinc-100">
+        <MobileEmulator
+          isDark={isDark}
+          setIsDark={() => {}}
+          selectedTheme={selectedTheme}
+          setSelectedTheme={setSelectedTheme}
+        />
       </div>
     </AppProviders>
   );
