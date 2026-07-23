@@ -46,6 +46,7 @@ export default function MobileEmulator({
   const [loginPassword, setLoginPassword] = useState("");
   const [loginError, setLoginError] = useState("");
   const [loginLoading, setLoginLoading] = useState(false);
+  const [loginSuccessMessage, setLoginSuccessMessage] = useState("");
 
   const [regName, setRegName] = useState("");
   const [regEmail, setRegEmail] = useState("");
@@ -70,7 +71,6 @@ export default function MobileEmulator({
   const [cooldownTime, setCooldownTime] = useState(0);
   const [simulateNetworkFailure, setSimulateNetworkFailure] = useState(false);
 
-  const [activeSnackbar, setActiveSnackbar] = useState<{ message: string; type: "success" | "warning" | "error" | "info" } | null>(null);
   const [activeBottomSheet, setActiveBottomSheet] = useState<any | null>(null);
   const [activeDialog, setActiveDialog] = useState<string | null>(null);
 
@@ -204,10 +204,7 @@ export default function MobileEmulator({
   const [offlineQueue, setOfflineQueue] = useState<any[]>([]);
 
   const showToast = (message: string, type: "success" | "warning" | "error" | "info" = "success") => {
-    setActiveSnackbar({ message, type });
-    setTimeout(() => {
-      setActiveSnackbar(null);
-    }, 3000);
+    // No-op: Global notifications have been disabled to keep the UI clean and distraction-free
   };
 
   const getProfileCompletion = () => {
@@ -222,19 +219,118 @@ export default function MobileEmulator({
     return Math.min(100, score);
   };
 
+  const [onboardName, setOnboardName] = useState("");
+  const [onboardCollege, setOnboardCollege] = useState("");
+  const [onboardDegree, setOnboardDegree] = useState("");
+  const [onboardBranch, setOnboardBranch] = useState("");
+  const [onboardGradYear, setOnboardGradYear] = useState("");
+  const [onboardCgpa, setOnboardCgpa] = useState("");
+  const [onboardLoading, setOnboardLoading] = useState(false);
+  const [onboardError, setOnboardError] = useState("");
+
+  const isProfileCompleted = () => {
+    if (!auth.profile) return false;
+    return !!(
+      auth.profile.full_name?.trim() &&
+      auth.profile.university?.trim() &&
+      auth.profile.degree?.trim() &&
+      auth.profile.graduation_year?.trim() &&
+      auth.profile.cgpa?.trim()
+    );
+  };
+
   React.useEffect(() => {
     if (auth.profile) {
-      if (auth.profile.full_name) setProfileName(auth.profile.full_name);
-      if (auth.profile.university) setProfileCollege(auth.profile.university);
-      if (auth.profile.degree) setProfileDegree(auth.profile.degree);
-      if (auth.profile.graduation_year) setProfileGradYear(auth.profile.graduation_year);
-      if (auth.profile.cgpa) setProfileCgpa(auth.profile.cgpa);
-      if (auth.profile.phone) setProfilePhone(auth.profile.phone);
-      if (auth.profile.target_role) setProfilePreferredRoles(auth.profile.target_role);
-      if (auth.profile.skills && Array.isArray(auth.profile.skills)) setProfileSkills(auth.profile.skills.join(", "));
-      if (auth.profile.linkedin_url) setLinkLinkedin(auth.profile.linkedin_url);
-      if (auth.profile.github_url) setLinkGithub(auth.profile.github_url);
-      if (auth.profile.portfolio_url) setLinkPortfolio(auth.profile.portfolio_url);
+      setOnboardName(auth.profile.full_name || "");
+      setOnboardCollege(auth.profile.university || "");
+      setOnboardDegree(auth.profile.degree || "");
+      setOnboardBranch(auth.profile.target_role || "");
+      setOnboardGradYear(auth.profile.graduation_year || "");
+      setOnboardCgpa(auth.profile.cgpa || "");
+    } else {
+      setOnboardName("");
+      setOnboardCollege("");
+      setOnboardDegree("");
+      setOnboardBranch("");
+      setOnboardGradYear("");
+      setOnboardCgpa("");
+    }
+  }, [auth.profile]);
+
+  const handleOnboardingSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setOnboardError("");
+
+    if (!onboardName.trim()) {
+      setOnboardError("Full name is required.");
+      return;
+    }
+    if (!onboardCollege.trim()) {
+      setOnboardError("University/College is required.");
+      return;
+    }
+    if (!onboardDegree.trim()) {
+      setOnboardError("Degree is required.");
+      return;
+    }
+    if (!onboardGradYear.trim()) {
+      setOnboardError("Graduation Year is required.");
+      return;
+    }
+    if (!onboardCgpa.trim() || isNaN(Number(onboardCgpa))) {
+      setOnboardError("Valid CGPA is required.");
+      return;
+    }
+
+    setOnboardLoading(true);
+    const res = await auth.updateProfile({
+      full_name: onboardName.trim(),
+      university: onboardCollege.trim(),
+      degree: onboardDegree.trim(),
+      graduation_year: onboardGradYear.trim(),
+      cgpa: onboardCgpa.trim(),
+      target_role: onboardBranch.trim() || auth.profile?.target_role || "Software Engineer",
+      updated_at: new Date().toISOString()
+    });
+
+    if (res.error) {
+      setOnboardError(res.error);
+      setOnboardLoading(false);
+      showToast("Profile update failed", "error");
+    } else {
+      await auth.refreshProfile();
+      setOnboardLoading(false);
+      showToast("Profile completed successfully!", "success");
+      setCurrentScreen("dashboard");
+    }
+  };
+
+
+  React.useEffect(() => {
+    if (auth.profile) {
+      setProfileName(auth.profile.full_name || "");
+      setProfileCollege(auth.profile.university || "");
+      setProfileDegree(auth.profile.degree || "");
+      setProfileGradYear(auth.profile.graduation_year || "");
+      setProfileCgpa(auth.profile.cgpa || "");
+      setProfilePhone(auth.profile.phone || "");
+      setProfilePreferredRoles(auth.profile.target_role || "");
+      setProfileSkills(auth.profile.skills && Array.isArray(auth.profile.skills) ? auth.profile.skills.join(", ") : "");
+      setLinkLinkedin(auth.profile.linkedin_url || "");
+      setLinkGithub(auth.profile.github_url || "");
+      setLinkPortfolio(auth.profile.portfolio_url || "");
+    } else {
+      setProfileName("");
+      setProfileCollege("");
+      setProfileDegree("");
+      setProfileGradYear("");
+      setProfileCgpa("");
+      setProfilePhone("");
+      setProfilePreferredRoles("");
+      setProfileSkills("");
+      setLinkLinkedin("");
+      setLinkGithub("");
+      setLinkPortfolio("");
     }
   }, [auth.profile]);
 
@@ -351,17 +447,22 @@ export default function MobileEmulator({
   }, [cooldownTime]);
 
   React.useEffect(() => {
-    if (currentScreen === "splash" && !auth.isLoading) {
+    const isReady = !auth.isLoading && (!auth.isAuthenticated || !auth.isLoadingProfile);
+    if (currentScreen === "splash" && isReady) {
       const timer = setTimeout(() => {
         if (auth.isAuthenticated) {
-          setCurrentScreen("dashboard");
+          if (isProfileCompleted()) {
+            setCurrentScreen("dashboard");
+          } else {
+            setCurrentScreen("onboarding");
+          }
         } else {
           setCurrentScreen("login");
         }
       }, 1500);
       return () => clearTimeout(timer);
     }
-  }, [currentScreen, auth.isLoading, auth.isAuthenticated]);
+  }, [currentScreen, auth.isLoading, auth.isLoadingProfile, auth.isAuthenticated, auth.profile]);
 
   const [headerVisible, setHeaderVisible] = useState(true);
   const [lastScrollTop, setLastScrollTop] = useState(0);
@@ -409,6 +510,7 @@ export default function MobileEmulator({
     }
     
     setLoginError("");
+    setLoginSuccessMessage("");
 
     if (!isValidEmail(loginEmail)) {
       setLoginError("Please enter a valid university email address.");
@@ -531,8 +633,17 @@ export default function MobileEmulator({
       setRegError(res.error);
       showToast("Registration failed", "error");
     } else {
-      setCurrentScreen("dashboard");
-      showToast("Account created successfully in Supabase", "success");
+      setLoginSuccessMessage("Please check your email to confirm registration, then sign in.");
+      setLoginError("");
+      
+      // Clear inputs
+      setRegName("");
+      setRegEmail("");
+      setRegPass("");
+      setRegConfirmPass("");
+      setRegAcceptedTerms(false);
+      
+      setCurrentScreen("login");
     }
   };
 
@@ -682,10 +793,7 @@ export default function MobileEmulator({
         }
       }
 
-      setActiveSnackbar({
-        message: `Deleted ${appToDelete.company} application record. Undo to restore.`,
-        type: "info"
-      });
+      // Deleted application record successfully
     }
   };
 
@@ -809,7 +917,7 @@ export default function MobileEmulator({
       
 
 
-      <AnimatePresence mode="wait">
+      <AnimatePresence>
           {currentScreen === "splash" && (
             <motion.div
               key="splash"
@@ -834,9 +942,9 @@ export default function MobileEmulator({
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.35, delay: 0.04, ease: [0.16, 1, 0.3, 1] }}
-                className="w-10 h-10 rounded-xl bg-[#121214] border border-zinc-800 flex items-center justify-center text-white mb-6 shadow-sm shadow-black/40"
+                className="w-16 h-16 rounded-2xl bg-white/[0.04] border border-white/[0.08] flex items-center justify-center mb-6 shadow-md"
               >
-                <VeyloPrepLogo className="w-6 h-6" />
+                <VeyloPrepLogo className="w-11 h-11" />
               </motion.div>
 
               <motion.div
@@ -899,6 +1007,20 @@ export default function MobileEmulator({
                     </p>
                   )}
 
+                  {loginSuccessMessage && (
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.96, y: -4 }}
+                      animate={{ opacity: 1, scale: 1, y: 0 }}
+                      className="p-3.5 rounded-xl bg-emerald-500/5 border border-emerald-500/15 text-left flex items-start gap-2.5 shadow-sm shadow-emerald-950/10"
+                    >
+                      <CheckCircle className="text-emerald-400 shrink-0 mt-0.5" size={15} />
+                      <div className="flex-1 space-y-0.5 min-w-0">
+                        <p className="text-[11.5px] font-extrabold text-emerald-400 tracking-tight leading-none uppercase">Confirm Registration</p>
+                        <p className="text-[11px] font-semibold leading-relaxed text-emerald-400/80">{loginSuccessMessage}</p>
+                      </div>
+                    </motion.div>
+                  )}
+
                   <div className="flex items-center justify-between pt-1">
                     <div className="flex items-center space-x-2.5">
                       <button
@@ -945,47 +1067,12 @@ export default function MobileEmulator({
                     {loginLoading ? "Signing in..." : "Sign In"}
                   </button>
                 </motion.div>
-              </form>
-
-              <motion.div
+              </form>              <motion.div
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.35, delay: 0.20, ease: [0.16, 1, 0.3, 1] }}
-                className="mt-4"
-              >
-                <button
-                  onClick={handleGoogleSignIn}
-                  disabled={loginLoading}
-                  className="w-full h-12 rounded-xl border border-zinc-800 bg-transparent hover:bg-zinc-900/50 text-sm text-zinc-300 font-bold transition-all duration-150 flex items-center justify-center space-x-2.5 cursor-pointer disabled:opacity-50 active:scale-98 shadow-sm shadow-black/20"
-                >
-                  <svg className="w-4 h-4" viewBox="0 0 24 24">
-                    <path fill="#EA4335" d="M12 5.04c1.62 0 3.08.56 4.22 1.64l3.15-3.15C17.45 1.73 14.92 1 12 1 7.35 1 3.4 3.65 1.48 7.5l3.77 2.92C6.18 7.02 8.87 5.04 12 5.04z" />
-                    <path fill="#4285F4" d="M23.49 12.27c0-.81-.07-1.59-.2-2.36H12v4.47h6.44c-.28 1.47-1.11 2.71-2.36 3.55l3.66 2.84c2.14-1.97 3.75-4.88 3.75-8.5z" />
-                    <path fill="#FBBC05" d="M5.25 14.58c-.24-.71-.38-1.47-.38-2.27s.14-1.56.38-2.27L1.48 7.12C.54 9 0 11.1 0 13.3c0 2.2.54 4.3 1.48 6.18l3.77-2.9z" />
-                    <path fill="#34A853" d="M12 23c3.24 0 5.97-1.07 7.96-2.92l-3.66-2.84c-1.01.68-2.31 1.08-4.3 1.08-3.13 0-5.82-1.98-6.77-4.86l-3.77 2.92C3.4 20.35 7.35 23 12 23z" />
-                  </svg>
-                  <span>Continue with Google</span>
-                </button>
-              </motion.div>
-
-              <motion.div
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.35, delay: 0.24, ease: [0.16, 1, 0.3, 1] }}
                 className="mt-6 text-center pb-2 flex flex-col items-center gap-3"
               >
-                <button
-                  type="button"
-                  onClick={() => {
-                    setLoginEmail("singhxayush100@gmail.com");
-                    setLoginPassword("password");
-                    showToast("Demo credentials loaded.", "info");
-                  }}
-                  className="text-xs text-zinc-550 hover:text-zinc-350 transition-colors font-bold underline underline-offset-4 cursor-pointer"
-                >
-                  Use demo account
-                </button>
-
                 <div className="text-xs text-zinc-400 font-semibold mt-1">
                   Need an account?{" "}
                   <button
@@ -1229,9 +1316,10 @@ export default function MobileEmulator({
             </motion.div>
           )}
 
-          {isAuthenticated && (
-            <motion.div
-              key="auth_shell"
+          {isAuthenticated && currentScreen !== "splash" && (
+            isProfileCompleted() ? (
+              <motion.div
+                key="auth_shell"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
@@ -1796,10 +1884,10 @@ export default function MobileEmulator({
                 initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-                className={`absolute bottom-5 left-4 right-4 h-[72px] rounded-full border px-2 flex items-center justify-between z-40 backdrop-blur-xl transition-all duration-200 ${
+                className={`absolute bottom-5 left-4 right-4 h-[72px] rounded-full border px-2 flex items-center justify-between z-40 backdrop-blur-[12px] -webkit-backdrop-filter:blur(12px) transition-all duration-200 ${
                   isDark 
-                    ? "bg-[#121214]/80 border-white/[0.08] shadow-[0_12px_42px_rgba(0,0,0,0.6)]" 
-                    : "bg-white/85 border-zinc-200/80 shadow-[0_12px_32px_rgba(0,0,0,0.03)]"
+                    ? "bg-[#18181A]/65 border-white/[0.08] shadow-[0_12px_40px_rgba(0,0,0,0.5)]" 
+                    : "bg-white/60 border-zinc-200/40 shadow-[0_12px_30px_rgba(0,0,0,0.04)]"
                 }`}
               >
                 {[
@@ -1842,30 +1930,111 @@ export default function MobileEmulator({
                 })}
               </motion.div>
             </motion.div>
+            ) : (
+              <motion.div
+                key="onboarding_shell"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="absolute inset-0 flex flex-col h-full bg-[#09090B] text-zinc-100 p-6 pt-16 overflow-y-auto"
+              >
+                <div className="mb-6 text-left">
+                  <h2 className="text-3xl font-extrabold tracking-tight text-white font-display">Complete Profile</h2>
+                  <p className="text-sm text-zinc-400 mt-2 leading-relaxed">Please fill in your essential academic details to unlock the placement tracker.</p>
+                </div>
+
+                <form onSubmit={handleOnboardingSubmit} className="space-y-4">
+                  <div className="bg-[#121214] border border-zinc-800 rounded-2xl p-5 space-y-4 shadow-xl">
+                    <div className="space-y-1 text-left">
+                      <label className="text-[10px] font-bold tracking-wider text-zinc-400 uppercase font-mono block">Full Name</label>
+                      <input
+                        type="text"
+                        required
+                        value={onboardName}
+                        onChange={(e) => setOnboardName(e.target.value)}
+                        placeholder="e.g. Ayush Singh"
+                        className="w-full h-12 px-3.5 bg-zinc-900 border border-zinc-800 rounded-xl text-sm text-zinc-100 placeholder-zinc-600 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/20 transition-all font-semibold"
+                      />
+                    </div>
+
+                    <div className="space-y-1 text-left">
+                      <label className="text-[10px] font-bold tracking-wider text-zinc-400 uppercase font-mono block">University / College</label>
+                      <input
+                        type="text"
+                        required
+                        value={onboardCollege}
+                        onChange={(e) => setOnboardCollege(e.target.value)}
+                        placeholder="e.g. Indian Institute of Technology"
+                        className="w-full h-12 px-3.5 bg-zinc-900 border border-zinc-800 rounded-xl text-sm text-zinc-100 placeholder-zinc-600 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/20 transition-all font-semibold"
+                      />
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-3 text-left">
+                      <div className="space-y-1">
+                        <label className="text-[10px] font-bold tracking-wider text-zinc-400 uppercase font-mono block">Degree</label>
+                        <input
+                          type="text"
+                          required
+                          value={onboardDegree}
+                          onChange={(e) => setOnboardDegree(e.target.value)}
+                          placeholder="e.g. B.Tech"
+                          className="w-full h-12 px-3.5 bg-zinc-900 border border-zinc-800 rounded-xl text-sm text-zinc-100 placeholder-zinc-600 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/20 transition-all font-semibold"
+                        />
+                      </div>
+                      <div className="space-y-1">
+                        <label className="text-[10px] font-bold tracking-wider text-zinc-400 uppercase font-mono block">CGPA</label>
+                        <input
+                          type="text"
+                          required
+                          value={onboardCgpa}
+                          onChange={(e) => setOnboardCgpa(e.target.value)}
+                          placeholder="e.g. 9.15"
+                          className="w-full h-12 px-3.5 bg-zinc-900 border border-zinc-800 rounded-xl text-sm text-zinc-100 placeholder-zinc-600 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/20 transition-all font-semibold"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="space-y-1 text-left">
+                      <label className="text-[10px] font-bold tracking-wider text-zinc-400 uppercase font-mono block">Graduation Year</label>
+                      <input
+                        type="text"
+                        required
+                        value={onboardGradYear}
+                        onChange={(e) => setOnboardGradYear(e.target.value)}
+                        placeholder="e.g. 2027"
+                        className="w-full h-12 px-3.5 bg-zinc-900 border border-zinc-800 rounded-xl text-sm text-zinc-100 placeholder-zinc-600 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/20 transition-all font-semibold"
+                      />
+                    </div>
+                  </div>
+
+                  {onboardError && (
+                    <div className="p-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-xs flex items-start space-x-2 text-left">
+                      <AlertTriangle size={14} className="mt-0.5 flex-shrink-0 text-red-400" />
+                      <span className="font-semibold">{onboardError}</span>
+                    </div>
+                  )}
+
+                  <button
+                    type="submit"
+                    disabled={onboardLoading}
+                    className="w-full h-12 rounded-xl bg-blue-600 hover:bg-blue-550 active:scale-98 text-white text-sm font-bold transition-all flex items-center justify-center cursor-pointer disabled:opacity-50 shadow-md shadow-blue-600/10 mt-2"
+                  >
+                    {onboardLoading ? "Updating Profile..." : "Complete Setup"}
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={handleLogout}
+                    className="w-full h-12 rounded-xl border border-zinc-800 bg-transparent text-sm text-zinc-400 hover:text-white font-bold transition-all flex items-center justify-center cursor-pointer active:scale-98 mt-2"
+                  >
+                    Sign Out
+                  </button>
+                </form>
+              </motion.div>
+            )
           )}
         </AnimatePresence>
 
-        <AnimatePresence>
-          {activeSnackbar && (
-            <motion.div
-              initial={{ y: 50, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              exit={{ y: 50, opacity: 0 }}
-              className="absolute bottom-16 left-3 right-3 p-2.5 rounded-lg border shadow-xl z-[90] flex items-center space-x-2 bg-zinc-950 text-white border-zinc-800 text-[11px]"
-            >
-              <div className="flex-shrink-0">
-                {activeSnackbar.type === "success" && <CheckCircle size={13} className="text-emerald-400" />}
-                {activeSnackbar.type === "warning" && <AlertTriangle size={13} className="text-yellow-400" />}
-                {activeSnackbar.type === "error" && <AlertTriangle size={13} className="text-red-400" />}
-                {activeSnackbar.type === "info" && <Sparkles size={13} className="text-blue-400" />}
-              </div>
-              <p className="flex-1 font-medium leading-tight">{activeSnackbar.message}</p>
-              <button onClick={() => setActiveSnackbar(null)} className="text-zinc-500 hover:text-zinc-300">
-                <X size={12} />
-              </button>
-            </motion.div>
-          )}
-        </AnimatePresence>
 
         <AnimatePresence>
           {activeBottomSheet && (

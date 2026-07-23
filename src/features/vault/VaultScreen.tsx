@@ -21,7 +21,10 @@ import {
   Upload,
   Calendar,
   GraduationCap,
-  TrendingUp
+  TrendingUp,
+  ArrowLeft,
+  Edit2,
+  MoreHorizontal
 } from "lucide-react";
 import { useAuth } from "../../providers/auth.provider";
 import { ResumeService } from "../../services/resume.service";
@@ -167,7 +170,109 @@ export const VaultScreen: React.FC<VaultScreenProps> = ({
   };
 
   const resumeService = React.useMemo(() => new ResumeService(), []);
+  const documentService = React.useMemo(() => new DocumentService(), []);
   const resumeFileInputRef = useRef<HTMLInputElement | null>(null);
+
+  const [showResumeManager, setShowResumeManager] = useState(false);
+  const [renamingResumeId, setRenamingResumeId] = useState<string | null>(null);
+  const [renameInput, setRenameInput] = useState("");
+
+  const [showCertManager, setShowCertManager] = useState(false);
+  const [renamingCertId, setRenamingCertId] = useState<string | null>(null);
+  const [renameCertInput, setRenameCertInput] = useState("");
+
+  const [replacingResumeId, setReplacingResumeId] = useState<string | null>(null);
+  const [replacingCertId, setReplacingCertId] = useState<string | null>(null);
+  const [activeResumeMenuId, setActiveResumeMenuId] = useState<string | null>(null);
+  const [activeCertMenuId, setActiveCertMenuId] = useState<string | null>(null);
+
+  const handleSetActiveResume = async (id: string) => {
+    if (!auth.user) return;
+    showToast("Updating default resume...", "info");
+    const res = await resumeService.setActiveResume(auth.user.id, id);
+    if (res.error) {
+      showToast(res.error, "error");
+      return;
+    }
+    const mapped = res.resumes.map((r) => ({
+      id: r.id,
+      name: r.name,
+      version: r.version || "v1.0",
+      storagePath: r.storage_path,
+      isDefault: Boolean(r.is_active),
+      createdAt: r.created_at ? r.created_at.split("T")[0] : new Date().toISOString().split("T")[0],
+      updatedAt: r.updated_at ? r.updated_at.split("T")[0] : new Date().toISOString().split("T")[0],
+      fileSizeKb: r.file_size_kb || 450,
+    }));
+    setResumes(mapped);
+    showToast("Default resume updated successfully", "success");
+  };
+
+  const handleRenameResumeSubmit = async (id: string, newName: string) => {
+    const trimmed = newName.trim();
+    if (!trimmed) {
+      showToast("Resume name cannot be empty.", "warning");
+      return;
+    }
+    showToast("Renaming resume...", "info");
+    const res = await resumeService.renameResume(id, trimmed);
+    if (res.error) {
+      showToast(res.error, "error");
+      return;
+    }
+    setResumes((prev) =>
+      prev.map((r) => (r.id === id ? { ...r, name: trimmed } : r))
+    );
+    setRenamingResumeId(null);
+    setRenameInput("");
+    showToast("Resume renamed successfully", "success");
+  };
+
+  const handleDeleteResume = async (id: string, storagePath: string) => {
+    if (window.confirm("Are you sure you want to delete this resume?")) {
+      showToast("Deleting resume...", "info");
+      const res = await resumeService.deleteResume(id, storagePath);
+      if (res.error) {
+        showToast(res.error, "error");
+        return;
+      }
+      setResumes((prev) => prev.filter((r) => r.id !== id));
+      showToast("Resume deleted successfully", "success");
+    }
+  };
+
+  const handleRenameCertSubmit = async (id: string, newName: string) => {
+    const trimmed = newName.trim();
+    if (!trimmed) {
+      showToast("Certificate name cannot be empty.", "warning");
+      return;
+    }
+    showToast("Renaming certificate...", "info");
+    const res = await documentService.renameDocument(id, trimmed);
+    if (res.error) {
+      showToast(res.error, "error");
+      return;
+    }
+    setVaultDocuments((prev) =>
+      prev.map((d) => (d.id === id ? { ...d, name: trimmed } : d))
+    );
+    setRenamingCertId(null);
+    setRenameCertInput("");
+    showToast("Certificate renamed successfully", "success");
+  };
+
+  const handleDeleteCert = async (id: string, storagePath: string) => {
+    if (window.confirm("Are you sure you want to delete this certificate?")) {
+      showToast("Deleting certificate...", "info");
+      const res = await documentService.deleteDocument(id, storagePath);
+      if (res.error) {
+        showToast(res.error, "error");
+        return;
+      }
+      setVaultDocuments((prev) => prev.filter((d) => d.id !== id));
+      showToast("Certificate deleted successfully", "success");
+    }
+  };
 
   const handleResumeFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -186,6 +291,18 @@ export const VaultScreen: React.FC<VaultScreenProps> = ({
     }
 
     if (res.resume) {
+      if (replacingResumeId) {
+        const oldResume = resumes.find(r => r.id === replacingResumeId);
+        if (oldResume) {
+          await resumeService.deleteResume(oldResume.id, oldResume.storagePath);
+          setResumes((prev) => prev.filter((r) => r.id !== oldResume.id));
+        }
+        setReplacingResumeId(null);
+        showToast(`Replaced document with ${res.resume.name}`, "success");
+      } else {
+        showToast(`Uploaded ${res.resume.name} successfully`, "success");
+      }
+
       const newResumeItem = {
         id: res.resume.id,
         name: res.resume.name,
@@ -198,7 +315,6 @@ export const VaultScreen: React.FC<VaultScreenProps> = ({
       };
 
       setResumes((prev) => [newResumeItem, ...prev]);
-      showToast(`Uploaded ${res.resume.name} successfully`, "success");
     }
   };
 
@@ -216,8 +332,6 @@ export const VaultScreen: React.FC<VaultScreenProps> = ({
     window.open(res.url, "_blank", "noopener,noreferrer");
   };
 
-  const documentService = React.useMemo(() => new DocumentService(), []);
-  
   const coverLetterFileInputRef = useRef<HTMLInputElement | null>(null);
   const portfolioFileInputRef = useRef<HTMLInputElement | null>(null);
   const certFileInputRef = useRef<HTMLInputElement | null>(null);
@@ -289,6 +403,18 @@ export const VaultScreen: React.FC<VaultScreenProps> = ({
     if (res.error) {
       showToast(res.error, "error");
     } else if (res.document) {
+      if (replacingCertId) {
+        const oldCert = vaultDocuments.find(d => d.id === replacingCertId);
+        if (oldCert) {
+          await documentService.deleteDocument(oldCert.id, oldCert.storagePath);
+          setVaultDocuments((prev) => prev.filter((d) => d.id !== oldCert.id));
+        }
+        setReplacingCertId(null);
+        showToast(`Replaced certificate with ${res.document.name}`, "success");
+      } else {
+        showToast("Certificate uploaded successfully", "success");
+      }
+
       const newDocItem = {
         id: res.document.id,
         name: res.document.name,
@@ -299,7 +425,6 @@ export const VaultScreen: React.FC<VaultScreenProps> = ({
         updatedAt: new Date().toISOString().split("T")[0]
       };
       setVaultDocuments((prev) => [newDocItem, ...prev]);
-      showToast("Certificate uploaded successfully", "success");
     }
   };
 
@@ -513,8 +638,538 @@ export const VaultScreen: React.FC<VaultScreenProps> = ({
 
   return (
     <div className="font-sans select-none relative pb-6 pt-2">
+      {/* Root-level hidden file inputs to ensure they remain mounted for ref clicks */}
+      <input
+        type="file"
+        ref={resumeFileInputRef}
+        onChange={handleResumeFileUpload}
+        accept=".pdf,.doc,.docx"
+        className="hidden"
+      />
+      <input
+        type="file"
+        ref={coverLetterFileInputRef}
+        onChange={handleCoverLetterUpload}
+        accept=".pdf,.doc,.docx"
+        className="hidden"
+      />
+      <input
+        type="file"
+        ref={portfolioFileInputRef}
+        onChange={handlePortfolioUpload}
+        accept=".pdf,.doc,.docx"
+        className="hidden"
+      />
+      <input
+        type="file"
+        ref={certFileInputRef}
+        onChange={handleCertUpload}
+        accept=".pdf,.doc,.docx"
+        className="hidden"
+      />
+
       <AnimatePresence mode="wait">
-        {isEditing ? (
+        {showCertManager ? (
+          <motion.div
+            key="cert-manager-view"
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 12 }}
+            transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
+            className="space-y-6 text-left relative min-h-[500px]"
+          >
+            {/* Apple-style Large Header */}
+            <div className="flex flex-col items-start px-1 space-y-2 mt-2">
+              <button 
+                type="button"
+                onClick={() => {
+                  setShowCertManager(false);
+                  setActiveCertMenuId(null);
+                }}
+                className={`text-xs font-bold flex items-center space-x-1.5 transition-colors ${
+                  isDark ? "text-zinc-455 hover:text-zinc-200" : "text-zinc-500 hover:text-zinc-800"
+                }`}
+              >
+                <ArrowLeft size={13} />
+                <span>Career Vault</span>
+              </button>
+              <div className="flex flex-col text-left">
+                <h1 className={`text-3xl font-extrabold tracking-tight ${isDark ? "text-white" : "text-zinc-950"}`}>
+                  Certificates
+                </h1>
+                <p className={`text-[11.5px] tracking-tight font-medium mt-1 leading-tight ${isDark ? "text-zinc-500" : "text-zinc-450"}`}>
+                  Verify and present your verified academic credentials.
+                </p>
+              </div>
+            </div>
+
+            {/* List of certificates */}
+            <div className="space-y-4.5 mt-5">
+              {vaultDocuments.filter(d => d.category?.toLowerCase() === "certificate").length === 0 ? (
+                <div className={`py-16 px-6 text-center border border-dashed rounded-[20px] ${isDark ? "bg-[#18181B]/10 border-zinc-800/80" : "bg-zinc-50 border-zinc-250 shadow-xs"}`}>
+                  <div className={`w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4 ${isDark ? "bg-zinc-900 text-zinc-500" : "bg-zinc-200/50 text-zinc-400"}`}>
+                    <Award size={24} />
+                  </div>
+                  <h4 className={`text-sm font-bold ${isDark ? "text-zinc-300" : "text-zinc-800"}`}>No Certificates Found</h4>
+                  <p className={`text-[11px] ${isDark ? "text-zinc-500" : "text-zinc-455"} mt-1.5 max-w-[200px] mx-auto leading-relaxed`}>
+                    Archive your credentials and verified academic sync files here.
+                  </p>
+                </div>
+              ) : (
+                <div className="space-y-3.5">
+                  {vaultDocuments
+                    .filter(d => d.category?.toLowerCase() === "certificate")
+                    .map((c) => {
+                      const isRenaming = renamingCertId === c.id;
+
+                      return (
+                        <div 
+                          key={c.id} 
+                          className={`p-5 rounded-[20px] border relative transition-all duration-200 ${
+                            isDark 
+                              ? "bg-white/[0.03] border-white/[0.08] hover:bg-white/[0.05]" 
+                              : "bg-white border-zinc-200/60 hover:bg-zinc-50/50 shadow-xs"
+                          }`}
+                        >
+                          <div className="flex items-start justify-between gap-3">
+                            <div className="flex items-center gap-4 min-w-0">
+                              <div className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 border ${
+                                isDark 
+                                  ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-400" 
+                                  : "bg-emerald-50 border-emerald-100 text-emerald-600"
+                              }`}>
+                                <Award size={22} />
+                              </div>
+                              <div className="text-left min-w-0">
+                                {isRenaming ? (
+                                  <div className="flex items-center space-x-2 mt-0.5">
+                                    <input
+                                      type="text"
+                                      value={renameCertInput}
+                                      onChange={(e) => setRenameCertInput(e.target.value)}
+                                      className={`h-8 px-2.5 rounded-lg text-xs outline-none border transition-all ${
+                                        isDark 
+                                          ? "bg-zinc-900 border-zinc-800 text-white focus:border-blue-500" 
+                                          : "bg-zinc-50 border-zinc-250 text-zinc-900 focus:border-blue-600"
+                                      }`}
+                                      autoFocus
+                                    />
+                                    <button
+                                      type="button"
+                                      onClick={() => handleRenameCertSubmit(c.id, renameCertInput)}
+                                      className="h-8 px-3 rounded-lg bg-blue-600 hover:bg-blue-550 text-white text-[10px] font-bold cursor-pointer"
+                                    >
+                                      Save
+                                    </button>
+                                    <button
+                                      type="button"
+                                      onClick={() => setRenamingCertId(null)}
+                                      className={`h-8 px-2 rounded-lg text-[10px] font-bold cursor-pointer ${isDark ? "text-zinc-400 hover:text-zinc-200" : "text-zinc-500 hover:text-zinc-800"}`}
+                                    >
+                                      Cancel
+                                    </button>
+                                  </div>
+                                ) : (
+                                  <div className="flex items-center gap-2">
+                                    <span className={`text-[14px] font-bold leading-tight truncate max-w-[160px] ${isDark ? "text-zinc-100" : "text-zinc-900"}`}>
+                                      {c.name}
+                                    </span>
+                                    <span className={`px-2 py-0.5 rounded-md text-[8px] font-extrabold tracking-wider uppercase border shrink-0 ${
+                                      isDark 
+                                        ? "bg-indigo-500/10 text-indigo-400 border-indigo-500/20" 
+                                        : "bg-indigo-50 text-indigo-700 border-indigo-100"
+                                    }`}>
+                                      Verified
+                                    </span>
+                                  </div>
+                                )}
+                                <span className={`text-[10px] font-mono leading-tight block mt-1 ${isDark ? "text-zinc-550" : "text-zinc-400"}`}>
+                                  {c.fileSizeKb ? `${c.fileSizeKb} KB` : "500 KB"} • {c.createdAt || "Just now"} • Certificate
+                                </span>
+                              </div>
+                            </div>
+
+                            {/* Dropdown Menu Trigger */}
+                            <div className="relative shrink-0">
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setActiveCertMenuId(activeCertMenuId === c.id ? null : c.id);
+                                }}
+                                className={`w-8 h-8 rounded-lg flex items-center justify-center border transition-all cursor-pointer ${
+                                  isDark ? "bg-[#1E1E22] border-zinc-800 text-zinc-400 hover:text-white" : "bg-zinc-50 border-zinc-200 text-zinc-600 hover:bg-zinc-100"
+                                }`}
+                              >
+                                <MoreHorizontal size={14} />
+                              </button>
+
+                              {/* Dropdown Content */}
+                              <AnimatePresence>
+                                {activeCertMenuId === c.id && (
+                                  <>
+                                    <div 
+                                      className="fixed inset-0 z-40 cursor-default" 
+                                      onClick={() => setActiveCertMenuId(null)}
+                                    />
+                                    <motion.div
+                                      initial={{ opacity: 0, scale: 0.95, y: -10 }}
+                                      animate={{ opacity: 1, scale: 1, y: 0 }}
+                                      exit={{ opacity: 0, scale: 0.95, y: -10 }}
+                                      transition={{ duration: 0.12 }}
+                                      className={`absolute right-0 mt-1 w-44 rounded-xl border z-50 shadow-lg ${
+                                        isDark 
+                                          ? "bg-[#1C1C1E] border-zinc-800 text-zinc-250" 
+                                          : "bg-white border-zinc-200 text-zinc-800"
+                                      } py-1 overflow-hidden`}
+                                    >
+                                      <button
+                                        type="button"
+                                        onClick={() => {
+                                          setActiveCertMenuId(null);
+                                          handleViewDocument(c);
+                                        }}
+                                        className={`w-full px-3.5 py-2 text-left text-xs font-semibold flex items-center space-x-2 ${
+                                          isDark ? "hover:bg-zinc-800/60 text-zinc-300" : "hover:bg-zinc-105 text-zinc-700"
+                                        }`}
+                                      >
+                                        <ExternalLink size={12} />
+                                        <span>Open Certificate</span>
+                                      </button>
+                                      <button
+                                        type="button"
+                                        onClick={() => {
+                                          setActiveCertMenuId(null);
+                                          setRenamingCertId(c.id);
+                                          setRenameCertInput(c.name);
+                                        }}
+                                        className={`w-full px-3.5 py-2 text-left text-xs font-semibold flex items-center space-x-2 ${
+                                          isDark ? "hover:bg-zinc-800/60 text-zinc-300" : "hover:bg-zinc-105 text-zinc-700"
+                                        }`}
+                                      >
+                                        <Edit2 size={12} />
+                                        <span>Rename File</span>
+                                      </button>
+                                      <button
+                                        type="button"
+                                        onClick={() => {
+                                          setActiveCertMenuId(null);
+                                          setReplacingCertId(c.id);
+                                          certFileInputRef.current?.click();
+                                        }}
+                                        className={`w-full px-3.5 py-2 text-left text-xs font-semibold flex items-center space-x-2 ${
+                                          isDark ? "hover:bg-zinc-800/60 text-zinc-300" : "hover:bg-zinc-105 text-zinc-700"
+                                        }`}
+                                      >
+                                        <Upload size={12} />
+                                        <span>Replace File</span>
+                                      </button>
+                                      <button
+                                        type="button"
+                                        onClick={() => {
+                                          setActiveCertMenuId(null);
+                                          handleViewDocument(c);
+                                        }}
+                                        className={`w-full px-3.5 py-2 text-left text-xs font-semibold flex items-center space-x-2 ${
+                                          isDark ? "hover:bg-zinc-800/60 text-zinc-300" : "hover:bg-zinc-105 text-zinc-700"
+                                        }`}
+                                      >
+                                        <Upload size={12} className="rotate-180" />
+                                        <span>Download PDF</span>
+                                      </button>
+                                      <div className={`h-[0.5px] ${isDark ? "bg-zinc-800" : "bg-zinc-150"}`} />
+                                      <button
+                                        type="button"
+                                        onClick={() => {
+                                          setActiveCertMenuId(null);
+                                          handleDeleteCert(c.id, c.storagePath);
+                                        }}
+                                        className={`w-full px-3.5 py-2 text-left text-xs font-bold flex items-center space-x-2 text-red-500 ${
+                                          isDark ? "hover:bg-red-950/20" : "hover:bg-red-50"
+                                        }`}
+                                      >
+                                        <Trash2 size={12} />
+                                        <span>Delete Certificate</span>
+                                      </button>
+                                    </motion.div>
+                                  </>
+                                )}
+                              </AnimatePresence>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                </div>
+              )}
+            </div>
+
+            {/* Premium Floating Upload FAB */}
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => certFileInputRef.current?.click()}
+              className="fixed bottom-24 right-6 w-13 h-13 rounded-full bg-blue-650 hover:bg-blue-600 active:scale-95 text-white flex items-center justify-center shadow-lg shadow-blue-500/20 z-40 border border-blue-500/30 cursor-pointer"
+            >
+              <Plus size={22} />
+            </motion.button>
+          </motion.div>
+        ) : showResumeManager ? (
+          <motion.div
+            key="resume-manager-view"
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 12 }}
+            transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
+            className="space-y-6 text-left relative min-h-[500px]"
+          >
+            {/* Apple-style Large Header */}
+            <div className="flex flex-col items-start px-1 space-y-2 mt-2">
+              <button 
+                type="button"
+                onClick={() => {
+                  setShowResumeManager(false);
+                  setActiveResumeMenuId(null);
+                }}
+                className={`text-xs font-bold flex items-center space-x-1.5 transition-colors ${
+                  isDark ? "text-zinc-455 hover:text-zinc-200" : "text-zinc-500 hover:text-zinc-800"
+                }`}
+              >
+                <ArrowLeft size={13} />
+                <span>Career Vault</span>
+              </button>
+              <div className="flex flex-col text-left">
+                <h1 className={`text-3xl font-extrabold tracking-tight ${isDark ? "text-white" : "text-zinc-950"}`}>
+                  Resumes
+                </h1>
+                <p className={`text-[11.5px] tracking-tight font-medium mt-1 leading-tight ${isDark ? "text-zinc-500" : "text-zinc-450"}`}>
+                  Manage your active credentials for applicant sync systems.
+                </p>
+              </div>
+            </div>
+
+            {/* List of resumes */}
+            <div className="space-y-4.5 mt-5">
+              {resumes.length === 0 ? (
+                <div className={`py-16 px-6 text-center border border-dashed rounded-[20px] ${isDark ? "bg-[#18181B]/10 border-zinc-800/80" : "bg-zinc-50 border-zinc-250 shadow-xs"}`}>
+                  <div className={`w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4 ${isDark ? "bg-zinc-900 text-zinc-500" : "bg-zinc-200/50 text-zinc-400"}`}>
+                    <FileText size={24} />
+                  </div>
+                  <h4 className={`text-sm font-bold ${isDark ? "text-zinc-300" : "text-zinc-800"}`}>No Resumes Found</h4>
+                  <p className={`text-[11px] ${isDark ? "text-zinc-500" : "text-zinc-455"} mt-1.5 max-w-[200px] mx-auto leading-relaxed`}>
+                    Upload your active resume versions to start syncing with recruiter portals.
+                  </p>
+                </div>
+              ) : (
+                <div className="space-y-3.5">
+                  {resumes.map((r) => {
+                    const isDefault = r.isDefault;
+                    const isRenaming = renamingResumeId === r.id;
+
+                    return (
+                      <div 
+                        key={r.id} 
+                        className={`p-5 rounded-[20px] border relative transition-all duration-200 ${
+                          isDark 
+                            ? "bg-white/[0.03] border-white/[0.08] hover:bg-white/[0.05]" 
+                            : "bg-white border-zinc-200/60 hover:bg-zinc-50/50 shadow-xs"
+                        }`}
+                      >
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="flex items-center gap-4 min-w-0">
+                            <div className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 border ${
+                              isDark 
+                                ? "bg-blue-500/10 border-blue-500/20 text-blue-400" 
+                                : "bg-blue-50 border-blue-100 text-blue-600"
+                            }`}>
+                              <FileText size={22} />
+                            </div>
+                            <div className="text-left min-w-0">
+                              {isRenaming ? (
+                                <div className="flex items-center space-x-2 mt-0.5">
+                                  <input
+                                    type="text"
+                                    value={renameInput}
+                                    onChange={(e) => setRenameInput(e.target.value)}
+                                    className={`h-8 px-2.5 rounded-lg text-xs outline-none border transition-all ${
+                                      isDark 
+                                        ? "bg-zinc-900 border-zinc-800 text-white focus:border-blue-500" 
+                                        : "bg-zinc-50 border-zinc-250 text-zinc-900 focus:border-blue-600"
+                                    }`}
+                                    autoFocus
+                                  />
+                                  <button
+                                    type="button"
+                                    onClick={() => handleRenameResumeSubmit(r.id, renameInput)}
+                                    className="h-8 px-3 rounded-lg bg-blue-600 hover:bg-blue-550 text-white text-[10px] font-bold cursor-pointer"
+                                  >
+                                    Save
+                                  </button>
+                                  <button
+                                    type="button"
+                                    onClick={() => setRenamingResumeId(null)}
+                                    className={`h-8 px-2 rounded-lg text-[10px] font-bold cursor-pointer ${isDark ? "text-zinc-400 hover:text-zinc-200" : "text-zinc-500 hover:text-zinc-800"}`}
+                                  >
+                                    Cancel
+                                  </button>
+                                </div>
+                              ) : (
+                                <div className="flex items-center gap-2">
+                                  <span className={`text-[14px] font-bold leading-tight truncate max-w-[150px] ${isDark ? "text-zinc-100" : "text-zinc-900"}`}>
+                                    {r.name}
+                                  </span>
+                                  {isDefault && (
+                                    <span className="px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-400 text-[8px] font-extrabold tracking-wider uppercase border border-emerald-500/20 shrink-0">
+                                      Default
+                                    </span>
+                                  )}
+                                </div>
+                              )}
+                              <span className={`text-[10px] font-mono leading-tight block mt-1 ${isDark ? "text-zinc-555" : "text-zinc-400"}`}>
+                                {r.fileSizeKb ? `${r.fileSizeKb} KB` : "450 KB"} • {r.createdAt || "Just now"} • Resume
+                              </span>
+                            </div>
+                          </div>
+
+                          {/* Dropdown Menu Trigger */}
+                          <div className="relative shrink-0">
+                            <button
+                              type="button"
+                              onClick={() => {
+                                  setActiveResumeMenuId(activeResumeMenuId === r.id ? null : r.id);
+                              }}
+                              className={`w-8 h-8 rounded-lg flex items-center justify-center border transition-all cursor-pointer ${
+                                isDark ? "bg-[#1E1E22] border-zinc-800 text-zinc-400 hover:text-white" : "bg-zinc-50 border-zinc-200 text-zinc-600 hover:bg-zinc-100"
+                              }`}
+                            >
+                              <MoreHorizontal size={14} />
+                            </button>
+
+                            {/* Dropdown Content */}
+                            <AnimatePresence>
+                              {activeResumeMenuId === r.id && (
+                                <>
+                                  <div 
+                                    className="fixed inset-0 z-40 cursor-default" 
+                                    onClick={() => setActiveResumeMenuId(null)}
+                                  />
+                                  <motion.div
+                                    initial={{ opacity: 0, scale: 0.95, y: -10 }}
+                                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                                    exit={{ opacity: 0, scale: 0.95, y: -10 }}
+                                    transition={{ duration: 0.12 }}
+                                    className={`absolute right-0 mt-1 w-44 rounded-xl border z-50 shadow-lg ${
+                                      isDark 
+                                        ? "bg-[#1C1C1E] border-zinc-800 text-zinc-250" 
+                                        : "bg-white border-zinc-200 text-zinc-800"
+                                    } py-1 overflow-hidden`}
+                                  >
+                                    <button
+                                      type="button"
+                                      onClick={() => {
+                                        setActiveResumeMenuId(null);
+                                        handleViewResume(r.storagePath, r.name);
+                                      }}
+                                      className={`w-full px-3.5 py-2 text-left text-xs font-semibold flex items-center space-x-2 ${
+                                        isDark ? "hover:bg-zinc-800/60 text-zinc-300" : "hover:bg-zinc-105 text-zinc-700"
+                                      }`}
+                                    >
+                                      <ExternalLink size={12} />
+                                      <span>Open Resume</span>
+                                    </button>
+                                    {!isDefault && (
+                                      <button
+                                        type="button"
+                                        onClick={() => {
+                                          setActiveResumeMenuId(null);
+                                          handleSetActiveResume(r.id);
+                                        }}
+                                        className={`w-full px-3.5 py-2 text-left text-xs font-semibold flex items-center space-x-2 ${
+                                          isDark ? "hover:bg-zinc-800/60 text-zinc-300" : "hover:bg-zinc-105 text-zinc-700"
+                                        }`}
+                                      >
+                                        <Check size={12} />
+                                        <span>Mark as Default</span>
+                                      </button>
+                                    )}
+                                    <button
+                                      type="button"
+                                      onClick={() => {
+                                        setActiveResumeMenuId(null);
+                                        setRenamingResumeId(r.id);
+                                        setRenameInput(r.name);
+                                      }}
+                                      className={`w-full px-3.5 py-2 text-left text-xs font-semibold flex items-center space-x-2 ${
+                                        isDark ? "hover:bg-zinc-800/60 text-zinc-300" : "hover:bg-zinc-105 text-zinc-700"
+                                      }`}
+                                    >
+                                      <Edit2 size={12} />
+                                      <span>Rename File</span>
+                                    </button>
+                                    <button
+                                      type="button"
+                                      onClick={() => {
+                                        setActiveResumeMenuId(null);
+                                        setReplacingResumeId(r.id);
+                                        resumeFileInputRef.current?.click();
+                                      }}
+                                      className={`w-full px-3.5 py-2 text-left text-xs font-semibold flex items-center space-x-2 ${
+                                        isDark ? "hover:bg-zinc-800/60 text-zinc-300" : "hover:bg-zinc-105 text-zinc-700"
+                                      }`}
+                                    >
+                                      <Upload size={12} />
+                                      <span>Replace File</span>
+                                    </button>
+                                    <button
+                                      type="button"
+                                      onClick={() => {
+                                        setActiveResumeMenuId(null);
+                                        handleViewResume(r.storagePath, r.name);
+                                      }}
+                                      className={`w-full px-3.5 py-2 text-left text-xs font-semibold flex items-center space-x-2 ${
+                                        isDark ? "hover:bg-zinc-800/60 text-zinc-300" : "hover:bg-zinc-105 text-zinc-700"
+                                      }`}
+                                    >
+                                      <Upload size={12} className="rotate-180" />
+                                      <span>Download PDF</span>
+                                    </button>
+                                    <div className={`h-[0.5px] ${isDark ? "bg-zinc-800" : "bg-zinc-150"}`} />
+                                    <button
+                                      type="button"
+                                      onClick={() => {
+                                        setActiveResumeMenuId(null);
+                                        handleDeleteResume(r.id, r.storagePath);
+                                      }}
+                                      className={`w-full px-3.5 py-2 text-left text-xs font-bold flex items-center space-x-2 text-red-500 ${
+                                        isDark ? "hover:bg-red-950/20" : "hover:bg-red-50"
+                                      }`}
+                                    >
+                                      <Trash2 size={12} />
+                                      <span>Delete Resume</span>
+                                    </button>
+                                  </motion.div>
+                                </>
+                              )}
+                            </AnimatePresence>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+
+            {/* Premium Floating Upload FAB */}
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => resumeFileInputRef.current?.click()}
+              className="fixed bottom-24 right-6 w-13 h-13 rounded-full bg-blue-650 hover:bg-blue-600 active:scale-95 text-white flex items-center justify-center shadow-lg shadow-blue-500/20 z-40 border border-blue-500/30 cursor-pointer"
+            >
+              <Plus size={22} />
+            </motion.button>
+          </motion.div>
+        ) : isEditing ? (
           <motion.div
             key="edit-view"
             initial={{ opacity: 0, y: 10 }}
@@ -751,28 +1406,16 @@ export const VaultScreen: React.FC<VaultScreenProps> = ({
                         {resumes[0]?.name || "Not uploaded"}
                       </span>
                     </div>
-                    <input
-                      type="file"
-                      ref={resumeFileInputRef}
-                      onChange={handleResumeFileUpload}
-                      accept=".pdf,.doc,.docx"
-                      className="hidden"
-                    />
                     <div className="flex items-center space-x-2">
-                      {resumes[0]?.storagePath && (
-                        <button
-                          onClick={() => handleViewResume(resumes[0].storagePath, resumes[0].name)}
-                          className={`px-2.5 py-1.5 ${isDark ? "bg-zinc-800 text-zinc-300 hover:bg-zinc-700" : "bg-zinc-100 text-zinc-700 hover:bg-zinc-200"} text-[10px] font-bold rounded-full transition-colors cursor-pointer`}
-                        >
-                          View
-                        </button>
-                      )}
                       <button
-                        onClick={() => resumeFileInputRef.current?.click()}
-                        className={`px-2.5 py-1.5 ${isDark ? "bg-blue-500/10 hover:bg-blue-500/15 text-[#0A84FF]" : "bg-blue-50 hover:bg-blue-100 text-[#007AFF]"} text-[10px] font-bold rounded-full transition-colors cursor-pointer flex items-center space-x-1`}
+                        type="button"
+                        onClick={() => {
+                          setIsEditing(false);
+                          setShowResumeManager(true);
+                        }}
+                        className={`px-3 py-1.5 ${isDark ? "bg-[#1C1C1E] border border-zinc-805 text-zinc-300 hover:text-white" : "bg-white border border-zinc-200 text-zinc-700 hover:bg-zinc-50"} text-[10px] font-bold rounded-lg transition-colors cursor-pointer`}
                       >
-                        <Upload size={10} />
-                        <span>Upload PDF</span>
+                        Manage Resumes
                       </button>
                     </div>
                   </div>
@@ -821,38 +1464,10 @@ export const VaultScreen: React.FC<VaultScreenProps> = ({
           <motion.div
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.18, ease: "easeOut" }}
-            className="space-y-7"
+            className="space-y-6"
           >
-            <input
-              type="file"
-              ref={resumeFileInputRef}
-              onChange={handleResumeFileUpload}
-              accept=".pdf,.doc,.docx"
-              className="hidden"
-            />
-            <input
-              type="file"
-              ref={coverLetterFileInputRef}
-              onChange={handleCoverLetterUpload}
-              accept=".pdf,.doc,.docx"
-              className="hidden"
-            />
-            <input
-              type="file"
-              ref={portfolioFileInputRef}
-              onChange={handlePortfolioUpload}
-              accept=".pdf,.doc,.docx"
-              className="hidden"
-            />
-            <input
-              type="file"
-              ref={certFileInputRef}
-              onChange={handleCertUpload}
-              accept=".pdf,.doc,.docx"
-              className="hidden"
-            />
-
-            <div className="pt-4.5 flex items-center justify-between text-left">
+            {/* ── PAGE HEADER ── */}
+            <div className="pt-3 flex items-center justify-between text-left">
               <div className="flex flex-col items-start">
                 <span className="text-[10px] font-bold tracking-widest text-blue-500 dark:text-blue-400 block leading-none uppercase font-sans mb-2">
                   DIGITAL WALLET
@@ -873,93 +1488,119 @@ export const VaultScreen: React.FC<VaultScreenProps> = ({
               </button>
             </div>
 
-            <div className={`p-6 rounded-[22px] border relative ${
-              isDark ? "bg-[#0C0C0E]/95 border-zinc-800/80" : "bg-white border-zinc-200 shadow-xs"
+            {/* ── HERO PROFILE CARD ── */}
+            <div className={`rounded-[26px] border relative overflow-hidden ${
+              isDark
+                ? "bg-[#0C0C0E] border-zinc-800/70 shadow-[0_8px_32px_rgba(0,0,0,0.45)]"
+                : "bg-white border-zinc-200/80 shadow-[0_4px_24px_rgba(0,0,0,0.06)]"
             }`}>
-              <div className="flex items-center gap-4">
-                <div className="relative group">
-                  <input
-                    type="file"
-                    ref={fileInputRef}
-                    onChange={handleAvatarFileSelect}
-                    accept="image/png,image/jpeg,image/jpg,image/webp"
-                    className="hidden"
-                  />
-                  <div
-                    onClick={() => fileInputRef.current?.click()}
-                    className={`w-20 h-20 min-w-[80px] min-h-[80px] rounded-full overflow-hidden flex items-center justify-center shrink-0 border-2 cursor-pointer relative ${
-                      isDark ? "bg-blue-950/20 border-blue-500/40 text-blue-400" : "bg-blue-50 border-blue-100 text-blue-600"
-                    }`}
-                    title="Click to upload avatar"
-                  >
-                    {auth.avatarSignedUrl ? (
-                      <img src={auth.avatarSignedUrl} alt={profileName} className="w-full h-full object-cover" />
-                    ) : (
-                      <span className="text-[28px] font-extrabold text-blue-455 dark:text-blue-400">{getInitials(profileName || "User").charAt(0)}</span>
+              {/* subtle top gradient stripe */}
+              <div className={`absolute inset-x-0 top-0 h-[2px] rounded-t-[26px] ${isDark ? "bg-gradient-to-r from-blue-600/60 via-indigo-500/40 to-transparent" : "bg-gradient-to-r from-blue-400/40 via-indigo-300/30 to-transparent"}`} />
+
+              <div className="px-6 pt-7 pb-6">
+                {/* Avatar + Name row */}
+                <div className="flex items-center gap-5">
+                  <div className="relative group shrink-0">
+                    <input
+                      type="file"
+                      ref={fileInputRef}
+                      onChange={handleAvatarFileSelect}
+                      accept="image/png,image/jpeg,image/jpg,image/webp"
+                      className="hidden"
+                    />
+                    <div
+                      onClick={() => fileInputRef.current?.click()}
+                      className={`w-[88px] h-[88px] rounded-full overflow-hidden flex items-center justify-center border-2 cursor-pointer relative transition-transform active:scale-95 ${
+                        isDark ? "bg-gradient-to-br from-blue-900/40 to-indigo-900/30 border-blue-500/35 text-blue-300" : "bg-gradient-to-br from-blue-50 to-indigo-50 border-blue-200/80 text-blue-600"
+                      }`}
+                      title="Tap to change photo"
+                    >
+                      {auth.avatarSignedUrl ? (
+                        <img src={auth.avatarSignedUrl} alt={profileName} className="w-full h-full object-cover" />
+                      ) : (
+                        <span className={`text-[32px] font-extrabold ${isDark ? "text-blue-300" : "text-blue-500"}`}>{getInitials(profileName || "User").charAt(0)}</span>
+                      )}
+                      <div className="absolute inset-0 bg-black/45 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity rounded-full">
+                        <Camera size={20} className="text-white" />
+                      </div>
+                    </div>
+                    {/* online indicator dot */}
+                    <div className="absolute bottom-0.5 right-0.5 w-4 h-4 rounded-full bg-emerald-500 border-2 border-[#0C0C0E] dark:border-[#0C0C0E] shadow" />
+                  </div>
+
+                  <div className="min-w-0 flex-1 text-left">
+                    <h3 className={`text-[24px] font-extrabold tracking-tight leading-tight ${isDark ? "text-white" : "text-zinc-900"}`}>
+                      {profileName || "Placement Candidate"}
+                    </h3>
+                    <div className={`flex items-center gap-1.5 mt-1 text-[13px] font-medium ${isDark ? "text-zinc-400" : "text-zinc-500"}`}>
+                      <GraduationCap size={13} className="shrink-0 opacity-70" />
+                      <span className="truncate">{profileCollege || "University / College"}</span>
+                    </div>
+                    {profileBranch && (
+                      <span className={`mt-1.5 inline-block text-[11px] font-semibold px-2.5 py-0.5 rounded-full ${
+                        isDark ? "bg-blue-500/10 text-blue-400" : "bg-blue-50 text-blue-600"
+                      }`}>{profileBranch}</span>
                     )}
-                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
-                      <Camera size={18} className="text-white" />
+                  </div>
+                </div>
+
+                {/* ── STAT TILES ── */}
+                {(profileDegree || profileCgpa || profileGradYear) && (
+                  <div className={`mt-6 pt-5 border-t ${isDark ? "border-zinc-800/50" : "border-zinc-100"} grid grid-cols-3 gap-2.5`}>
+                    {/* Degree */}
+                    <div className={`rounded-2xl border p-4 flex flex-col items-center justify-between gap-3 ${
+                      isDark ? "bg-[#101014] border-[#222228] shadow-[inset_0_1px_0_rgba(255,255,255,0.03)]" : "bg-zinc-50 border-zinc-150"
+                    }`} style={{ minHeight: 126 }}>
+                      <span className={`text-[9px] font-bold uppercase tracking-widest leading-none ${isDark ? "text-zinc-500" : "text-zinc-400"}`}>Degree</span>
+                      <span className={`text-[15px] font-extrabold leading-tight text-center ${isDark ? "text-zinc-100" : "text-zinc-800"}`} style={{ wordBreak: "break-word" }}>
+                        {profileDegree || "—"}
+                      </span>
+                      <div className={`w-9 h-9 rounded-full flex items-center justify-center ${
+                        isDark ? "bg-blue-500/12 text-blue-400" : "bg-blue-50 text-blue-600"
+                      }`}>
+                        <GraduationCap size={15} />
+                      </div>
+                    </div>
+
+                    {/* CGPA */}
+                    <div className={`rounded-2xl border p-4 flex flex-col items-center justify-between gap-3 ${
+                      isDark ? "bg-[#101014] border-[#222228] shadow-[inset_0_1px_0_rgba(255,255,255,0.03)]" : "bg-zinc-50 border-zinc-150"
+                    }`} style={{ minHeight: 126 }}>
+                      <span className={`text-[9px] font-bold uppercase tracking-widest leading-none ${isDark ? "text-zinc-500" : "text-zinc-400"}`}>CGPA</span>
+                      <span className="text-[22px] font-black leading-none text-[#0A84FF] dark:text-[#3B82F6]">
+                        {profileCgpa || "—"}
+                      </span>
+                      <div className={`w-9 h-9 rounded-full flex items-center justify-center ${
+                        isDark ? "bg-blue-500/12 text-blue-400" : "bg-blue-50 text-blue-600"
+                      }`}>
+                        <TrendingUp size={15} />
+                      </div>
+                    </div>
+
+                    {/* Grad Year */}
+                    <div className={`rounded-2xl border p-4 flex flex-col items-center justify-between gap-3 ${
+                      isDark ? "bg-[#101014] border-[#222228] shadow-[inset_0_1px_0_rgba(255,255,255,0.03)]" : "bg-zinc-50 border-zinc-150"
+                    }`} style={{ minHeight: 126 }}>
+                      <span className={`text-[9px] font-bold uppercase tracking-widest leading-none ${isDark ? "text-zinc-500" : "text-zinc-400"}`}>Grad</span>
+                      <span className={`text-[18px] font-black leading-none ${isDark ? "text-zinc-100" : "text-zinc-800"}`}>
+                        {profileGradYear || "—"}
+                      </span>
+                      <div className={`w-9 h-9 rounded-full flex items-center justify-center ${
+                        isDark ? "bg-blue-500/12 text-blue-400" : "bg-blue-50 text-blue-600"
+                      }`}>
+                        <Calendar size={15} />
+                      </div>
                     </div>
                   </div>
-                </div>
-                
-                <div className="min-w-0 text-left">
-                  <h3 className={`text-[22px] font-bold tracking-tight leading-tight truncate ${isDark ? "text-white" : "text-zinc-900"}`}>
-                    {profileName || "Placement Candidate"}
-                  </h3>
-                  <div className="flex items-center gap-1.5 text-zinc-500 mt-1.5 text-sm font-medium">
-                    <MapPin size={14} className="text-zinc-500 shrink-0" />
-                    <span className="truncate max-w-[200px]">{profileCollege || "University / College"}</span>
-                  </div>
-                </div>
+                )}
               </div>
-
-              {(profileDegree || profileCgpa || profileGradYear) && (
-                <div className={`mt-6 pt-6 border-t ${isDark ? "border-zinc-805/30" : "border-zinc-150"} grid grid-cols-3 gap-3 text-center`}>
-                  <div className={`p-4 rounded-xl border flex flex-col justify-between items-center h-[116px] ${
-                    isDark ? "bg-[#111115] border-[#222226]" : "bg-zinc-50 border-zinc-200"
-                  }`}>
-                    <span className={`text-[9.5px] font-bold ${isDark ? "text-zinc-550" : "text-zinc-400"} uppercase tracking-wider block leading-none`}>DEGREE</span>
-                    <span className={`text-[13.5px] font-bold block leading-none truncate max-w-[70px] ${isDark ? "text-white" : "text-zinc-750"}`}>
-                      {profileDegree || "B.Tech"}
-                    </span>
-                    <div className="w-7.5 h-7.5 rounded-full flex items-center justify-center border border-blue-500/10 bg-blue-500/5 text-blue-500 dark:text-blue-450">
-                      <GraduationCap size={14} />
-                    </div>
-                  </div>
-
-                  <div className={`p-4 rounded-xl border flex flex-col justify-between items-center h-[116px] ${
-                    isDark ? "bg-[#111115] border-[#222226]" : "bg-zinc-50 border-zinc-200"
-                  }`}>
-                    <span className={`text-[9.5px] font-bold ${isDark ? "text-zinc-550" : "text-zinc-400"} uppercase tracking-wider block leading-none`}>CGPA</span>
-                    <span className="text-[13.5px] font-extrabold block leading-none text-[#0A84FF] dark:text-[#3B82F6]">
-                      {profileCgpa || "N/A"}
-                    </span>
-                    <div className="w-7.5 h-7.5 rounded-full flex items-center justify-center border border-blue-500/10 bg-blue-500/5 text-blue-500 dark:text-blue-450">
-                      <TrendingUp size={14} />
-                    </div>
-                  </div>
-
-                  <div className={`p-4 rounded-xl border flex flex-col justify-between items-center h-[116px] ${
-                    isDark ? "bg-[#111115] border-[#222226]" : "bg-zinc-50 border-zinc-200"
-                  }`}>
-                    <span className={`text-[9.5px] font-bold ${isDark ? "text-zinc-550" : "text-zinc-400"} uppercase tracking-wider block leading-none`}>GRAD YEAR</span>
-                    <span className={`text-[13.5px] font-bold block leading-none truncate max-w-[70px] ${isDark ? "text-white" : "text-zinc-750"}`}>
-                      {profileGradYear || "2027"}
-                    </span>
-                    <div className="w-7.5 h-7.5 rounded-full flex items-center justify-center border border-blue-500/10 bg-blue-500/5 text-blue-500 dark:text-blue-450">
-                      <Calendar size={14} />
-                    </div>
-                  </div>
-                </div>
-              )}
             </div>
 
-            {/* Profile Progress Completion Bar */}
-            <div className="space-y-2 text-left">
-              <div className="flex items-center justify-between text-xs font-bold px-0.5">
-                <span className={isDark ? "text-zinc-400" : "text-zinc-500"}>Profile Completion</span>
-                <span className="text-blue-550 dark:text-blue-400 font-extrabold">{completion}% Complete</span>
+            {/* ── PROFILE COMPLETION ── */}
+            <div className="space-y-2.5 text-left">
+              <div className="flex items-center justify-between">
+                <span className={`text-[11px] font-bold uppercase tracking-widest ${isDark ? "text-zinc-500" : "text-zinc-400"}`}>Profile Completion</span>
+                <span className={`text-[11px] font-extrabold ${isDark ? "text-blue-400" : "text-[#007AFF]"}`}>{completion}%</span>
               </div>
               <div className={`w-full h-1.5 rounded-full overflow-hidden ${isDark ? "bg-zinc-850" : "bg-zinc-150"}`}>
                 <motion.div
@@ -971,53 +1612,46 @@ export const VaultScreen: React.FC<VaultScreenProps> = ({
               </div>
             </div>
 
-            <div className="space-y-3.5 text-left">
-              <span className="text-[10.5px] font-bold text-zinc-500 tracking-widest leading-none block uppercase font-sans">
-                QUICK DOCUMENTS
+            {/* ── QUICK DOCUMENTS ── */}
+            <div className="space-y-3 text-left">
+              <span className={`text-[10.5px] font-bold uppercase tracking-widest leading-none block px-0.5 ${isDark ? "text-zinc-500" : "text-zinc-400"}`}>
+                Quick Documents
               </span>
               
-              <div className={`rounded-[22px] border divide-y divide-zinc-800/40 p-1.5 ${
-                isDark ? "bg-[#0C0C0E]/95 border-zinc-800/80" : "bg-white border-zinc-200 shadow-xs"
-              }`}>
+              <div className={`rounded-[24px] border overflow-hidden divide-y ${isDark ? "bg-[#0C0C0E] border-zinc-800/70 divide-zinc-800/50 shadow-[0_4px_20px_rgba(0,0,0,0.30)]" : "bg-white border-zinc-200/80 divide-zinc-100 shadow-[0_2px_12px_rgba(0,0,0,0.05)]"}`}>
                 {/* 1. Resume */}
                 <div 
                   onClick={() => {
-                    const res = resumes.find(r => r.isDefault) || resumes[0];
-                    if (res) {
-                      handleViewResume(res.storagePath, res.name);
-                    } else {
-                      resumeFileInputRef.current?.click();
-                    }
+                    setShowResumeManager(true);
                   }}
-                  className="p-4 flex items-center justify-between transition-all duration-150 cursor-pointer hover:bg-white/[0.02]"
+                  className={`min-h-[72px] px-5 py-4 flex items-center justify-between gap-3 cursor-pointer transition-colors duration-150 ${isDark ? "hover:bg-white/[0.025] active:bg-white/[0.05]" : "hover:bg-zinc-50/80 active:bg-zinc-100/60"}`}
                 >
-                  <div className="flex items-center space-x-3.5 min-w-0">
-                    <div className={`w-11 h-11 rounded-[12px] flex items-center justify-center shrink-0 border ${
-                      isDark ? "bg-blue-500/10 border-blue-500/20 text-blue-400" : "bg-blue-50 border-blue-100 text-blue-650"
+                  <div className="flex items-center gap-4 min-w-0">
+                    <div className={`w-12 h-12 rounded-[14px] flex items-center justify-center shrink-0 border ${
+                      isDark ? "bg-blue-500/12 border-blue-500/20 text-blue-400" : "bg-blue-50 border-blue-100 text-blue-600"
                     }`}>
-                      <FileText size={20} />
+                      <FileText size={21} />
                     </div>
-                    <div className="text-left min-w-0 space-y-0.5">
-                      <span className="text-sm font-bold text-white block leading-none font-sans">Resume</span>
-                      <span className="text-xs text-zinc-500 block truncate max-w-[170px] font-sans font-medium">
-                        Your latest resume
+                    <div className="text-left min-w-0">
+                      <span className={`text-[14px] font-bold block leading-tight ${isDark ? "text-zinc-50" : "text-zinc-900"}`}>Resume</span>
+                      <span className={`text-[12px] font-medium block truncate max-w-[160px] mt-0.5 ${isDark ? "text-zinc-500" : "text-zinc-400"}`}>
+                        {resumes.find(r => r.isDefault)?.name || resumes[0]?.name || "Manage your resumes"}
                       </span>
                     </div>
                   </div>
-                  
                   <div className="flex items-center gap-2.5 shrink-0">
-                    {resumes[0] ? (
-                      <span className="px-3.5 h-6.5 flex items-center gap-1.5 rounded-full border text-[10.5px] font-bold tracking-wide uppercase leading-none bg-emerald-500/10 border-emerald-500/25 text-emerald-450 font-sans">
-                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                        <span>Available</span>
+                    {resumes.length > 0 ? (
+                      <span className={`px-3 py-1 rounded-full text-[10px] font-bold tracking-wide flex items-center gap-1.5 ${isDark ? "bg-emerald-500/12 text-emerald-400" : "bg-emerald-50 text-emerald-600"}`}>
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 block" />
+                        {resumes.length} {resumes.length === 1 ? "File" : "Files"}
                       </span>
                     ) : (
-                      <span className="px-3.5 h-6.5 flex items-center gap-1.5 rounded-full border text-[10.5px] font-bold tracking-wide uppercase leading-none bg-[#19191C] border-[#252529] text-zinc-400 font-sans">
-                        <span className="w-1.5 h-1.5 rounded-full bg-amber-550" />
-                        <span>Not uploaded</span>
+                      <span className={`px-3 py-1 rounded-full text-[10px] font-bold tracking-wide flex items-center gap-1.5 ${isDark ? "bg-zinc-800 text-zinc-500" : "bg-zinc-100 text-zinc-400"}`}>
+                        <span className="w-1.5 h-1.5 rounded-full bg-amber-400 block" />
+                        Upload
                       </span>
                     )}
-                    <ChevronRight size={14} className="text-zinc-650" />
+                    <ChevronRight size={15} className={isDark ? "text-zinc-700" : "text-zinc-300"} />
                   </div>
                 </div>
 
@@ -1031,35 +1665,34 @@ export const VaultScreen: React.FC<VaultScreenProps> = ({
                       coverLetterFileInputRef.current?.click();
                     }
                   }}
-                  className="p-4 flex items-center justify-between transition-all duration-150 cursor-pointer hover:bg-white/[0.02]"
+                  className={`min-h-[72px] px-5 py-4 flex items-center justify-between gap-3 cursor-pointer transition-colors duration-150 ${isDark ? "hover:bg-white/[0.025] active:bg-white/[0.05]" : "hover:bg-zinc-50/80 active:bg-zinc-100/60"}`}
                 >
-                  <div className="flex items-center space-x-3.5 min-w-0">
-                    <div className={`w-11 h-11 rounded-[12px] flex items-center justify-center shrink-0 border ${
-                      isDark ? "bg-[#818CF8]/10 border-[#818CF8]/20 text-[#818CF8]" : "bg-purple-50 border-purple-100 text-purple-650"
+                  <div className="flex items-center gap-4 min-w-0">
+                    <div className={`w-12 h-12 rounded-[14px] flex items-center justify-center shrink-0 border ${
+                      isDark ? "bg-indigo-500/12 border-indigo-500/20 text-indigo-400" : "bg-indigo-50 border-indigo-100 text-indigo-600"
                     }`}>
-                      <FileText size={20} />
+                      <FileText size={21} />
                     </div>
-                    <div className="text-left min-w-0 space-y-0.5">
-                      <span className="text-sm font-bold text-white block leading-none font-sans">Cover Letter</span>
-                      <span className="text-xs text-zinc-500 block truncate max-w-[170px] font-sans font-medium">
-                        Standard Cover Letter
+                    <div className="text-left min-w-0">
+                      <span className={`text-[14px] font-bold block leading-tight ${isDark ? "text-zinc-50" : "text-zinc-900"}`}>Cover Letter</span>
+                      <span className={`text-[12px] font-medium block truncate max-w-[160px] mt-0.5 ${isDark ? "text-zinc-500" : "text-zinc-400"}`}>
+                        {vaultDocuments.find(d => d.category?.toLowerCase() === "cover letter")?.name || "Standard cover letter"}
                       </span>
                     </div>
                   </div>
-                  
                   <div className="flex items-center gap-2.5 shrink-0">
                     {vaultDocuments.find(d => d.category?.toLowerCase() === "cover letter") ? (
-                      <span className="px-3.5 h-6.5 flex items-center gap-1.5 rounded-full border text-[10.5px] font-bold tracking-wide uppercase leading-none bg-emerald-500/10 border-emerald-500/25 text-emerald-450 font-sans">
-                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                        <span>Available</span>
+                      <span className={`px-3 py-1 rounded-full text-[10px] font-bold tracking-wide flex items-center gap-1.5 ${isDark ? "bg-emerald-500/12 text-emerald-400" : "bg-emerald-50 text-emerald-600"}`}>
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 block" />
+                        Available
                       </span>
                     ) : (
-                      <span className="px-3.5 h-6.5 flex items-center gap-1.5 rounded-full border text-[10.5px] font-bold tracking-wide uppercase leading-none bg-[#19191C] border-[#252529] text-zinc-400 font-sans">
-                        <span className="w-1.5 h-1.5 rounded-full bg-amber-550" />
-                        <span>Not uploaded</span>
+                      <span className={`px-3 py-1 rounded-full text-[10px] font-bold tracking-wide flex items-center gap-1.5 ${isDark ? "bg-zinc-800 text-zinc-500" : "bg-zinc-100 text-zinc-400"}`}>
+                        <span className="w-1.5 h-1.5 rounded-full bg-amber-400 block" />
+                        Upload
                       </span>
                     )}
-                    <ChevronRight size={14} className="text-zinc-650" />
+                    <ChevronRight size={15} className={isDark ? "text-zinc-700" : "text-zinc-300"} />
                   </div>
                 </div>
 
@@ -1075,77 +1708,70 @@ export const VaultScreen: React.FC<VaultScreenProps> = ({
                       portfolioFileInputRef.current?.click();
                     }
                   }}
-                  className="p-4 flex items-center justify-between transition-all duration-150 cursor-pointer hover:bg-white/[0.02]"
+                  className={`min-h-[72px] px-5 py-4 flex items-center justify-between gap-3 cursor-pointer transition-colors duration-150 ${isDark ? "hover:bg-white/[0.025] active:bg-white/[0.05]" : "hover:bg-zinc-50/80 active:bg-zinc-100/60"}`}
                 >
-                  <div className="flex items-center space-x-3.5 min-w-0">
-                    <div className={`w-11 h-11 rounded-[12px] flex items-center justify-center shrink-0 border ${
-                      isDark ? "bg-amber-500/10 border-amber-500/20 text-amber-400" : "bg-amber-50 border-amber-100 text-amber-650"
+                  <div className="flex items-center gap-4 min-w-0">
+                    <div className={`w-12 h-12 rounded-[14px] flex items-center justify-center shrink-0 border ${
+                      isDark ? "bg-amber-500/12 border-amber-500/20 text-amber-400" : "bg-amber-50 border-amber-100 text-amber-600"
                     }`}>
-                      <Briefcase size={20} />
+                      <Briefcase size={21} />
                     </div>
-                    <div className="text-left min-w-0 space-y-0.5">
-                      <span className="text-sm font-bold text-white block leading-none font-sans">Portfolio</span>
-                      <span className="text-xs text-zinc-500 block truncate max-w-[170px] font-sans font-medium">
-                        {linkPortfolio || "https://portfolio.dev"}
+                    <div className="text-left min-w-0">
+                      <span className={`text-[14px] font-bold block leading-tight ${isDark ? "text-zinc-50" : "text-zinc-900"}`}>Portfolio</span>
+                      <span className={`text-[12px] font-medium block truncate max-w-[160px] mt-0.5 ${isDark ? "text-zinc-500" : "text-zinc-400"}`}>
+                        {linkPortfolio || "Portfolio link or file"}
                       </span>
                     </div>
                   </div>
-                  
                   <div className="flex items-center gap-2.5 shrink-0">
-                    {vaultDocuments.find(d => d.category?.toLowerCase() === "portfolio") || linkPortfolio ? (
-                      <span className="px-3.5 h-6.5 flex items-center gap-1.5 rounded-full border text-[10.5px] font-bold tracking-wide uppercase leading-none bg-emerald-500/10 border-emerald-500/25 text-emerald-455 font-sans">
-                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                        <span>Available</span>
+                    {(vaultDocuments.find(d => d.category?.toLowerCase() === "portfolio") || linkPortfolio) ? (
+                      <span className={`px-3 py-1 rounded-full text-[10px] font-bold tracking-wide flex items-center gap-1.5 ${isDark ? "bg-emerald-500/12 text-emerald-400" : "bg-emerald-50 text-emerald-600"}`}>
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 block" />
+                        Available
                       </span>
                     ) : (
-                      <span className="px-3.5 h-6.5 flex items-center gap-1.5 rounded-full border text-[10.5px] font-bold tracking-wide uppercase leading-none bg-[#19191C] border-[#252529] text-zinc-400 font-sans">
-                        <span className="w-1.5 h-1.5 rounded-full bg-amber-550" />
-                        <span>Not uploaded</span>
+                      <span className={`px-3 py-1 rounded-full text-[10px] font-bold tracking-wide flex items-center gap-1.5 ${isDark ? "bg-zinc-800 text-zinc-500" : "bg-zinc-100 text-zinc-400"}`}>
+                        <span className="w-1.5 h-1.5 rounded-full bg-amber-400 block" />
+                        Upload
                       </span>
                     )}
-                    <ChevronRight size={14} className="text-zinc-650" />
+                    <ChevronRight size={15} className={isDark ? "text-zinc-700" : "text-zinc-300"} />
                   </div>
                 </div>
 
                 {/* 4. Certificates */}
                 <div 
                   onClick={() => {
-                    const c = vaultDocuments.find(d => d.category?.toLowerCase() === "certificate");
-                    if (c) {
-                      handleViewDocument(c);
-                    } else {
-                      certFileInputRef.current?.click();
-                    }
+                    setShowCertManager(true);
                   }}
-                  className="p-4 flex items-center justify-between transition-all duration-150 cursor-pointer hover:bg-white/[0.02]"
+                  className={`min-h-[72px] px-5 py-4 flex items-center justify-between gap-3 cursor-pointer transition-colors duration-150 ${isDark ? "hover:bg-white/[0.025] active:bg-white/[0.05]" : "hover:bg-zinc-50/80 active:bg-zinc-100/60"}`}
                 >
-                  <div className="flex items-center space-x-3.5 min-w-0">
-                    <div className={`w-11 h-11 rounded-[12px] flex items-center justify-center shrink-0 border ${
-                      isDark ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-400" : "bg-emerald-50 border-emerald-100 text-emerald-650"
+                  <div className="flex items-center gap-4 min-w-0">
+                    <div className={`w-12 h-12 rounded-[14px] flex items-center justify-center shrink-0 border ${
+                      isDark ? "bg-emerald-500/12 border-emerald-500/20 text-emerald-400" : "bg-emerald-50 border-emerald-100 text-emerald-600"
                     }`}>
-                      <Award size={20} />
+                      <Award size={21} />
                     </div>
-                    <div className="text-left min-w-0 space-y-0.5">
-                      <span className="text-sm font-bold text-white block leading-none font-sans">Certificates</span>
-                      <span className="text-xs text-zinc-500 block truncate max-w-[170px] font-sans font-medium">
+                    <div className="text-left min-w-0">
+                      <span className={`text-[14px] font-bold block leading-tight ${isDark ? "text-zinc-50" : "text-zinc-900"}`}>Certificates</span>
+                      <span className={`text-[12px] font-medium block truncate max-w-[160px] mt-0.5 ${isDark ? "text-zinc-500" : "text-zinc-400"}`}>
                         Your verified certificates
                       </span>
                     </div>
                   </div>
-                  
                   <div className="flex items-center gap-2.5 shrink-0">
                     {vaultDocuments.filter(d => d.category?.toLowerCase() === "certificate").length > 0 ? (
-                      <span className="px-3.5 h-6.5 flex items-center gap-1.5 rounded-full border text-[10.5px] font-bold tracking-wide uppercase leading-none bg-emerald-500/10 border-emerald-500/25 text-emerald-450 font-sans">
-                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                        <span>{vaultDocuments.filter(d => d.category?.toLowerCase() === "certificate").length} Verified</span>
+                      <span className={`px-3 py-1 rounded-full text-[10px] font-bold tracking-wide flex items-center gap-1.5 ${isDark ? "bg-emerald-500/12 text-emerald-400" : "bg-emerald-50 text-emerald-600"}`}>
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 block" />
+                        {vaultDocuments.filter(d => d.category?.toLowerCase() === "certificate").length} Verified
                       </span>
                     ) : (
-                      <span className="px-3.5 h-6.5 flex items-center gap-1.5 rounded-full border text-[10.5px] font-bold tracking-wide uppercase leading-none bg-[#19191C] border-[#252529] text-zinc-400 font-sans">
-                        <span className="w-1.5 h-1.5 rounded-full bg-zinc-500" />
-                        <span>0 Verified</span>
+                      <span className={`px-3 py-1 rounded-full text-[10px] font-bold tracking-wide flex items-center gap-1.5 ${isDark ? "bg-zinc-800 text-zinc-500" : "bg-zinc-100 text-zinc-400"}`}>
+                        <span className="w-1.5 h-1.5 rounded-full bg-zinc-500 block" />
+                        0 Added
                       </span>
                     )}
-                    <ChevronRight size={14} className="text-zinc-650" />
+                    <ChevronRight size={15} className={isDark ? "text-zinc-700" : "text-zinc-300"} />
                   </div>
                 </div>
               </div>
@@ -1230,13 +1856,12 @@ export const VaultScreen: React.FC<VaultScreenProps> = ({
               </div>
             )}
 
-            <div className="space-y-3.5 text-left">
-              <span className="text-[10.5px] font-bold text-zinc-500 tracking-widest leading-none block uppercase font-mono">
+            {/* ── PROFESSIONAL LINKS ── */}
+            <div className="space-y-3 text-left">
+              <span className={`text-[10.5px] font-bold uppercase tracking-widest leading-none block px-0.5 font-sans ${isDark ? "text-zinc-500" : "text-zinc-400"}`}>
                 Professional Links
               </span>
-              <div className={`rounded-[22px] border divide-y divide-zinc-800/40 p-1.5 ${
-                isDark ? "bg-[#0C0C0E]/95 border-zinc-800/80" : "bg-white border-zinc-200 shadow-xs"
-              }`}>
+              <div className={`rounded-[24px] border overflow-hidden divide-y ${isDark ? "bg-[#0C0C0E] border-zinc-800/70 divide-zinc-800/50 shadow-[0_4px_20px_rgba(0,0,0,0.30)]" : "bg-white border-zinc-200/80 divide-zinc-100 shadow-[0_2px_12px_rgba(0,0,0,0.05)]"}`}>
                 {/* LinkedIn */}
                 <div 
                   onClick={() => {
@@ -1246,29 +1871,29 @@ export const VaultScreen: React.FC<VaultScreenProps> = ({
                       showToast("No LinkedIn profile linked yet.", "warning");
                     }
                   }}
-                  className="p-4 flex items-center justify-between transition-all duration-150 cursor-pointer hover:bg-white/[0.02]"
+                  className={`min-h-[68px] px-5 py-4 flex items-center justify-between gap-3 cursor-pointer transition-colors duration-150 ${isDark ? "hover:bg-white/[0.025] active:bg-white/[0.05]" : "hover:bg-zinc-50/80 active:bg-zinc-100/60"}`}
                 >
-                  <div className="flex items-center space-x-3.5 min-w-0">
-                    <div className={`w-11 h-11 rounded-[12px] flex items-center justify-center shrink-0 border ${
-                      isDark ? "bg-[#0077B5]/10 border-[#0077B5]/20 text-[#33a0ff]" : "bg-[#0077B5]/10 border-[#0077B5]/20 text-[#0077B5]"
+                  <div className="flex items-center gap-4 min-w-0">
+                    <div className={`w-12 h-12 rounded-[14px] flex items-center justify-center shrink-0 border ${
+                      isDark ? "bg-[#0077B5]/12 border-[#0077B5]/20 text-[#33a0ff]" : "bg-[#0077B5]/10 border-[#0077B5]/20 text-[#0077B5]"
                     }`}>
-                      <Linkedin size={20} />
+                      <Linkedin size={21} />
                     </div>
-                    <span className="text-sm font-bold text-white block leading-none font-sans">LinkedIn</span>
+                    <span className={`text-[14px] font-bold block leading-tight ${isDark ? "text-zinc-50" : "text-zinc-900"}`}>LinkedIn</span>
                   </div>
                   <div className="flex items-center gap-2.5 shrink-0">
                     {linkLinkedin ? (
-                      <span className="px-3.5 h-6.5 flex items-center gap-1.5 rounded-full border text-[10.5px] font-bold tracking-wide uppercase leading-none bg-emerald-500/10 border-emerald-500/25 text-emerald-450 font-sans">
-                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                        <span>Linked</span>
+                      <span className={`px-3 py-1 rounded-full text-[10px] font-bold tracking-wide flex items-center gap-1.5 ${isDark ? "bg-emerald-500/12 text-emerald-400" : "bg-emerald-50 text-emerald-600"}`}>
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 block" />
+                        Linked
                       </span>
                     ) : (
-                      <span className="px-3.5 h-6.5 flex items-center gap-1.5 rounded-full border text-[10.5px] font-bold tracking-wide uppercase leading-none bg-[#19191C] border-[#252529] text-zinc-400 font-sans">
-                        <span className="w-1.5 h-1.5 rounded-full bg-zinc-550" />
-                        <span>Not linked</span>
+                      <span className={`px-3 py-1 rounded-full text-[10px] font-bold tracking-wide flex items-center gap-1.5 ${isDark ? "bg-zinc-800 text-zinc-500" : "bg-zinc-100 text-zinc-400"}`}>
+                        <span className="w-1.5 h-1.5 rounded-full bg-zinc-400 block" />
+                        Not linked
                       </span>
                     )}
-                    <ChevronRight size={14} className="text-zinc-650" />
+                    <ChevronRight size={15} className={isDark ? "text-zinc-700" : "text-zinc-300"} />
                   </div>
                 </div>
 
@@ -1281,33 +1906,33 @@ export const VaultScreen: React.FC<VaultScreenProps> = ({
                       showToast("No GitHub profile linked yet.", "warning");
                     }
                   }}
-                  className="p-4 flex items-center justify-between transition-all duration-150 cursor-pointer hover:bg-white/[0.02]"
+                  className={`min-h-[68px] px-5 py-4 flex items-center justify-between gap-3 cursor-pointer transition-colors duration-150 ${isDark ? "hover:bg-white/[0.025] active:bg-white/[0.05]" : "hover:bg-zinc-50/80 active:bg-zinc-100/60"}`}
                 >
-                  <div className="flex items-center space-x-3.5 min-w-0">
-                    <div className={`w-11 h-11 rounded-[12px] flex items-center justify-center shrink-0 border ${
-                      isDark ? "bg-zinc-800/30 border-zinc-700/30 text-zinc-300" : "bg-zinc-600/10 border-zinc-600/20 text-zinc-700"
+                  <div className="flex items-center gap-4 min-w-0">
+                    <div className={`w-12 h-12 rounded-[14px] flex items-center justify-center shrink-0 border ${
+                      isDark ? "bg-zinc-800/40 border-zinc-700/40 text-zinc-300" : "bg-zinc-100 border-zinc-200 text-zinc-700"
                     }`}>
-                      <Github size={20} />
+                      <Github size={21} />
                     </div>
-                    <span className="text-sm font-bold text-white block leading-none font-sans">GitHub</span>
+                    <span className={`text-[14px] font-bold block leading-tight ${isDark ? "text-zinc-50" : "text-zinc-900"}`}>GitHub</span>
                   </div>
                   <div className="flex items-center gap-2.5 shrink-0">
                     {linkGithub ? (
-                      <span className="px-3.5 h-6.5 flex items-center gap-1.5 rounded-full border text-[10.5px] font-bold tracking-wide uppercase leading-none bg-emerald-500/10 border-emerald-500/25 text-emerald-455 font-sans">
-                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                        <span>Linked</span>
+                      <span className={`px-3 py-1 rounded-full text-[10px] font-bold tracking-wide flex items-center gap-1.5 ${isDark ? "bg-emerald-500/12 text-emerald-400" : "bg-emerald-50 text-emerald-600"}`}>
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 block" />
+                        Linked
                       </span>
                     ) : (
-                      <span className="px-3.5 h-6.5 flex items-center gap-1.5 rounded-full border text-[10.5px] font-bold tracking-wide uppercase leading-none bg-[#19191C] border-[#252529] text-zinc-400 font-sans">
-                        <span className="w-1.5 h-1.5 rounded-full bg-zinc-555" />
-                        <span>Not linked</span>
+                      <span className={`px-3 py-1 rounded-full text-[10px] font-bold tracking-wide flex items-center gap-1.5 ${isDark ? "bg-zinc-800 text-zinc-500" : "bg-zinc-100 text-zinc-400"}`}>
+                        <span className="w-1.5 h-1.5 rounded-full bg-zinc-400 block" />
+                        Not linked
                       </span>
                     )}
-                    <ChevronRight size={14} className="text-zinc-650" />
+                    <ChevronRight size={15} className={isDark ? "text-zinc-700" : "text-zinc-300"} />
                   </div>
                 </div>
 
-                {/* Portfolio */}
+                {/* Portfolio Website */}
                 <div 
                   onClick={() => {
                     if (linkPersonalWebsite) {
@@ -1318,37 +1943,38 @@ export const VaultScreen: React.FC<VaultScreenProps> = ({
                       showToast("No portfolio website linked yet.", "warning");
                     }
                   }}
-                  className="p-4 flex items-center justify-between transition-all duration-150 cursor-pointer hover:bg-white/[0.02]"
+                  className={`min-h-[68px] px-5 py-4 flex items-center justify-between gap-3 cursor-pointer transition-colors duration-150 ${isDark ? "hover:bg-white/[0.025] active:bg-white/[0.05]" : "hover:bg-zinc-50/80 active:bg-zinc-100/60"}`}
                 >
-                  <div className="flex items-center space-x-3.5 min-w-0">
-                    <div className={`w-11 h-11 rounded-[12px] flex items-center justify-center shrink-0 border ${
-                      isDark ? "bg-cyan-500/10 border-cyan-500/20 text-cyan-400" : "bg-cyan-500/10 border-cyan-500/20 text-cyan-600"
+                  <div className="flex items-center gap-4 min-w-0">
+                    <div className={`w-12 h-12 rounded-[14px] flex items-center justify-center shrink-0 border ${
+                      isDark ? "bg-cyan-500/12 border-cyan-500/20 text-cyan-400" : "bg-cyan-50 border-cyan-100 text-cyan-600"
                     }`}>
-                      <Globe size={20} />
+                      <Globe size={21} />
                     </div>
-                    <span className="text-sm font-bold text-white block leading-none font-sans">Portfolio Website</span>
+                    <span className={`text-[14px] font-bold block leading-tight ${isDark ? "text-zinc-50" : "text-zinc-900"}`}>Portfolio Website</span>
                   </div>
                   <div className="flex items-center gap-2.5 shrink-0">
                     {(linkPersonalWebsite || linkPortfolio) ? (
-                      <span className="px-3.5 h-6.5 flex items-center gap-1.5 rounded-full border text-[10.5px] font-bold tracking-wide uppercase leading-none bg-emerald-500/10 border-emerald-500/25 text-emerald-455 font-sans">
-                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                        <span>Linked</span>
+                      <span className={`px-3 py-1 rounded-full text-[10px] font-bold tracking-wide flex items-center gap-1.5 ${isDark ? "bg-emerald-500/12 text-emerald-400" : "bg-emerald-50 text-emerald-600"}`}>
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 block" />
+                        Linked
                       </span>
                     ) : (
-                      <span className="px-3.5 h-6.5 flex items-center gap-1.5 rounded-full border text-[10.5px] font-bold tracking-wide uppercase leading-none bg-[#19191C] border-[#252529] text-zinc-400 font-sans">
-                        <span className="w-1.5 h-1.5 rounded-full bg-zinc-555" />
-                        <span>Not linked</span>
+                      <span className={`px-3 py-1 rounded-full text-[10px] font-bold tracking-wide flex items-center gap-1.5 ${isDark ? "bg-zinc-800 text-zinc-500" : "bg-zinc-100 text-zinc-400"}`}>
+                        <span className="w-1.5 h-1.5 rounded-full bg-zinc-400 block" />
+                        Not linked
                       </span>
                     )}
-                    <ChevronRight size={14} className="text-zinc-650" />
+                    <ChevronRight size={15} className={isDark ? "text-zinc-700" : "text-zinc-300"} />
                   </div>
                 </div>
               </div>
             </div>
 
+            {/* ── COPYABLE LINKS VAULT ── */}
             <div className="space-y-3">
-              <div className="flex items-center justify-between px-1.5">
-                <span className="text-[10.5px] font-bold text-zinc-500 tracking-widest leading-none block uppercase font-mono">
+              <div className="flex items-center justify-between px-0.5">
+                <span className={`text-[10.5px] font-bold font-sans uppercase tracking-widest leading-none block ${isDark ? "text-zinc-500" : "text-zinc-400"}`}>
                   Copyable Links Vault
                 </span>
                 <button
@@ -1507,64 +2133,68 @@ export const VaultScreen: React.FC<VaultScreenProps> = ({
               )}
             </div>
 
-            <div className="space-y-3.5 text-left">
-              <span className="text-[10.5px] font-bold text-zinc-500 tracking-widest leading-none block uppercase font-mono">
+            {/* ── PERSONAL INFORMATION ── */}
+            <div className="space-y-3 text-left">
+              <span className={`text-[10.5px] font-bold uppercase tracking-widest leading-none block px-0.5 font-sans ${isDark ? "text-zinc-500" : "text-zinc-400"}`}>
                 Personal Information
               </span>
-              <div className={`rounded-[22px] border divide-y divide-zinc-800/40 p-1.5 ${
-                isDark ? "bg-[#0C0C0E]/95 border-zinc-800/80" : "bg-white border-zinc-200 shadow-xs"
-              }`}>
+              <div className={`rounded-[24px] border overflow-hidden divide-y ${isDark ? "bg-[#0C0C0E] border-zinc-800/70 divide-zinc-800/50 shadow-[0_4px_20px_rgba(0,0,0,0.30)]" : "bg-white border-zinc-200/80 divide-zinc-100 shadow-[0_2px_12px_rgba(0,0,0,0.05)]"}`}>
                 {/* Email */}
-                <div className="p-4 flex items-center justify-between min-h-[56px]">
-                  <div className="flex items-center min-w-0">
-                    <div className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 ${
-                      isDark ? "bg-rose-500/10 text-rose-400" : "bg-rose-50 border border-rose-100 text-rose-500"
+                <div className={`min-h-[64px] px-5 py-4 flex items-center justify-between gap-3`}>
+                  <div className="flex items-center gap-4 min-w-0">
+                    <div className={`w-11 h-11 rounded-[12px] flex items-center justify-center shrink-0 ${
+                      isDark ? "bg-rose-500/12 text-rose-400" : "bg-rose-50 border border-rose-100 text-rose-500"
                     }`}>
-                      <Mail size={16} />
+                      <Mail size={18} />
                     </div>
-                    <span className="text-sm font-semibold text-white block leading-none font-sans ml-3">Email</span>
+                    <span className={`text-[14px] font-bold block ${isDark ? "text-zinc-50" : "text-zinc-900"}`}>Email</span>
                   </div>
-                  <span className="text-sm font-medium text-zinc-400 truncate max-w-[180px] text-right font-sans">
+                  <span className={`text-[12.5px] font-medium text-right truncate max-w-[165px] ${isDark ? "text-zinc-400" : "text-zinc-500"}`}>
                     {profileEmail || "No email"}
                   </span>
                 </div>
 
                 {/* Phone */}
-                <div className="p-4 flex items-center justify-between min-h-[56px]">
-                  <div className="flex items-center min-w-0">
-                    <div className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 ${
-                      isDark ? "bg-emerald-500/10 text-emerald-400" : "bg-emerald-50 border border-emerald-100 text-emerald-500"
+                <div className={`min-h-[64px] px-5 py-4 flex items-center justify-between gap-3`}>
+                  <div className="flex items-center gap-4 min-w-0">
+                    <div className={`w-11 h-11 rounded-[12px] flex items-center justify-center shrink-0 ${
+                      isDark ? "bg-emerald-500/12 text-emerald-400" : "bg-emerald-50 border border-emerald-100 text-emerald-500"
                     }`}>
-                      <Phone size={16} />
+                      <Phone size={18} />
                     </div>
-                    <span className="text-sm font-semibold text-white block leading-none font-sans ml-3">Phone</span>
+                    <span className={`text-[14px] font-bold block ${isDark ? "text-zinc-50" : "text-zinc-900"}`}>Phone</span>
                   </div>
-                  <span className="text-sm font-medium text-zinc-400 text-right font-sans">
+                  <span className={`text-[12.5px] font-medium text-right ${isDark ? "text-zinc-400" : "text-zinc-500"}`}>
                     {profilePhone || "No phone"}
                   </span>
                 </div>
 
                 {/* Location */}
-                <div className="p-4 flex items-center justify-between min-h-[56px]">
-                  <div className="flex items-center min-w-0">
-                    <div className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 ${
-                      isDark ? "bg-blue-500/10 text-blue-450" : "bg-blue-50 border border-blue-100 text-blue-500"
+                <div className={`min-h-[64px] px-5 py-4 flex items-center justify-between gap-3`}>
+                  <div className="flex items-center gap-4 min-w-0">
+                    <div className={`w-11 h-11 rounded-[12px] flex items-center justify-center shrink-0 ${
+                      isDark ? "bg-blue-500/12 text-blue-400" : "bg-blue-50 border border-blue-100 text-blue-500"
                     }`}>
-                      <MapPin size={16} />
+                      <MapPin size={18} />
                     </div>
-                    <span className="text-sm font-semibold text-white block leading-none font-sans ml-3">Location</span>
+                    <span className={`text-[14px] font-bold block ${isDark ? "text-zinc-50" : "text-zinc-900"}`}>Location</span>
                   </div>
-                  <span className="text-sm font-medium text-zinc-400 text-right truncate max-w-[180px] font-sans">
+                  <span className={`text-[12.5px] font-medium text-right truncate max-w-[165px] ${isDark ? "text-zinc-400" : "text-zinc-500"}`}>
                     {profileAddress || "No location"}
                   </span>
                 </div>
               </div>
             </div>
 
-            <div className="pt-2">
+            {/* ── EDIT PROFILE CTA ── */}
+            <div className="pb-2">
               <button
                 onClick={handleOpenEdit}
-                className="w-full h-13.5 rounded-[22px] bg-[#0A84FF] hover:bg-[#007AFF] text-white font-extrabold text-[13.5px] shadow-lg shadow-blue-500/10 cursor-pointer transition-all active:scale-[0.97] flex items-center justify-center space-x-1.5 mt-2"
+                className={`w-full py-4 rounded-[22px] font-extrabold text-[14px] cursor-pointer transition-all active:scale-[0.97] flex items-center justify-center gap-2 shadow-lg ${
+                  isDark
+                    ? "bg-[#0A84FF] hover:bg-[#007AFF] text-white shadow-blue-500/15"
+                    : "bg-[#007AFF] hover:bg-[#0066D6] text-white shadow-blue-400/20"
+                }`}
               >
                 <span>Edit Profile</span>
               </button>

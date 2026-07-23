@@ -1,22 +1,27 @@
-import React, { useState } from "react";
+import React from "react";
 import MobileEmulator from "./features/emulator/MobileEmulator";
 import { AppProviders } from "./app/providers";
+import { useTheme } from "./providers/theme.provider";
 
-export default function App() {
-  const [isDark] = useState<boolean>(true);
-  const [selectedTheme, setSelectedTheme] = useState<"dark" | "light" | "system">("dark");
+function InnerApp() {
+  const { isDark, setIsDark, selectedTheme, setSelectedTheme } = useTheme();
 
   return (
+    <div className={`w-full h-dvh ${isDark ? "bg-[#09090B] text-zinc-100" : "bg-[#F4F4F5] text-zinc-900"} flex flex-col overflow-hidden relative font-sans antialiased`}>
+      <MobileEmulator
+        isDark={isDark}
+        setIsDark={setIsDark}
+        selectedTheme={selectedTheme}
+        setSelectedTheme={setSelectedTheme}
+      />
+    </div>
+  );
+}
+
+export default function App() {
+  return (
     <AppProviders>
-      {/* Responsive mobile-first viewport wrapper */}
-      <div className="w-full h-dvh bg-[#09090B] flex flex-col overflow-hidden relative font-sans antialiased text-zinc-100">
-        <MobileEmulator
-          isDark={isDark}
-          setIsDark={() => {}}
-          selectedTheme={selectedTheme}
-          setSelectedTheme={setSelectedTheme}
-        />
-      </div>
+      <InnerApp />
     </AppProviders>
   );
 }

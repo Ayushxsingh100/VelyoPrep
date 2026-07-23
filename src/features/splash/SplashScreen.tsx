@@ -1,5 +1,5 @@
-import React from "react";
-import { motion } from "motion/react";
+import React, { useState } from "react";
+import { motion, useReducedMotion } from "motion/react";
 import { VeyloPrepLogo } from "../../shared/components/logo/VeyloPrepLogo";
 
 interface SplashScreenProps {
@@ -7,104 +7,115 @@ interface SplashScreenProps {
 }
 
 export const SplashScreen: React.FC<SplashScreenProps> = ({ isDark }) => {
-  const titleText = "VeyloPrep";
+  const shouldReduceMotion = useReducedMotion();
+  const [entranceDone, setEntranceDone] = useState(false);
+
+  // Logo entrance spring animation variants (low stiffness for a smooth, slow settle)
+  const logoContainerVariants = {
+    initial: shouldReduceMotion 
+      ? { opacity: 0 } 
+      : { scale: 0.15, rotate: -65, opacity: 0 },
+    animate: {
+      scale: 1,
+      rotate: 0,
+      opacity: 1,
+      transition: {
+        type: "spring",
+        stiffness: 42,   // Slower settle
+        damping: 9.5,    // Smooth slide without sharp bounces
+        mass: 1,
+        opacity: { duration: 0.7, ease: "easeOut" }
+      }
+    }
+  };
+
+  // Continuous micro-float (only starts after entrance completes to prevent axial fight stutters)
+  const floatVariants = shouldReduceMotion || !entranceDone
+    ? {}
+    : {
+        y: [0, -5, 0],
+        transition: {
+          duration: 4,
+          repeat: Infinity,
+          ease: "easeInOut"
+        }
+      };
+
+  // Ambient glow entrance animation
+  const glowVariants = {
+    initial: { scale: 0.3, opacity: 0 },
+    animate: {
+      scale: 1.25,
+      opacity: 0.22,
+      transition: {
+        duration: 1.6,
+        ease: [0.16, 1, 0.3, 1] // Elegant easeOut
+      }
+    }
+  };
+
+  // Continuous pulsing for the glow (only active when entranceDone is true)
+  const glowPulseVariants = shouldReduceMotion || !entranceDone
+    ? {}
+    : {
+        scale: [1.25, 1.35, 1.25],
+        opacity: [0.22, 0.28, 0.22],
+        transition: {
+          duration: 4,
+          repeat: Infinity,
+          ease: "easeInOut"
+        }
+      };
 
   return (
-    <div className="absolute inset-0 flex flex-col items-center justify-center p-6 bg-black text-white overflow-hidden select-none">
-      {/* Background Cyberpunk Ambient Glows */}
+    <div className="absolute inset-0 flex flex-col items-center justify-center p-6 bg-[#09090B] text-white overflow-hidden select-none">
+      
+      {/* ── BACKGROUND MESH ── */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
-        {/* Blue Glow Top Right */}
-        <motion.div
-          animate={{
-            scale: [1, 1.2, 1],
-            x: [0, 15, 0],
-            y: [0, -10, 0],
-          }}
-          transition={{
-            duration: 5,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
-          className="absolute -top-10 -right-10 w-44 h-44 bg-blue-500/10 rounded-full blur-3xl"
-        />
-        {/* Purple Glow Bottom Left */}
-        <motion.div
-          animate={{
-            scale: [1, 1.15, 1],
-            x: [0, -10, 0],
-            y: [0, 15, 0],
-          }}
-          transition={{
-            duration: 6,
-            repeat: Infinity,
-            ease: "easeInOut",
-            delay: 1,
-          }}
-          className="absolute -bottom-10 -left-10 w-44 h-44 bg-indigo-500/10 rounded-full blur-3xl"
-        />
-        {/* Tech Grid Backdrop */}
-        <div className="absolute inset-0 opacity-5 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:16px_16px]" />
+        <div className="absolute -top-[30%] -left-[30%] w-[160%] h-[160%] bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-blue-900/25 via-[#09090B] to-[#09090B] opacity-70" />
       </div>
 
-      {/* Main Content Area (Logo & Title) */}
-      <div className="flex flex-col items-center justify-center z-10">
-        {/* Premium Rotating/Pulsing Logo Container */}
-        <div className="relative mb-6">
-          {/* Animated Outer Orbit Circle */}
+      {/* ── BIG BANG GLOW BACKDROP ── */}
+      <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-0">
+        <motion.div
+          variants={glowVariants}
+          initial="initial"
+          animate="animate"
+          className="relative w-80 h-80"
+        >
           <motion.div
-            animate={{ rotate: 360 }}
-            transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
-            className="absolute -inset-4 rounded-full border border-dashed border-blue-500/30"
+            variants={glowPulseVariants}
+            animate="animate"
+            className="w-full h-full bg-gradient-to-br from-[#0A84FF] via-indigo-500 to-blue-700 rounded-full blur-[84px]"
           />
-          {/* Animated Outer Pulse Ring */}
-          <motion.div
-            animate={{ scale: [1, 1.1, 1], opacity: [0.3, 0.6, 0.3] }}
-            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-            className="absolute -inset-2 rounded-2xl bg-gradient-to-br from-blue-500/20 to-indigo-500/20 blur-md"
-          />
-          {/* Logo Frame */}
-          <motion.div
-            initial={{ scale: 0, rotate: -45 }}
-            animate={{ scale: 1, rotate: 0 }}
-            transition={{ type: "spring", stiffness: 120, damping: 14 }}
-            className="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-600 via-sky-500 to-indigo-600 p-0.5 flex items-center justify-center shadow-2xl shadow-blue-500/20"
-          >
-            <div className="w-full h-full bg-black rounded-[14px] flex items-center justify-center text-white">
-              <motion.div
-                animate={{
-                  y: [0, -2, 0],
-                }}
-                transition={{
-                  duration: 2,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                }}
-              >
-                <VeyloPrepLogo className="w-9 h-9 text-white" />
-              </motion.div>
-            </div>
-          </motion.div>
-        </div>
+        </motion.div>
+      </div>
 
-        {/* Staggered Title Reveal */}
-        <div className="flex space-x-1 overflow-hidden">
-          {titleText.split("").map((letter, i) => (
-            <motion.span
-              key={i}
-              initial={{ y: 24, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{
-                delay: i * 0.05 + 0.1,
-                type: "spring",
-                stiffness: 150,
-                damping: 12,
-              }}
-              className="text-3xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-b from-white via-zinc-100 to-zinc-300"
-            >
-              {letter}
-            </motion.span>
-          ))}
-        </div>
+      {/* ── HERO LOGO ── */}
+      <div className="flex flex-col items-center justify-center z-10">
+        <motion.div
+          variants={logoContainerVariants}
+          initial="initial"
+          animate="animate"
+          onAnimationComplete={() => setEntranceDone(true)}
+          className="relative"
+        >
+          {/* Dashboard halo orbits */}
+          {!shouldReduceMotion && (
+            <motion.div
+              animate={{ rotate: 360 }}
+              transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
+              className="absolute -inset-6 rounded-full border border-white/[0.04] border-dashed"
+            />
+          )}
+
+          {/* Frosted Glass Container */}
+          <div className="w-40 h-40 rounded-[32px] bg-white/[0.03] border border-white/[0.1] shadow-[0_32px_64px_rgba(0,0,0,0.5)] backdrop-blur-xl flex items-center justify-center p-7">
+            <motion.div animate={floatVariants} className="w-full h-full flex items-center justify-center">
+              <VeyloPrepLogo className="w-full h-full object-contain" />
+            </motion.div>
+          </div>
+        </motion.div>
       </div>
     </div>
   );

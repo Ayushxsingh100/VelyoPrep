@@ -243,7 +243,6 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({
         icon: <FileText size={14} className="text-[#3B82F6]" />,
         action: () => {
           setCurrentScreen("vault");
-          showToast(`Opened Resume Vault for ${latest.name}`, "info");
         }
       };
     }
@@ -257,7 +256,6 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({
         icon: <Briefcase size={14} className="text-[#3B82F6]" />,
         action: () => {
           setCurrentScreen("tracker");
-          showToast(`Resuming details for ${latestApp.company}`, "info");
         }
       };
     }
@@ -390,7 +388,6 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({
         <button 
           onClick={() => {
             setCurrentScreen("settings");
-            showToast("Navigation routed to Settings", "info");
           }} 
           className={`w-11 h-11 rounded-full border flex items-center justify-center transition-all duration-200 cursor-pointer shrink-0 ${
             isDark 

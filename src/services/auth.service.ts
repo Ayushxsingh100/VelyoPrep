@@ -63,6 +63,7 @@ export class SupabaseAuthService implements IAuthService {
 
   async signUp(email: string, pass: string, name?: string): Promise<AuthResult> {
     try {
+      const redirectUrl = typeof window !== "undefined" ? `${window.location.origin}` : undefined;
       const { data, error } = await this.client.auth.signUp({
         email,
         password: pass,
@@ -70,6 +71,7 @@ export class SupabaseAuthService implements IAuthService {
           data: {
             full_name: name || "",
           },
+          emailRedirectTo: redirectUrl,
         },
       });
 
