@@ -183,7 +183,7 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({
     if (pendingDeadline) {
       return {
         contextLabel: "Upcoming Deadline",
-        company: pendingDeadline.company || "PlacementOS Milestone",
+        company: pendingDeadline.company || "VeyloPrep Milestone",
         role: pendingDeadline.title,
         time: pendingDeadline.dueDate ? `Due ${pendingDeadline.dueDate}` : "Today",
         statusType: "Deadline",
@@ -195,7 +195,7 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({
 
     return {
       contextLabel: "Placement Journey Started",
-      company: "PlacementOS Core",
+      company: "VeyloPrep Core",
       role: "Log your first placement item",
       time: "Begin tracking to unlock priority tasks",
       statusType: "Default",

@@ -41,7 +41,7 @@ export const ReleaseConsoleScreen: React.FC<ReleaseConsoleScreenProps> = ({
     if (isRunningTests) return;
     setIsRunningTests(true);
     setTestProgress(0);
-    setTestLogs(["[CLI] Bootstrapping PlacementOS V1 Test Runner...", "[CLI] Loading secure environment configs..."]);
+    setTestLogs(["[CLI] Bootstrapping VeyloPrep V1 Test Runner...", "[CLI] Loading secure environment configs..."]);
     
     setTestSuite(prev => prev.map(t => ({ ...t, status: "pending", duration: "0ms" })));
 
@@ -75,7 +75,7 @@ export const ReleaseConsoleScreen: React.FC<ReleaseConsoleScreenProps> = ({
             "🚀 ALL 7 CRITICAL TEST MODULES COMPLETED SUCCESSFULLY",
             "📊 Final Report: 7 Passed, 0 Failed, 48 Assertions Safe"
           ]);
-          showToast("PlacementOS test suite compiled & executed 100% green", "success");
+          showToast("VeyloPrep test suite compiled & executed 100% green", "success");
         }, 300);
       }
     }, 850);
@@ -124,8 +124,8 @@ export const ReleaseConsoleScreen: React.FC<ReleaseConsoleScreenProps> = ({
   const docData = useMemo(() => {
     return {
       architecture: {
-        title: "PlacementOS Platform Architecture Overview",
-        content: `PlacementOS is engineered following clean architecture guidelines with Riverpod state containers and Supabase secure schemas.
+        title: "VeyloPrep Platform Architecture Overview",
+        content: `VeyloPrep is engineered following clean architecture guidelines with Riverpod state containers and Supabase secure schemas.
 
 • Presentation Layer: Fully isolated Design System showcasing strict typographic spacing, Inter display typography, and motion-powered fluid transitions.
 • Domain Layer: Centralized state controllers and aggregates that prevent unnecessary widget rebuilds.
@@ -133,7 +133,7 @@ export const ReleaseConsoleScreen: React.FC<ReleaseConsoleScreenProps> = ({
       },
       deployment: {
         title: "Production Deployment & Server Hardening Guide",
-        content: `Standard steps to host PlacementOS securely in a sandboxed Cloud container:
+        content: `Standard steps to host VeyloPrep securely in a sandboxed Cloud container:
 
 1. Configure Port Binding: Nginx reverse proxy routes outside traffic strictly to container port 3000.
 2. Initialize Database: Ensure Supabase relational schemas and row-level security (RLS) rules are provisioned correctly.
@@ -141,7 +141,7 @@ export const ReleaseConsoleScreen: React.FC<ReleaseConsoleScreenProps> = ({
       },
       testing: {
         title: "QA Hardening & Continuous Integration Manual",
-        content: `The PlacementOS QA pipeline consists of strict quality gates:
+        content: `The VeyloPrep QA pipeline consists of strict quality gates:
 
 • Static Analysis: Linter configuration (eslint, tsc) must yield 0 warnings before build integration.
 • Unit Testing: Strict models validation (e.g. dates formatting, file size limit, URL checks).
@@ -306,7 +306,7 @@ export const ReleaseConsoleScreen: React.FC<ReleaseConsoleScreenProps> = ({
                     <Shield size={15} className="text-blue-400 mr-1.5" />
                     Security Hardening Checklist
                   </h4>
-                  <p className="text-xs text-zinc-550 mt-0.5">Ensure PlacementOS holds maximum secure integrity</p>
+                  <p className="text-xs text-zinc-550 mt-0.5">Ensure VeyloPrep holds maximum secure integrity</p>
                 </div>
                 <span className="px-1.5 py-0.5 rounded bg-blue-500/10 text-blue-400 text-[8.5px] font-mono font-bold">100% SECURE</span>
               </div>
@@ -472,7 +472,7 @@ export const ReleaseConsoleScreen: React.FC<ReleaseConsoleScreenProps> = ({
               </form>
 
               <div className="space-y-1 bg-zinc-950/20 p-2.5 rounded border border-zinc-800/45 text-[10px] leading-relaxed">
-                <p className="font-bold text-zinc-300">PLACEMENTOS {releaseChannel.toUpperCase()} RELEASE v{appVersion}</p>
+                <p className="font-bold text-zinc-300">VEYLOPREP {releaseChannel.toUpperCase()} RELEASE v{appVersion}</p>
                 <ul className="list-disc pl-3.5 space-y-0.5 text-zinc-400">
                   <li><strong>Ticket-011 Dashboard</strong>: Centralized placement pipeline analytics with responsive trend sparklines.</li>
                   <li><strong>Ticket-010 Job Capture</strong>: Automated smart parser for Stripe and Google internship URLs.</li>
@@ -486,7 +486,7 @@ export const ReleaseConsoleScreen: React.FC<ReleaseConsoleScreenProps> = ({
 
             <div className="grid grid-cols-1 min-[340px]:grid-cols-2 gap-1.5">
               <button 
-                onClick={() => showToast("PlacementOS Platform Licenses: Licensed under Apache 2.0 open-source parameters.", "info")}
+                onClick={() => showToast("VeyloPrep Platform Licenses: Licensed under Apache 2.0 open-source parameters.", "info")}
                 className="py-1.5 px-2 rounded border border-zinc-800 hover:border-zinc-700 bg-zinc-900/20 text-center text-[9px] text-zinc-400"
               >
                 📜 View OS Licenses

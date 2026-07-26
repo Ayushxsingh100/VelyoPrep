@@ -480,7 +480,7 @@ export default function BlueprintConsole({ isDark }: BlueprintConsoleProps) {
                 <span className="px-2.5 py-0.5 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-[10px] font-bold font-mono">AUTH MODULE</span>
                 <span className="px-2.5 py-0.5 rounded-full bg-purple-500/10 border border-purple-500/20 text-purple-400 text-[10px] font-bold font-mono">SUPABASE + RIVERPOD</span>
               </div>
-              <h2 className="text-xl font-bold tracking-tight mt-3">PlacementOS Authentication Module</h2>
+              <h2 className="text-xl font-bold tracking-tight mt-3">VeyloPrep Authentication Module</h2>
               <p className={`text-xs ${themeTextSubtle} mt-2 max-w-3xl leading-relaxed`}>
                 This tab implements **Ticket-005: Authentication Module (UI & Session Management)**. It incorporates production-ready login/registration/recovery views with robust text field validators, a password strength calculator, real-time Google OAuth widgets, persistent login listeners, and a sealed-monad exception pipeline connecting with the Supabase back-end.
               </p>
@@ -571,7 +571,7 @@ export default function BlueprintConsole({ isDark }: BlueprintConsoleProps) {
                 <span className="px-2.5 py-0.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-500 text-[10px] font-bold font-mono">APPLICATION SHELL</span>
                 <span className="px-2.5 py-0.5 rounded-full bg-purple-500/10 border border-purple-500/20 text-purple-500 text-[10px] font-bold font-mono">GOROUTER READY</span>
               </div>
-              <h2 className="text-xl font-bold tracking-tight mt-3">PlacementOS App Shell & Navigation</h2>
+              <h2 className="text-xl font-bold tracking-tight mt-3">VeyloPrep App Shell & Navigation</h2>
               <p className={`text-xs ${themeTextSubtle} mt-2 max-w-3xl leading-relaxed`}>
                 This panel implements **Ticket-004: Application Shell & Navigation Framework** as defined in the official Project Bible. It provides GoRouter nested ShellRoutes, Route Observers, adaptive BottomNav, Navigation Rail, and Sidebar components, global AppBar, authentication guard placeholders, and high-performance layout wrappers.
               </p>
@@ -662,7 +662,7 @@ export default function BlueprintConsole({ isDark }: BlueprintConsoleProps) {
                 <span className="px-2.5 py-0.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-500 text-[10px] font-bold font-mono">DESIGN SYSTEM FOUNDATION</span>
                 <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 text-[10px] font-bold font-mono">MATERIAL 3 READY</span>
               </div>
-              <h2 className="text-xl font-bold tracking-tight mt-3">PlacementOS Core Design System</h2>
+              <h2 className="text-xl font-bold tracking-tight mt-3">VeyloPrep Core Design System</h2>
               <p className={`text-xs ${themeTextSubtle} mt-2 max-w-3xl leading-relaxed`}>
                 This panel implements **Ticket-003: Design System Implementation** as defined in the official Project Bible. It provides strongly-typed design tokens for spacing, radii, strokes, durations, curves, responsive layouts, Material 3 dynamic light/dark palettes, semantic states (Hover, Focus, Pressed, Disabled), and shared components (PrimaryButton, MetricCard, PasswordField).
               </p>

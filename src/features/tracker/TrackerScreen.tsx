@@ -526,7 +526,7 @@ export const TrackerScreen: React.FC<TrackerScreenProps> = ({
     };
 
     const handleShare = () => {
-      const payload = `💼 PlacementOS Record\n🏢 Company: ${selectedApp.company}\n🎯 Role: ${selectedApp.role}\n📍 Location: ${selectedApp.location || "Remote"}\n💵 Salary: ${formattedComp}\n📈 Stage: ${selectedApp.status}\n🔗 Link: ${selectedApp.jobUrl || "None"}`;
+      const payload = `💼 VeyloPrep Record\n🏢 Company: ${selectedApp.company}\n🎯 Role: ${selectedApp.role}\n📍 Location: ${selectedApp.location || "Remote"}\n💵 Salary: ${formattedComp}\n📈 Stage: ${selectedApp.status}\n🔗 Link: ${selectedApp.jobUrl || "None"}`;
       navigator.clipboard.writeText(payload);
       showToast("Metadata copied to clipboard", "success");
       setShowShareModal(true);
@@ -965,13 +965,13 @@ export const TrackerScreen: React.FC<TrackerScreenProps> = ({
                 <div className={`p-3 rounded-2xl border text-[11px] font-mono whitespace-pre-wrap leading-relaxed ${
                   isDark ? 'bg-zinc-950/40 border-zinc-800 text-zinc-300' : 'bg-zinc-50 border-zinc-200 text-zinc-700'
                 }`}>
-                  {`💼 PlacementOS Record\n🏢 Company: ${selectedApp.company}\n🎯 Role: ${selectedApp.role}\n📍 Location: ${selectedApp.location || "Remote"}\n💵 Salary: ${formattedComp}\n📈 Stage: ${selectedApp.status}`}
+                  {`💼 VeyloPrep Record\n🏢 Company: ${selectedApp.company}\n🎯 Role: ${selectedApp.role}\n📍 Location: ${selectedApp.location || "Remote"}\n💵 Salary: ${formattedComp}\n📈 Stage: ${selectedApp.status}`}
                 </div>
 
                 <div className="mt-4 flex gap-2">
                   <button
                     onClick={() => {
-                      navigator.clipboard.writeText(`PlacementOS Opportunity details copy completed!`);
+                      navigator.clipboard.writeText(`VeyloPrep Opportunity details copy completed!`);
                       showToast("Copied!", "success");
                       setShowShareModal(false);
                     }}

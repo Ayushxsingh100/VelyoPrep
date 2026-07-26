@@ -3,7 +3,7 @@ import MobileEmulator from "./features/emulator/MobileEmulator";
 import { AppProviders } from "./app/providers";
 import { useTheme } from "./providers/theme.provider";
 import { useRegisterSW } from "virtual:pwa-register/react";
-import { WifiOff, RefreshCw, Sparkles, X, Smartphone, Share, PlusSquare } from "lucide-react";
+import { WifiOff, RefreshCw, Sparkles, Smartphone, Share, PlusSquare } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 
 function OfflineOverlay({ isDark }: { isDark: boolean }) {
