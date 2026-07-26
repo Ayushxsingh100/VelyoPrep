@@ -915,6 +915,7 @@ export const TrackerScreen: React.FC<TrackerScreenProps> = ({
                 <a 
                   href={selectedApp.jobUrl} 
                   target="_blank" 
+                  rel="noopener noreferrer"
                   referrerPolicy="no-referrer"
                   className="text-blue-500 hover:text-blue-400 font-semibold inline-flex items-center gap-1 hover:underline cursor-pointer text-right"
                 >

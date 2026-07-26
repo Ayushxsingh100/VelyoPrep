@@ -908,7 +908,7 @@ export const VaultScreen: React.FC<VaultScreenProps> = ({
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => certFileInputRef.current?.click()}
-              className="fixed bottom-24 right-6 w-13 h-13 rounded-full bg-blue-650 hover:bg-blue-600 active:scale-95 text-white flex items-center justify-center shadow-lg shadow-blue-500/20 z-40 border border-blue-500/30 cursor-pointer"
+              className="fixed bottom-[calc(6rem+env(safe-area-inset-bottom,0px))] right-6 w-13 h-13 rounded-full bg-blue-650 hover:bg-blue-600 active:scale-95 text-white flex items-center justify-center shadow-lg shadow-blue-500/20 z-40 border border-blue-500/30 cursor-pointer"
             >
               <Plus size={22} />
             </motion.button>
@@ -1164,7 +1164,7 @@ export const VaultScreen: React.FC<VaultScreenProps> = ({
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => resumeFileInputRef.current?.click()}
-              className="fixed bottom-24 right-6 w-13 h-13 rounded-full bg-blue-650 hover:bg-blue-600 active:scale-95 text-white flex items-center justify-center shadow-lg shadow-blue-500/20 z-40 border border-blue-500/30 cursor-pointer"
+              className="fixed bottom-[calc(6rem+env(safe-area-inset-bottom,0px))] right-6 w-13 h-13 rounded-full bg-blue-650 hover:bg-blue-600 active:scale-95 text-white flex items-center justify-center shadow-lg shadow-blue-500/20 z-40 border border-blue-500/30 cursor-pointer"
             >
               <Plus size={22} />
             </motion.button>

@@ -16,6 +16,7 @@ import { motion, AnimatePresence } from "motion/react";
 import { VeyloPrepLogo } from "../../shared/components/logo/VeyloPrepLogo";
 import { SplashScreen } from "../splash/SplashScreen";
 import { useAuth } from "../../providers/auth.provider";
+import { supabase } from "../../lib/supabase/client";
 import { JobService } from "../../services/job.service";
 import { DeadlineService } from "../../services/deadline.service";
 import { ResumeService } from "../../services/resume.service";
@@ -452,7 +453,14 @@ export default function MobileEmulator({
       const timer = setTimeout(() => {
         if (auth.isAuthenticated) {
           if (isProfileCompleted()) {
-            setCurrentScreen("dashboard");
+            const params = new URLSearchParams(window.location.search);
+            const targetScreen = params.get("screen");
+            const validScreens = ["dashboard", "tracker", "deadlines", "jobs", "vault"];
+            if (targetScreen && validScreens.includes(targetScreen)) {
+              setCurrentScreen(targetScreen);
+            } else {
+              setCurrentScreen("dashboard");
+            }
           } else {
             setCurrentScreen("onboarding");
           }
@@ -463,6 +471,44 @@ export default function MobileEmulator({
       return () => clearTimeout(timer);
     }
   }, [currentScreen, auth.isLoading, auth.isLoadingProfile, auth.isAuthenticated, auth.profile]);
+
+  // Popstate history listener for predictable PWA/hardware back transitions
+  React.useEffect(() => {
+    if (currentScreen === "splash") return;
+
+    const handlePopState = (event: PopStateEvent) => {
+      if (event.state && event.state.screen) {
+        setCurrentScreen(event.state.screen);
+      }
+    };
+
+    window.addEventListener("popstate", handlePopState);
+
+    if (!window.history.state || window.history.state.screen !== currentScreen) {
+      window.history.pushState({ screen: currentScreen }, "", "");
+    }
+
+    return () => {
+      window.removeEventListener("popstate", handlePopState);
+    };
+  }, [currentScreen]);
+
+  // Center scroll focused input/textarea above mobile keyboard overlay
+  React.useEffect(() => {
+    const handleFocus = (e: FocusEvent) => {
+      const target = e.target as HTMLElement;
+      if (target && (target.tagName === "INPUT" || target.tagName === "TEXTAREA")) {
+        setTimeout(() => {
+          target.scrollIntoView({ behavior: "smooth", block: "center" });
+        }, 300);
+      }
+    };
+
+    window.addEventListener("focus", handleFocus, true);
+    return () => {
+      window.removeEventListener("focus", handleFocus, true);
+    };
+  }, []);
 
   const [headerVisible, setHeaderVisible] = useState(true);
   const [lastScrollTop, setLastScrollTop] = useState(0);
@@ -560,7 +606,6 @@ export default function MobileEmulator({
     setLoginError("");
     setLoginLoading(true);
     try {
-      const { supabase } = await import("../../lib/supabase/client");
       const { error } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {
@@ -936,7 +981,7 @@ export default function MobileEmulator({
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="absolute inset-0 flex flex-col p-6 pt-16 overflow-y-auto bg-[#09090B] text-zinc-100"
+              className="absolute inset-0 flex flex-col p-6 pt-[calc(4rem+env(safe-area-inset-top,0px))] overflow-y-auto bg-[#09090B] text-zinc-100"
             >
               <motion.div
                 initial={{ opacity: 0, y: 8 }}
@@ -1100,7 +1145,7 @@ export default function MobileEmulator({
               initial={{ x: 100, opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
               exit={{ x: -100, opacity: 0 }}
-              className="absolute inset-0 flex flex-col p-6 pt-16 overflow-y-auto bg-[#09090B] text-zinc-100"
+              className="absolute inset-0 flex flex-col p-6 pt-[calc(4rem+env(safe-area-inset-top,0px))] overflow-y-auto bg-[#09090B] text-zinc-100"
             >
               <div className="mb-6 text-left">
                 <button 
@@ -1246,7 +1291,7 @@ export default function MobileEmulator({
               initial={{ x: 100, opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
               exit={{ x: -100, opacity: 0 }}
-              className="absolute inset-0 flex flex-col p-6 pt-16 overflow-y-auto bg-[#09090B] text-zinc-100"
+              className="absolute inset-0 flex flex-col p-6 pt-[calc(4rem+env(safe-area-inset-top,0px))] overflow-y-auto bg-[#09090B] text-zinc-100"
             >
               <div className="mb-6 text-left">
                 <button 
@@ -1327,7 +1372,7 @@ export default function MobileEmulator({
             >
               <div 
                 onScroll={handleScroll}
-                className={`flex-1 overflow-y-auto overflow-x-hidden ${currentScreen === "dashboard" ? "pt-5" : "pt-12"} pb-[104px] scrollbar-none`}
+                className={`flex-1 overflow-y-auto overflow-x-hidden ${currentScreen === "dashboard" ? "pt-[calc(1.25rem+env(safe-area-inset-top,0px))]" : "pt-[calc(3rem+env(safe-area-inset-top,0px))]" } pb-[calc(104px+env(safe-area-inset-bottom,0px))] scrollbar-none`}
               >
                 {currentScreen === "dashboard" && (
                   <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-4 px-4">
@@ -1884,7 +1929,7 @@ export default function MobileEmulator({
                 initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-                className={`absolute bottom-5 left-4 right-4 h-[72px] rounded-full border px-2 flex items-center justify-between z-40 backdrop-blur-[12px] -webkit-backdrop-filter:blur(12px) transition-all duration-200 ${
+                className={`absolute bottom-[calc(1.25rem+env(safe-area-inset-bottom,0px))] left-4 right-4 h-[72px] rounded-full border px-2 flex items-center justify-between z-40 backdrop-blur-[12px] -webkit-backdrop-filter:blur(12px) transition-all duration-200 ${
                   isDark 
                     ? "bg-[#18181A]/65 border-white/[0.08] shadow-[0_12px_40px_rgba(0,0,0,0.5)]" 
                     : "bg-white/60 border-zinc-200/40 shadow-[0_12px_30px_rgba(0,0,0,0.04)]"
@@ -1936,7 +1981,7 @@ export default function MobileEmulator({
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                className="absolute inset-0 flex flex-col h-full bg-[#09090B] text-zinc-100 p-6 pt-16 overflow-y-auto"
+                className="absolute inset-0 flex flex-col h-full bg-[#09090B] text-zinc-100 p-6 pt-[calc(4rem+env(safe-area-inset-top,0px))] overflow-y-auto"
               >
                 <div className="mb-6 text-left">
                   <h2 className="text-3xl font-extrabold tracking-tight text-white font-display">Complete Profile</h2>

@@ -1,5 +1,4 @@
 import React from "react";
-import iconUrl from "@/media/icon.png";
 
 interface VeyloPrepLogoProps {
   className?: string;
@@ -8,7 +7,7 @@ interface VeyloPrepLogoProps {
 export function VeyloPrepLogo({ className = "w-6 h-6" }: VeyloPrepLogoProps) {
   return (
     <img
-      src={iconUrl}
+      src="/pwa-192x192.png"
       alt="VeyloPrep Logo"
       className={`${className} object-contain`}
     />
