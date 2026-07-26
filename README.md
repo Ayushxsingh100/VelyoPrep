@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="./showcase/hero/veylo-prep-hero.png" alt="VeyloPrep — Your Placement Journey, Organised" width="100%" />
+  <img src="showcase/veylo-prep-hero.png" alt="VeyloPrep — Your Placement Journey, Organised" width="100%" />
 </p>
 
 <h1 align="center">VeyloPrep</h1>
@@ -43,7 +43,7 @@ Built for college students preparing for internships and placements, VeyloPrep p
 Get a clear view of your placement journey, upcoming priorities and application progress from one home screen.
 
 <p align="center">
-  <img src="./showcase/screenshots/dashboard.png" alt="VeyloPrep Career Dashboard" width="100%" />
+  <img src="showcase/dashboard.png" alt="VeyloPrep Career Dashboard" width="100%" />
 </p>
 
 ### Application Tracker
@@ -51,7 +51,7 @@ Get a clear view of your placement journey, upcoming priorities and application 
 Track opportunities through the complete application journey — from applying to assessments, interviews and offers.
 
 <p align="center">
-  <img src="./showcase/screenshots/application-tracker.png" alt="VeyloPrep Application Tracker" width="100%" />
+  <img src="showcase/tracker.png" alt="VeyloPrep Application Tracker" width="100%" />
 </p>
 
 ### Today & Milestones
@@ -59,7 +59,7 @@ Track opportunities through the complete application journey — from applying t
 Keep interviews, assessments, deadlines and other placement activities visible and organised.
 
 <p align="center">
-  <img src="./showcase/screenshots/today.png" alt="VeyloPrep Today and Milestones" width="100%" />
+  <img src="showcase/today.png" alt="VeyloPrep Today and Milestones" width="100%" />
 </p>
 
 ### Job Hub
@@ -67,7 +67,7 @@ Keep interviews, assessments, deadlines and other placement activities visible a
 Keep frequently used job portals and career resources accessible from one organised hub, with support for custom portals.
 
 <p align="center">
-  <img src="./showcase/screenshots/job-hub.png" alt="VeyloPrep Job Hub" width="100%" />
+  <img src="showcase/job-hub.png" alt="VeyloPrep Job Hub" width="100%" />
 </p>
 
 ### Career Vault
@@ -75,7 +75,7 @@ Keep frequently used job portals and career resources accessible from one organi
 Maintain the information and documents repeatedly needed throughout internship and placement applications.
 
 <p align="center">
-  <img src="./showcase/screenshots/career-vault.png" alt="VeyloPrep Career Vault" width="100%" />
+  <img src="showcase/career-vault.png" alt="VeyloPrep Career Vault" width="100%" />
 </p>
 
 ### Career Resources
@@ -83,7 +83,7 @@ Maintain the information and documents repeatedly needed throughout internship a
 Organise resumes, certificates and professional links so important career assets remain easy to access.
 
 <p align="center">
-  <img src="./showcase/screenshots/vault-resources.png" alt="VeyloPrep Career Resources" width="100%" />
+  <img src="showcase/vault-resources.png" alt="VeyloPrep Career Resources" width="100%" />
 </p>
 
 ---
@@ -113,7 +113,7 @@ A short walkthrough of the core VeyloPrep experience:
 **Dashboard → Applications → Today → Job Hub → Career Vault**
 
 <p align="center">
-  <a href="./showcase/demo/veylo-prep-demo.mp4"><strong>Watch Product Demo</strong></a>
+  <a href="showcase/veylo-prep-demo.mp4"><strong>Watch Product Demo</strong></a>
 </p>
 
 ---
@@ -121,7 +121,7 @@ A short walkthrough of the core VeyloPrep experience:
 ## System Architecture
 
 <p align="center">
-  <img src="./docs/architecture/system-architecture.png" alt="VeyloPrep System Architecture" width="100%" />
+  <img src="showcase/system.png" alt="VeyloPrep System Architecture" width="100%" />
 </p>
 
 VeyloPrep uses a shared React + TypeScript application across its web and mobile experiences.
