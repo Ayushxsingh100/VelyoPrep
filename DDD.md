@@ -4,7 +4,7 @@ Perfect. This is the phase where we design the foundation of VeyloPrep's data mo
 
 # VeyloPrep Database Design Document (DDD)
 
-**Phase 3.3 — Database Architecture**
+* *Phase 3.3 — Database Architecture**
 
 **Version:** 1.0
 **Status:** Design Draft
